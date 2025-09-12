@@ -1,0 +1,707 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide scrollbar for horizontal scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 245, 241, 232;
+  --background-end-rgb: 245, 241, 232;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 45 20% 95%;
+    --foreground: 0 0% 3.9%;
+    --card: 45 20% 98%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 45 20% 98%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-gray-200;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0) !important;
+    -webkit-focus-ring-color: rgba(255, 255, 255, 0) !important;
+    outline: none !important;
+  }
+  body {
+    background-image: url("/images/textured-background.svg");
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    background-color: #f5f1e8;
+    @apply text-gray-900;
+    overflow-x: hidden;
+  }
+  html {
+    overflow-x: hidden;
+  }
+}
+
+/* Custom loading screen animations */
+@keyframes zoomIn {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(1.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+.loading-text-zoom {
+  animation: zoomIn 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.loading-fade-out {
+  animation: fadeOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Custom duration utilities */
+.duration-2000 {
+  transition-duration: 2000ms;
+}
+
+/* High-end 3D loading animations */
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0px) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+/* 3D perspective for loading screen */
+.loading-3d-container {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Enhanced text shadow for 3D effect */
+.text-3d-shadow {
+  text-shadow: 
+    0 1px 0 #ccc,
+    0 2px 0 #c9c9c9,
+    0 3px 0 #bbb,
+    0 4px 0 #b9b9b9,
+    0 5px 0 #aaa,
+    0 6px 1px rgba(0,0,0,.1),
+    0 0 5px rgba(0,0,0,.1),
+    0 1px 3px rgba(0,0,0,.3),
+    0 3px 5px rgba(0,0,0,.2),
+    0 5px 10px rgba(0,0,0,.25),
+    0 10px 10px rgba(0,0,0,.2),
+    0 20px 20px rgba(0,0,0,.15);
+}
+
+/* Particle animation */
+.particle-float {
+  animation: particleFloat 3s infinite ease-in-out;
+}
+
+/* 3D Carousel Styles */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Smooth transitions for 3D transforms */
+* {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Optimize animations for better performance */
+.animate-pulse,
+.animate-spin,
+.animate-bounce {
+  will-change: transform, opacity;
+}
+
+/* GPU acceleration for smooth animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Performance optimizations */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize images and media */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Reduce layout shifts */
+.aspect-ratio {
+  aspect-ratio: 16/9;
+}
+
+/* Optimize animations for performance */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom text selection styling */
+::selection {
+  background-color: #6B7280; /* Nice grey color */
+  color: #FFFFFF; /* White text for contrast */
+}
+
+::-moz-selection {
+  background-color: #6B7280; /* Nice grey color */
+  color: #FFFFFF; /* White text for contrast */
+}
+
+/* Custom selection for different text types */
+h1::selection,
+h2::selection,
+h3::selection,
+h4::selection,
+h5::selection,
+h6::selection {
+  background-color: #4B5563; /* Darker grey for headings */
+  color: #FFFFFF;
+}
+
+h1::-moz-selection,
+h2::-moz-selection,
+h3::-moz-selection,
+h4::-moz-selection,
+h5::-moz-selection,
+h6::-moz-selection {
+  background-color: #4B5563; /* Darker grey for headings */
+  color: #FFFFFF;
+}
+
+/* Selection for brand text */
+.text-brand-red::selection {
+  background-color: #DC2626; /* Keep brand red for red text */
+  color: #FFFFFF;
+}
+
+.text-brand-red::-moz-selection {
+  background-color: #DC2626; /* Keep brand red for red text */
+  color: #FFFFFF;
+}
+
+.text-brand-brown::selection {
+  background-color: #6B7280; /* Grey for brown text */
+  color: #FFFFFF;
+}
+
+.text-brand-brown::-moz-selection {
+  background-color: #6B7280; /* Grey for brown text */
+  color: #FFFFFF;
+}
+
+/* Selection for links */
+a::selection {
+  background-color: #6B7280; /* Grey for links */
+  color: #FFFFFF;
+}
+
+a::-moz-selection {
+  background-color: #6B7280; /* Grey for links */
+  color: #FFFFFF;
+}
+
+/* Traditional Sand Particle Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border: none;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, 
+    #8B4513 0%, 
+    #A0522D 20%,
+    #D2B48C 40%,
+    #DEB887 60%,
+    #F5DEB3 80%,
+    #F4E4BC 100%
+  );
+  border-radius: 6px;
+  border: none;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.3) 0.5px, transparent 0.5px),
+    radial-gradient(circle at 75% 35%, rgba(255, 255, 255, 0.2) 0.3px, transparent 0.3px),
+    radial-gradient(circle at 45% 75%, rgba(255, 255, 255, 0.4) 0.4px, transparent 0.4px),
+    radial-gradient(circle at 65% 65%, rgba(255, 255, 255, 0.2) 0.2px, transparent 0.2px);
+  background-size: 4px 4px, 6px 6px, 3px 3px, 5px 5px;
+  border-radius: 6px;
+  animation: sandFlow 15s linear infinite;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, 
+    #A0522D 0%, 
+    #CD853F 20%,
+    #DEB887 40%,
+    #F5DEB3 60%,
+    #F4E4BC 80%,
+    #FFF8DC 100%
+  );
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  transform: scaleX(1.1);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, 
+    #654321 0%, 
+    #8B4513 20%,
+    #A0522D 40%,
+    #CD853F 60%,
+    #DEB887 80%,
+    #F5DEB3 100%
+  );
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-corner {
+  background: linear-gradient(135deg, 
+    rgba(139, 69, 19, 0.1) 0%, 
+    rgba(245, 222, 179, 0.1) 100%
+  );
+}
+
+/* Sand particle animations */
+@keyframes sandFlow {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-15px); }
+}
+
+/* Clean Dot Cursor - Premium Blackish Grey */
+* {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="%23374151" stroke="%23111827" stroke-width="1"/></svg>'), auto;
+}
+
+/* Interactive cursor - Larger See-through Dot */
+a, button, [role="button"], input, textarea, select {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="%23374151" fill-opacity="0.4" stroke="%23111827" stroke-width="1.5"/></svg>'), pointer;
+}
+
+/* Text cursor - Standard I-beam */
+input[type="text"], input[type="email"], input[type="password"], textarea {
+  cursor: text;
+}
+
+/* Loading cursor - Spinning Dot */
+.loading, [aria-busy="true"] {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="%23374151" stroke="%23111827" stroke-width="1" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/></circle></svg>'), wait;
+}
+
+/* Disabled cursor - Faded Dot */
+[disabled], .disabled {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="%236B7280" stroke="%234B5563" stroke-width="1" opacity="0.5"/></svg>'), not-allowed;
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8B4513 rgba(139, 69, 19, 0.1);
+}
+
+/* Swiper Marquee Animation */
+.marquee-swiper-container {
+  margin-top: 2rem;
+  mask-image: linear-gradient(to right, transparent 0%, white 10%, white 90%, transparent 100%);
+  overflow: hidden;
+}
+
+.swiper.marquee-swiper {
+  overflow: visible;
+}
+
+.swiper.marquee-swiper .swiper-wrapper {
+  transition-timing-function: linear !important;
+  align-items: center;
+}
+
+.swiper-slide.marquee-swiper-slide {
+  width: 12rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+
+
+/* Elegant scrollbar for content areas */
+.content-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.content-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 2px;
+}
+
+.content-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.2);
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.content-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.4);
+}
+
+/* Premium scrollbar for special sections */
+.premium-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.premium-scrollbar::-webkit-scrollbar-track {
+  background: rgba(176, 158, 145, 0.05);
+  border-radius: 4px;
+}
+
+.premium-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(176, 158, 145, 0.4) 0%, rgba(139, 69, 19, 0.4) 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.premium-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(176, 158, 145, 0.6) 0%, rgba(139, 69, 19, 0.6) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Shiny text effect for Virasat logo */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shiny-text {
+  background: linear-gradient(
+    90deg,
+    #f97316 0%,
+    #fbbf24 25%,
+    #f97316 50%,
+    #fbbf24 75%,
+    #f97316 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Bento grid hover effects */
+.bento-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Glass morphism effect */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Text truncation utilities */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Enhanced card hover effects */
+.card-hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-text-animated {
+  background: linear-gradient(-45deg, #f97316, #ea580c, #dc2626, #b91c1c);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Enhanced button animations */
+.btn-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .8;
+  }
+}
+
+/* Floating animation for decorative elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Hide scrollbar for mobile carousel */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
+
+/* Custom Donate Button Style - Golden Gradient */
+.btn-donate {
+  width: 110px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(to right,#77530a,#ffd277,#77530a,#77530a,#ffd277,#77530a);
+  background-size: 250%;
+  background-position: left;
+  color: #ffd277;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-duration: 1s;
+  overflow: hidden;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.btn-donate::before {
+  position: absolute;
+  content: "DONATE";
+  color: #ffd277;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 97%;
+  height: 90%;
+  border-radius: 8px;
+  transition-duration: 1s;
+  background-color: rgba(0, 0, 0, 0.842);
+  background-size: 200%;
+}
+
+.btn-donate:hover {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.btn-donate:hover::before {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.btn-donate:active {
+  transform: scale(0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-donate {
+    transition: linear;
+  }
+  .btn-donate::before {
+    transition: linear;
+  }
+}
+
+/* Shine Animation for Get Tickets */
+.shine {
+  font-size: 1em;
+  font-weight: 600;
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #ffffff 35%,
+    #ffd700 50%,
+    #ffffff 65%,
+    #ffffff 100%
+  );
+  background-size: 200% 100%;
+  background-position: -200% 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shine 3s ease-in-out infinite;
+  text-shadow: 0 0 0 transparent;
+}
+
+@keyframes shine {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
