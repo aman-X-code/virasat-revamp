@@ -827,20 +827,6 @@ interface Artist {
 - **Conventional Commits**: Standardized commit messages
 - **Component Documentation**: JSDoc comments for components
 
-## 📞 Support & Contact
-
-### 🆘 Getting Help
-- **Documentation**: Check this README and inline comments
-- **Issues**: Create GitHub issues for bugs and feature requests
-- **Discussions**: Use GitHub Discussions for questions
-- **Email**: Contact the development team
-
-### 📧 Contact Information
-- **Organization**: REACH (Rural Entrepreneurship for Art & Cultural Heritage)
-- **Website**: [Official REACH Website](https://reach.org.in)
-- **Festival**: Virasat Cultural Heritage Festival
-- **Location**: Dehradun, Uttarakhand, India
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
