@@ -302,7 +302,7 @@ const EventsPage = () => {
               </motion.div>
 
               {/* Events Grid for this Day */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-4">
                 {/* Mobile: Horizontal scroll container */}
                 <div className="sm:hidden flex overflow-x-auto overflow-y-hidden scrollbar-hide gap-4 pb-2" style={{ scrollSnapType: 'x mandatory', scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
                   {eventsByDay[day].map((event, eventIndex) => (
@@ -446,8 +446,74 @@ const EventsPage = () => {
                   ))}
                 </div>
 
+                {/* Medium Laptop: Compact button layout */}
+                <div className="hidden sm:contents lg:hidden">
+                  {eventsByDay[day].map((event, eventIndex) => (
+                    <motion.div
+                      key={event.id}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: eventIndex * 0.05 }}
+                      className="group relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl transition-all duration-300 ease-out overflow-hidden flex flex-col"
+                      style={{
+                        filter: 'drop-shadow(0 0 0 transparent)'
+                      }}
+                      onMouseEnter={() => setHoveredCard(event.id)}
+                      onMouseLeave={() => setHoveredCard(null)}
+                    >
+                      {/* Compact button-style container */}
+                      <div className="bg-white rounded-xl m-1 flex flex-row items-center p-3 hover:shadow-lg transition-all duration-300">
+                        {/* Event Image - Small */}
+                        <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                          <motion.img
+                            src={getEventImageUrl(event.title)}
+                            alt={event.title}
+                            className="w-full h-full object-cover"
+                          />
+                          {/* Day Badge */}
+                          <div className="absolute -top-1 -left-1">
+                            <span className="bg-brand-black text-white px-1.5 py-0.5 rounded-full text-xs font-medium">
+                              {event.day}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Event Info */}
+                        <div className="flex-1 ml-3 min-w-0">
+                          <h3 className="text-sm font-bold text-brand-black font-serif group-hover:text-brand-red transition-colors duration-300 line-clamp-1 mb-1">
+                            {event.title}
+                          </h3>
+                          <div className="flex items-center gap-3 text-xs text-brand-earthen">
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-brand-red flex-shrink-0" />
+                              <span>{event.time}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MapPin className="w-3 h-3 text-brand-red flex-shrink-0" />
+                              <span className="truncate">{event.location}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* View Details Button */}
+                        <Link href={`/events/${event.id}`}>
+                          <motion.button
+                            className="bg-brand-red hover:bg-brand-red-dark text-white px-3 py-1.5 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1 flex-shrink-0 text-xs"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            View
+                            <ArrowRight className="w-3 h-3" />
+                          </motion.button>
+                        </Link>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
                 {/* Desktop: Grid layout */}
-                <div className="hidden sm:contents">
+                <div className="hidden lg:contents">
                 {eventsByDay[day].map((event, eventIndex) => (
                   <motion.div
                     key={event.id}

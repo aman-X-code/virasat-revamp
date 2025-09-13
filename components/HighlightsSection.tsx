@@ -5,37 +5,37 @@ import { motion } from 'framer-motion';
 
 const highlightsData = [
   {
-    imageUrl: 'https://placehold.co/600x400/8b786d/ffffff?text=Painting+Competition',
+    imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1757755057/prod/highlights/painting_bafhl5.png',
     title: 'Painting Competition',
     description: 'Express your creativity through traditional and contemporary art forms in our vibrant painting competition.',
   },
   {
-    imageUrl: 'https://placehold.co/600x400/5a3e36/ffffff?text=Reel+Making+Competition',
+    imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1757755057/prod/highlights/reel_xzmikx.png',
     title: 'Reel Making Competition',
     description: 'Capture the essence of our cultural heritage through creative short videos and reels.',
   },
   {
-    imageUrl: 'https://placehold.co/600x400/c0392b/ffffff?text=Photography+Competition',
+    imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1757755057/prod/highlights/photography_gtxpsb.png',
     title: 'Photography Competition',
     description: 'Freeze moments of beauty and tradition in our photography competition celebrating visual storytelling.',
   },
   {
-    imageUrl: 'https://placehold.co/600x400/2c3e50/ffffff?text=Videography+Competition',
+    imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1757755058/prod/highlights/videography_mz02ru.png',
     title: 'Videography Competition',
     description: 'Create compelling visual narratives that showcase the depth and richness of our cultural heritage.',
   },
   {
-    imageUrl: 'https://placehold.co/600x400/27ae60/ffffff?text=Artisan+Workshop',
+    imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1757755056/prod/highlights/artisan_rebsnr.png',
     title: 'Artisan Workshop',
     description: 'Learn from master craftsmen and discover the intricate techniques of traditional artisan work.',
   },
   {
-    imageUrl: 'https://placehold.co/600x400/e74c3c/ffffff?text=Vintage+Car+Rally',
+    imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1757755058/prod/highlights/vintage_zagvux.png',
     title: 'Vintage Car Rally',
     description: 'Experience the charm of classic automobiles in our vintage car rally through heritage routes.',
   },
   {
-    imageUrl: 'https://placehold.co/600x400/9b59b6/ffffff?text=Gala+Night',
+    imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1757755057/prod/highlights/gala_em7byp.png',
     title: 'Gala Night',
     description: 'An elegant evening celebrating our cultural heritage with performances, awards, and festivities.',
   },

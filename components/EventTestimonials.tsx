@@ -31,11 +31,38 @@ interface Testimonial {
   verified: boolean
 }
 
+// Fallback Avatar Component
+const FallbackAvatar = ({ name, className }: { name: string; className?: string }) => {
+  const initials = name
+    .split(' ')
+    .map(word => word.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+
+  const colors = [
+    'bg-blue-500 text-white',
+    'bg-green-500 text-white', 
+    'bg-purple-500 text-white',
+    'bg-pink-500 text-white',
+    'bg-yellow-500 text-white',
+    'bg-red-500 text-white'
+  ]
+  
+  const colorIndex = name.length % colors.length
+
+  return (
+    <div className={`rounded-full flex items-center justify-center font-semibold text-sm ${colors[colorIndex]} ${className || 'w-12 h-12'}`}>
+      {initials}
+    </div>
+  )
+}
+
 const testimonials: Testimonial[] = [
   {
     id: 1,
     name: "Priya Sharma",
-    avatar: "/images/artists/birju_maharaj.png",
+    avatar: "/images/avatars/placeholder-1.svg",
     rating: 5,
     comment: "Absolutely mesmerizing performance! The cultural authenticity was incredible. I felt transported to another era. The artists' dedication to preserving our heritage is truly inspiring.",
     date: "2 years ago",
@@ -47,7 +74,7 @@ const testimonials: Testimonial[] = [
   {
     id: 2,
     name: "Rajesh Kumar",
-    avatar: "/images/artists/lata_mangeshkar.jpg",
+    avatar: "/images/avatars/placeholder-2.svg",
     rating: 5,
     comment: "A beautiful celebration of our heritage. The venue was perfect, and the organization was flawless. Highly recommended for everyone who wants to experience authentic Indian culture.",
     date: "6 months ago",
@@ -59,7 +86,7 @@ const testimonials: Testimonial[] = [
   {
     id: 3,
     name: "Anita Patel",
-    avatar: "/images/artists/shubha_mudgal.jpg",
+    avatar: "/images/avatars/placeholder-3.svg",
     rating: 4,
     comment: "Wonderful experience overall! The performance was outstanding, though the venue could be better organized. Still, the cultural value made it completely worth it.",
     date: "2 weeks ago",
@@ -71,7 +98,7 @@ const testimonials: Testimonial[] = [
   {
     id: 4,
     name: "Vikram Singh",
-    avatar: "/images/artists/naseeruddin_shah.jpg",
+    avatar: "/images/avatars/placeholder-4.svg",
     rating: 5,
     comment: "Perfect blend of tradition and modern presentation. Loved every moment! The artists were world-class, and the cultural context provided was educational and engaging.",
     date: "3 weeks ago",
@@ -83,7 +110,7 @@ const testimonials: Testimonial[] = [
   {
     id: 5,
     name: "Meera Joshi",
-    avatar: "/images/artists/zakir_hussain.jpg",
+    avatar: "/images/avatars/placeholder-5.svg",
     rating: 5,
     comment: "This was my first classical music concert, and I was blown away! The explanations about ragas and the cultural significance made it accessible for beginners like me.",
     date: "1 month ago",
@@ -95,7 +122,7 @@ const testimonials: Testimonial[] = [
   {
     id: 6,
     name: "Arjun Reddy",
-    avatar: "/images/artists/ring.png",
+    avatar: "/images/avatars/placeholder-6.svg",
     rating: 5,
     comment: "Exceptional quality of performances! The festival truly captures the essence of Indian culture. My family and I had an unforgettable experience.",
     date: "1 month ago",
@@ -216,13 +243,25 @@ export default function EventTestimonials() {
               {/* Header */}
               <div className="flex items-start gap-4 mb-4">
                 <div className="relative">
-                  <Image
-                    src={testimonial.avatar}
-                    alt={testimonial.name}
-                    width={48}
-                    height={48}
-                    className="rounded-full object-cover"
-                  />
+                  <div className="w-12 h-12 rounded-full overflow-hidden">
+                    <Image
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      width={48}
+                      height={48}
+                      className="rounded-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.style.display = 'none'
+                        const fallback = target.nextElementSibling as HTMLElement
+                        if (fallback) fallback.style.display = 'flex'
+                      }}
+                    />
+                    <FallbackAvatar 
+                      name={testimonial.name} 
+                      className="w-12 h-12 hidden" 
+                    />
+                  </div>
                   {testimonial.verified && (
                     <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
                       <Award className="w-3 h-3 text-white" />

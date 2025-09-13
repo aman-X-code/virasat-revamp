@@ -8,27 +8,8 @@ import {
   MapPin, 
   Users, 
   Star, 
-  Calendar,
-  Heart,
   Share2,
-  Play,
-  Pause,
-  Volume2,
-  VolumeX,
-  ExternalLink,
-  Shield,
-  Music,
-  Camera,
-  Gift,
-  Coffee,
-  Wifi,
-  Car,
-  Utensils,
-  Crown,
-  CheckCircle,
-  Info,
   AlertCircle,
-  Eye,
   X,
   ChevronDown
 } from "lucide-react"
@@ -92,7 +73,6 @@ export default function EventDetailsClient({ eventData }: EventDetailsClientProp
   const [isMuted, setIsMuted] = useState(true)
   const [showShareModal, setShowShareModal] = useState(false)
   const [showInstructions, setShowInstructions] = useState(false)
-  const [showBookingModal, setShowBookingModal] = useState(false)
 
 
   const handleBookNow = () => {
@@ -174,8 +154,8 @@ export default function EventDetailsClient({ eventData }: EventDetailsClientProp
                       src={getEventImageUrl(eventData.title)}
                       alt={eventData.title}
                       width={400}
-                      height={192}
-                      className="w-full h-40 object-cover rounded-xl"
+                      height={240}
+                      className="w-full h-60 object-cover rounded-xl"
                     />
                     {eventData.featured && (
                       <span className="absolute top-3 right-3 bg-brand-red text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">

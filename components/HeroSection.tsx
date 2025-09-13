@@ -76,7 +76,7 @@ const HeroSection = () => {
       <div className="relative z-10 w-full h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
         <div className="w-full max-w-6xl mx-auto">
           {isMobile ? (
-            <div className="relative w-full h-[80vh] max-h-[800px] mt-16">
+            <div className="relative w-full h-[85vh] max-h-[800px] mt-16">
               <ComponentErrorBoundary componentName="Hero Carousel">
                 <HeroCarousel items={gridItems} />
               </ComponentErrorBoundary>
@@ -104,14 +104,14 @@ const HeroSection = () => {
 
                   {/* Main Text Container */}
                   <motion.div
-                    className="relative px-8 py-6 rounded-2xl backdrop-blur-sm bg-black/20 border border-white/10"
+                    className="relative px-6 py-4 pb-4 rounded-2xl backdrop-blur-sm bg-black/20 border border-white/10"
                     initial={{ scale: 0.95 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.7 }}
                   >
                     {/* VIRASAT Text */}
                     <motion.h1
-                      className="text-5xl sm:text-6xl font-bold leading-tight mb-3"
+                      className="text-5xl sm:text-6xl font-bold leading-tight mb-1"
                       style={{
                         fontFamily:
                           'var(--font-cinzel), "Cinzel", "Playfair Display", serif',
@@ -135,7 +135,7 @@ const HeroSection = () => {
 
                     {/* Elegant Divider */}
                     <motion.div
-                      className="w-16 h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mb-4"
+                      className="w-16 h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mb-2"
                       initial={{ width: 0 }}
                       animate={{ width: 64 }}
                       transition={{ duration: 1.5, delay: 1.2 }}
@@ -155,6 +155,7 @@ const HeroSection = () => {
                     </motion.p>
                   </motion.div>
 
+
                   {/* Single Floating Accent */}
                   <motion.div
                     className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-amber-400 rounded-full"
@@ -168,6 +169,7 @@ const HeroSection = () => {
                       ease: "easeInOut",
                     }}
                   />
+
                 </motion.div>
               </div>
             </div>
@@ -236,7 +238,7 @@ const HeroSection = () => {
 
                 {/* Shiny Virasat Text */}
                 <motion.div
-                  className="absolute inset-0 flex flex-col items-center justify-center text-center z-10 pt-28"
+                  className="absolute inset-0 flex flex-col items-center justify-center text-center z-10"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1, delay: 1.5 }}
@@ -272,55 +274,26 @@ const HeroSection = () => {
                     Heritage in the Hills
                   </motion.p>
 
-                  {/* Scroll Down Indicator */}
+                  {/* Scroll Down Graphic */}
                   <motion.div
-                    className="mt-8 flex flex-col items-center"
+                    className="absolute bottom-[1%] left-[47.5%] transform -translate-x-1/2 flex flex-col items-center"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 2.5 }}
                   >
                     <motion.div
-                      className="w-6 h-10 border-2 border-orange-400 rounded-full flex justify-center"
-                      animate={{
-                        borderColor: [
-                          "rgba(251, 146, 60, 0.4)",
-                          "rgba(251, 146, 60, 1)",
-                          "rgba(251, 146, 60, 0.4)",
-                        ],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
+                      className="w-5 h-8 border-2 border-amber-300/50 rounded-full flex justify-center"
+                      animate={{ y: [0, 6, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     >
                       <motion.div
-                        className="w-1 h-3 bg-orange-400 rounded-full mt-2"
-                        animate={{
-                          y: [0, 12, 0],
-                          opacity: [0.4, 1, 0.4],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: 0.2,
-                        }}
+                        className="w-1 h-2 bg-amber-300 rounded-full mt-1.5"
+                        animate={{ y: [0, 6, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                       />
                     </motion.div>
-                    <motion.p
-                      className="text-sm text-orange-400/80 mt-4 font-light"
-                      animate={{ opacity: [0.6, 1, 0.6] }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 0.5,
-                      }}
-                    >
-                      Scroll Down
-                    </motion.p>
                   </motion.div>
+
                 </motion.div>
 
                 {/* Floating decorative elements */}
