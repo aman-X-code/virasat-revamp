@@ -27,34 +27,81 @@ const nextConfig = {
   
   // Security headers
   async headers() {
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    const headers = [
+      {
+        key: 'X-Frame-Options',
+        value: 'DENY',
+      },
+      {
+        key: 'X-Content-Type-Options',
+        value: 'nosniff',
+      },
+      {
+        key: 'Referrer-Policy',
+        value: 'strict-origin-when-cross-origin',
+      },
+      {
+        key: 'X-XSS-Protection',
+        value: '1; mode=block',
+      },
+      {
+        key: 'Strict-Transport-Security',
+        value: 'max-age=31536000; includeSubDomains; preload',
+      },
+      {
+        key: 'Permissions-Policy',
+        value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+      },
+    ];
+
+    // Only add CSP in production
+    if (!isDevelopment) {
+      headers.push({
+        key: 'Content-Security-Policy',
+        value: [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://js.razorpay.com https://fonts.googleapis.com https://vercel.live blob:",
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+          "font-src 'self' https://fonts.gstatic.com",
+          "img-src 'self' data: https: blob: https://res.cloudinary.com",
+          "media-src 'self' https: blob: https://res.cloudinary.com",
+          "connect-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://res.cloudinary.com https://vercel.live https://lumberjack.razorpay.com https://cdn.jsdelivr.net https://maps.googleapis.com https://maps.gstatic.com",
+          "frame-src 'self' https://checkout.razorpay.com https://vercel.live https://api.razorpay.com https://www.google.com",
+          "object-src 'none'",
+          "base-uri 'self'",
+          "form-action 'self'"
+        ].join('; '),
+      });
+    }
+
     return [
       {
         source: '/(.*)',
+        headers,
+      },
+      // Special headers for donate page - more permissive CSP
+      {
+        source: '/donate',
         headers: [
+          ...headers.filter(h => h.key !== 'Content-Security-Policy'),
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains; preload',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
-          },
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:",
+              "style-src 'self' 'unsafe-inline' https:",
+              "font-src 'self' https:",
+              "img-src 'self' data: https: blob:",
+              "media-src 'self' https: blob:",
+              "connect-src 'self' https:",
+              "frame-src 'self' https:",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'"
+            ].join('; '),
+          }
         ],
       },
     ];

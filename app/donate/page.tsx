@@ -1,17 +1,106 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, CreditCard, Shield, Gift, Star, Users, Award, CheckCircle } from 'lucide-react';
+import { Heart, CreditCard, Shield, Gift, Star, Users, Award, CheckCircle, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const DonatePage = () => {
+  const router = useRouter();
   const [selectedAmount, setSelectedAmount] = useState(2000);
   const [customAmount, setCustomAmount] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+  const [razorpayError, setRazorpayError] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: ''
   });
+
+  // Preload Razorpay script on component mount
+  useEffect(() => {
+    const preloadRazorpay = () => {
+      // Check if already loaded
+      if (typeof (window as any).Razorpay !== 'undefined') {
+        console.log('Razorpay already loaded');
+        setRazorpayLoaded(true);
+        return;
+      }
+
+      // Log environment info for debugging
+      console.log('Environment check:', {
+        isProduction: process.env.NODE_ENV === 'production',
+        appUrl: process.env.NEXT_PUBLIC_APP_URL,
+        razorpayKey: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ? 'Set' : 'Not set'
+      });
+
+      // Check if script already exists
+      const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+      if (existingScript) {
+        console.log('Razorpay script already exists, waiting for load...');
+        // Wait for existing script to load
+        const checkInterval = setInterval(() => {
+          if (typeof (window as any).Razorpay !== 'undefined') {
+            clearInterval(checkInterval);
+            console.log('Razorpay loaded from existing script');
+            setRazorpayLoaded(true);
+          }
+        }, 100);
+
+        // Clear interval after 15 seconds and mark as failed
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          if (typeof (window as any).Razorpay === 'undefined') {
+            console.error('Existing Razorpay script failed to load within timeout');
+            setRazorpayLoaded(false);
+            setRazorpayError(true);
+          }
+        }, 15000);
+        return;
+      }
+
+      console.log('Loading Razorpay script...');
+      // Load the script
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+      
+      script.onload = () => {
+        console.log('Razorpay script loaded successfully');
+        // Double check that Razorpay is actually available
+        setTimeout(() => {
+          if (typeof (window as any).Razorpay !== 'undefined') {
+            setRazorpayLoaded(true);
+          } else {
+            console.error('Razorpay script loaded but Razorpay object not available');
+            setRazorpayLoaded(false);
+          }
+        }, 100);
+      };
+      
+      script.onerror = (error) => {
+        console.error('Failed to preload Razorpay script:', error);
+        console.error('This might be due to CSP blocking or network issues');
+        setRazorpayLoaded(false);
+        setRazorpayError(true);
+      };
+      
+      // Add timeout for script loading
+      setTimeout(() => {
+        if (typeof (window as any).Razorpay === 'undefined') {
+          console.error('Razorpay script loading timeout');
+          setRazorpayLoaded(false);
+          setRazorpayError(true);
+        }
+      }, 10000);
+      
+      document.head.appendChild(script);
+    };
+
+    preloadRazorpay();
+  }, []);
 
   const predefinedAmounts = [
     { amount: 500, label: '₹500', impact: 'Feeds 1 child for a week' },
@@ -43,11 +132,252 @@ const DonatePage = () => {
     });
   };
 
-  const handleDonate = (e: React.FormEvent) => {
+  // Function to manually retry loading Razorpay
+  const retryRazorpayLoad = () => {
+    console.log('Manually retrying Razorpay load...');
+    setRazorpayError(false);
+    setRazorpayLoaded(false);
+    
+    // Remove existing script if any
+    const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+    
+    // Load script again
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    
+    script.onload = () => {
+      console.log('Razorpay script loaded on retry');
+      setTimeout(() => {
+        if (typeof (window as any).Razorpay !== 'undefined') {
+          setRazorpayLoaded(true);
+          setRazorpayError(false);
+        } else {
+          setRazorpayError(true);
+        }
+      }, 100);
+    };
+    
+    script.onerror = () => {
+      console.error('Razorpay script failed on retry');
+      setRazorpayError(true);
+    };
+    
+    document.head.appendChild(script);
+  };
+
+  // Function to test network connectivity to Razorpay CDN
+  const testRazorpayConnectivity = async (): Promise<boolean> => {
+    try {
+      const response = await fetch('https://checkout.razorpay.com/v1/checkout.js', {
+        method: 'HEAD',
+        mode: 'no-cors',
+        cache: 'no-cache'
+      });
+      return true;
+    } catch (error) {
+      console.error('Razorpay CDN connectivity test failed:', error);
+      return false;
+    }
+  };
+
+  const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
-    const amount = customAmount ? parseInt(customAmount) : selectedAmount;
-    // Handle donation logic here
-    console.log('Donation:', { amount, ...formData });
+    setIsLoading(true);
+
+    try {
+      const amount = customAmount ? parseInt(customAmount) : selectedAmount;
+      
+      if (!amount || amount < 1) {
+        alert('Please enter a valid amount');
+        setIsLoading(false);
+        return;
+      }
+
+      // Test network connectivity first
+      const isConnected = await testRazorpayConnectivity();
+      if (!isConnected) {
+        alert('Unable to connect to payment gateway. Please check your internet connection and try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Create order
+      const orderResponse = await fetch('/api/razorpay/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount,
+          currency: 'INR',
+          receipt: `donation_${Date.now()}`,
+          notes: {
+            donor_name: formData.name,
+            donor_email: formData.email,
+            donor_phone: formData.phone,
+          },
+        }),
+      });
+
+      const orderData = await orderResponse.json();
+
+      if (!orderData.success) {
+        throw new Error(orderData.error || 'Failed to create order');
+      }
+
+      // Check if Razorpay key is available
+      const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!razorpayKey) {
+        throw new Error('Razorpay key not configured. Please check your environment variables.');
+      }
+
+      // Function to initialize Razorpay payment
+      const initializeRazorpay = () => {
+        try {
+          // Check if Razorpay is available
+          if (typeof (window as any).Razorpay === 'undefined') {
+            throw new Error('Razorpay script not loaded');
+          }
+
+          const options = {
+            key: razorpayKey,
+            amount: orderData.order.amount,
+            currency: orderData.order.currency,
+            name: 'Virasat - Cultural Heritage Foundation',
+            description: 'Donation for Heritage Preservation',
+            order_id: orderData.order.id,
+            prefill: {
+              name: formData.name,
+              email: formData.email,
+              contact: formData.phone,
+            },
+            theme: {
+              color: '#F59E0B',
+            },
+            // Ensure Indian payment methods are prioritized
+            method: {
+              netbanking: true,
+              wallet: true,
+              card: true,
+              upi: true,
+              emi: false,
+              paylater: false
+            },
+            handler: async function (response: any) {
+              try {
+                // Verify payment
+                const verifyResponse = await fetch('/api/razorpay/verify-payment', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature,
+                  }),
+                });
+
+                const verifyData = await verifyResponse.json();
+
+                if (verifyData.success) {
+                  // Redirect to success page
+                  router.push(`/donate/success?payment_id=${response.razorpay_payment_id}&order_id=${response.razorpay_order_id}&amount=${amount}`);
+                } else {
+                  throw new Error('Payment verification failed');
+                }
+              } catch (error) {
+                console.error('Payment verification error:', error);
+                router.push(`/donate/failure?error_description=Payment verification failed&order_id=${response.razorpay_order_id}`);
+              }
+            },
+            modal: {
+              ondismiss: function() {
+                setIsLoading(false);
+              }
+            }
+          };
+
+          const rzp = new (window as any).Razorpay(options);
+          rzp.open();
+        } catch (error) {
+          console.error('Razorpay initialization error:', error);
+          setIsLoading(false);
+          alert('Failed to initialize payment gateway. Please try again.');
+        }
+      };
+
+      // Check if Razorpay is already loaded
+      if (typeof (window as any).Razorpay !== 'undefined') {
+        initializeRazorpay();
+        return;
+      }
+
+      // Check if script is already being loaded
+      if (document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]')) {
+        // Script is already being loaded, wait for it
+        const checkRazorpay = setInterval(() => {
+          if (typeof (window as any).Razorpay !== 'undefined') {
+            clearInterval(checkRazorpay);
+            initializeRazorpay();
+          }
+        }, 100);
+
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          clearInterval(checkRazorpay);
+          if (typeof (window as any).Razorpay === 'undefined') {
+            setIsLoading(false);
+            alert('Payment gateway is taking too long to load. Please refresh the page and try again.');
+          }
+        }, 10000);
+        return;
+      }
+
+      // Load Razorpay script with retry mechanism
+      const loadRazorpayScript = (retryCount = 0) => {
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        script.crossOrigin = 'anonymous';
+        
+        script.onload = () => {
+          console.log('Razorpay script loaded successfully');
+          // Small delay to ensure Razorpay is fully initialized
+          setTimeout(() => {
+            initializeRazorpay();
+          }, 100);
+        };
+        
+        script.onerror = () => {
+          console.error(`Failed to load Razorpay script (attempt ${retryCount + 1})`);
+          
+          if (retryCount < 2) {
+            // Retry loading the script
+            setTimeout(() => {
+              loadRazorpayScript(retryCount + 1);
+            }, 1000 * (retryCount + 1)); // Exponential backoff
+          } else {
+            setIsLoading(false);
+            alert('Unable to load payment gateway. Please check your internet connection and try again. If the problem persists, please contact support.');
+          }
+        };
+        
+        document.head.appendChild(script);
+      };
+
+      loadRazorpayScript();
+
+    } catch (error) {
+      console.error('Donation error:', error);
+      setIsLoading(false);
+      router.push(`/donate/failure?error_description=${encodeURIComponent(error instanceof Error ? error.message : 'Payment failed')}`);
+    }
   };
 
   const fadeIn = {
@@ -379,12 +709,29 @@ const DonatePage = () => {
               </div>
 
               {/* Donate Button */}
-              <div className="pt-2 flex justify-center">
+              <div className="pt-2 flex flex-col items-center gap-3">
                 <button
                   type="submit"
+                  disabled={isLoading || !razorpayLoaded}
                   className="pay-btn"
                 >
-                  <span className="btn-text">Donate Now</span>
+                  <span className="btn-text">
+                    {isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Processing...
+                      </div>
+                    ) : !razorpayLoaded && !razorpayError ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Loading Payment Gateway...
+                      </div>
+                    ) : razorpayError ? (
+                      'Payment Gateway Error'
+                    ) : (
+                      'Donate Now'
+                    )}
+                  </span>
                   <div className="icon-container">
                     <svg viewBox="0 0 24 24" className="icon card-icon">
                       <path
@@ -418,6 +765,28 @@ const DonatePage = () => {
                     </svg>
                   </div>
                 </button>
+                
+                {/* Retry Button and Error Message */}
+                {razorpayError && (
+                  <div className="text-center">
+                    <p className="text-red-600 text-sm mb-2">
+                      Unable to load payment gateway. This might be due to network issues or firewall restrictions.
+                    </p>
+                    <button
+                      onClick={retryRazorpayLoad}
+                      className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors text-sm"
+                    >
+                      Retry Loading Payment Gateway
+                    </button>
+                  </div>
+                )}
+                
+                {/* Debug Info */}
+                {!razorpayLoaded && !razorpayError && (
+                  <p className="text-gray-500 text-xs text-center">
+                    Loading payment gateway... This may take a few seconds.
+                  </p>
+                )}
               </div>
             </form>
           </motion.div>

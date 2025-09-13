@@ -194,6 +194,15 @@ const HeroSection = () => {
                     playsInline
                     preload="metadata"
                     poster={`https://res.cloudinary.com/digilabs/image/upload/f_auto,q_auto,w_800,c_limit/prod/hero/prod/hero/${item.video.split("/").pop()?.replace(".mp4", ".jpg")}`}
+                    onError={(e) => {
+                      console.error('Video failed to load:', item.video);
+                      // Fallback to poster image if video fails
+                      const videoElement = e.target as HTMLVideoElement;
+                      const posterElement = document.createElement('div');
+                      posterElement.className = 'w-full h-full bg-gradient-to-br from-amber-500/20 to-orange-600/20 flex items-center justify-center';
+                      posterElement.innerHTML = '<div class="text-white/60 text-sm">Heritage Video</div>';
+                      videoElement.parentNode?.replaceChild(posterElement, videoElement);
+                    }}
                   >
                     <source src={item.video} type="video/mp4" />
                     Your browser does not support the video tag.

@@ -28,6 +28,15 @@ const HeroCarousel = ({ items }: { items: { id: number; video: string }[] }) => 
                 loop
                 muted
                 playsInline
+                onError={(e) => {
+                  console.error('Carousel video failed to load:', item.video);
+                  // Fallback to gradient background if video fails
+                  const videoElement = e.target as HTMLVideoElement;
+                  const fallbackElement = document.createElement('div');
+                  fallbackElement.className = 'w-full h-full bg-gradient-to-br from-amber-500/30 to-orange-600/30 flex items-center justify-center';
+                  fallbackElement.innerHTML = '<div class="text-white/70 text-lg font-semibold">Heritage Video</div>';
+                  videoElement.parentNode?.replaceChild(fallbackElement, videoElement);
+                }}
               >
                 <source src={item.video} type="video/mp4" />
                 Your browser does not support the video tag.

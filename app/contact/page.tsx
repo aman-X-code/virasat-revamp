@@ -528,6 +528,26 @@ const ContactPage = () => {
                 style={{ border: 0 }}
                 allowFullScreen={true}
                 loading="lazy"
+                onError={(e) => {
+                  console.error('Google Maps iframe failed to load');
+                  // Fallback to static map or address display
+                  const iframeElement = e.target as HTMLIFrameElement;
+                  const fallbackElement = document.createElement('div');
+                  fallbackElement.className = 'w-full h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center justify-center p-4';
+                  fallbackElement.innerHTML = `
+                    <div class="text-center">
+                      <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-3 mx-auto">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                        </svg>
+                      </div>
+                      <h3 class="text-lg font-semibold text-gray-800 mb-2">Our Location</h3>
+                      <p class="text-sm text-gray-600 mb-1">72/II, Vasant Vihar</p>
+                      <p class="text-sm text-gray-600">Dehradun – 248006, Uttarakhand</p>
+                    </div>
+                  `;
+                  iframeElement.parentNode?.replaceChild(fallbackElement, iframeElement);
+                }}
               ></iframe>
             </div>
           </motion.div>

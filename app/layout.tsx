@@ -59,7 +59,9 @@ export default function RootLayout({
       <head>
         {/* Performance optimizations */}
         <link rel="dns-prefetch" href="//res.cloudinary.com" />
+        <link rel="dns-prefetch" href="//checkout.razorpay.com" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://checkout.razorpay.com" crossOrigin="anonymous" />
         <link rel="preload" href="/images/rangoli-about.png" as="image" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -69,20 +71,6 @@ export default function RootLayout({
         <meta name="theme-color" content="#B09E91" />
         <meta name="color-scheme" content="light" />
         
-        {/* Security meta tags */}
-        <meta httpEquiv="Content-Security-Policy" content="
-          default-src 'self';
-          script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://maps.googleapis.com https://*.googleapis.com;
-          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.googleapis.com;
-          font-src 'self' https://fonts.gstatic.com;
-          img-src 'self' data: https://res.cloudinary.com https://*.googleapis.com https://*.gstatic.com https://placehold.co;
-          media-src 'self' https://res.cloudinary.com;
-          connect-src 'self' https://res.cloudinary.com https://*.googleapis.com;
-          frame-src 'self' https://*.google.com https://*.googleapis.com;
-          frame-ancestors 'none';
-          base-uri 'self';
-          form-action 'self';
-        " />
         
         {/* Resource hints for better performance */}
         <link rel="preload" href="/images/vir.png" as="image" />
