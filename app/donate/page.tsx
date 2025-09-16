@@ -17,33 +17,28 @@ const DonatePage = () => {
     email: '',
     phone: ''
   });
+  const [formErrors, setFormErrors] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
 
   // Preload Razorpay script on component mount
   useEffect(() => {
     const preloadRazorpay = () => {
       // Check if already loaded
       if (typeof (window as any).Razorpay !== 'undefined') {
-        console.log('Razorpay already loaded');
         setRazorpayLoaded(true);
         return;
       }
 
-      // Log environment info for debugging
-      console.log('Environment check:', {
-        isProduction: process.env.NODE_ENV === 'production',
-        appUrl: process.env.NEXT_PUBLIC_APP_URL,
-        razorpayKey: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ? 'Set' : 'Not set'
-      });
-
       // Check if script already exists
       const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
       if (existingScript) {
-        console.log('Razorpay script already exists, waiting for load...');
         // Wait for existing script to load
         const checkInterval = setInterval(() => {
           if (typeof (window as any).Razorpay !== 'undefined') {
             clearInterval(checkInterval);
-            console.log('Razorpay loaded from existing script');
             setRazorpayLoaded(true);
           }
         }, 100);
@@ -52,15 +47,12 @@ const DonatePage = () => {
         setTimeout(() => {
           clearInterval(checkInterval);
           if (typeof (window as any).Razorpay === 'undefined') {
-            console.error('Existing Razorpay script failed to load within timeout');
             setRazorpayLoaded(false);
             setRazorpayError(true);
           }
         }, 15000);
         return;
       }
-
-      console.log('Loading Razorpay script...');
       // Load the script
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -68,21 +60,17 @@ const DonatePage = () => {
       script.crossOrigin = 'anonymous';
       
       script.onload = () => {
-        console.log('Razorpay script loaded successfully');
         // Double check that Razorpay is actually available
         setTimeout(() => {
           if (typeof (window as any).Razorpay !== 'undefined') {
             setRazorpayLoaded(true);
           } else {
-            console.error('Razorpay script loaded but Razorpay object not available');
             setRazorpayLoaded(false);
           }
         }, 100);
       };
       
-      script.onerror = (error) => {
-        console.error('Failed to preload Razorpay script:', error);
-        console.error('This might be due to CSP blocking or network issues');
+      script.onerror = () => {
         setRazorpayLoaded(false);
         setRazorpayError(true);
       };
@@ -90,7 +78,6 @@ const DonatePage = () => {
       // Add timeout for script loading
       setTimeout(() => {
         if (typeof (window as any).Razorpay === 'undefined') {
-          console.error('Razorpay script loading timeout');
           setRazorpayLoaded(false);
           setRazorpayError(true);
         }
@@ -126,15 +113,23 @@ const DonatePage = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+    
+    // Clear error when user starts typing
+    if (formErrors[name as keyof typeof formErrors]) {
+      setFormErrors({
+        ...formErrors,
+        [name]: ''
+      });
+    }
   };
 
   // Function to manually retry loading Razorpay
   const retryRazorpayLoad = () => {
-    console.log('Manually retrying Razorpay load...');
     setRazorpayError(false);
     setRazorpayLoaded(false);
     
@@ -151,7 +146,6 @@ const DonatePage = () => {
     script.crossOrigin = 'anonymous';
     
     script.onload = () => {
-      console.log('Razorpay script loaded on retry');
       setTimeout(() => {
         if (typeof (window as any).Razorpay !== 'undefined') {
           setRazorpayLoaded(true);
@@ -163,7 +157,6 @@ const DonatePage = () => {
     };
     
     script.onerror = () => {
-      console.error('Razorpay script failed on retry');
       setRazorpayError(true);
     };
     
@@ -180,13 +173,43 @@ const DonatePage = () => {
       });
       return true;
     } catch (error) {
-      console.error('Razorpay CDN connectivity test failed:', error);
       return false;
     }
   };
 
+  const validateForm = () => {
+    const errors = { name: '', email: '', phone: '' };
+    let isValid = true;
+
+    if (!formData.name.trim()) {
+      errors.name = 'Name is required';
+      isValid = false;
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+      isValid = false;
+    }
+
+    if (!formData.phone.trim()) {
+      errors.phone = 'Phone number is required';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
+  };
+
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -230,11 +253,15 @@ const DonatePage = () => {
         throw new Error(orderData.error || 'Failed to create order');
       }
 
-      // Check if Razorpay key is available
-      const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-      if (!razorpayKey) {
-        throw new Error('Razorpay key not configured. Please check your environment variables.');
+      // Get Razorpay key securely from server
+      const keyResponse = await fetch('/api/razorpay/get-key');
+      const keyData = await keyResponse.json();
+      
+      if (!keyData.success) {
+        throw new Error('Payment gateway not available. Please try again later.');
       }
+      
+      const razorpayKey = keyData.key;
 
       // Function to initialize Razorpay payment
       const initializeRazorpay = () => {
@@ -291,10 +318,9 @@ const DonatePage = () => {
                 } else {
                   throw new Error('Payment verification failed');
                 }
-              } catch (error) {
-                console.error('Payment verification error:', error);
-                router.push(`/donate/failure?error_description=Payment verification failed&order_id=${response.razorpay_order_id}`);
-              }
+        } catch (error) {
+          router.push(`/donate/failure?error_description=Payment verification failed&order_id=${response.razorpay_order_id}`);
+        }
             },
             modal: {
               ondismiss: function() {
@@ -306,7 +332,6 @@ const DonatePage = () => {
           const rzp = new (window as any).Razorpay(options);
           rzp.open();
         } catch (error) {
-          console.error('Razorpay initialization error:', error);
           setIsLoading(false);
           alert('Failed to initialize payment gateway. Please try again.');
         }
@@ -347,7 +372,6 @@ const DonatePage = () => {
         script.crossOrigin = 'anonymous';
         
         script.onload = () => {
-          console.log('Razorpay script loaded successfully');
           // Small delay to ensure Razorpay is fully initialized
           setTimeout(() => {
             initializeRazorpay();
@@ -355,8 +379,6 @@ const DonatePage = () => {
         };
         
         script.onerror = () => {
-          console.error(`Failed to load Razorpay script (attempt ${retryCount + 1})`);
-          
           if (retryCount < 2) {
             // Retry loading the script
             setTimeout(() => {
@@ -374,7 +396,6 @@ const DonatePage = () => {
       loadRazorpayScript();
 
     } catch (error) {
-      console.error('Donation error:', error);
       setIsLoading(false);
       router.push(`/donate/failure?error_description=${encodeURIComponent(error instanceof Error ? error.message : 'Payment failed')}`);
     }
@@ -674,8 +695,17 @@ const DonatePage = () => {
                     onChange={handleInputChange}
                     placeholder="Enter your full name"
                     required
-                    className="w-full p-3 text-lg border-2 border-brand-earthen rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-300 bg-white/50"
+                    className={`w-full p-3 text-lg border-2 rounded-2xl focus:outline-none transition-all duration-300 bg-white/50 ${
+                      formErrors.name ? 'border-red-500' : 'border-brand-earthen focus:border-yellow-400'
+                    }`}
+                    aria-invalid={!!formErrors.name}
+                    aria-describedby={formErrors.name ? 'name-error' : undefined}
                   />
+                  {formErrors.name && (
+                    <p id="name-error" className="text-red-500 text-sm mt-1" role="alert">
+                      {formErrors.name}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -689,8 +719,17 @@ const DonatePage = () => {
                     onChange={handleInputChange}
                     placeholder="your.email@example.com"
                     required
-                    className="w-full p-3 text-lg border-2 border-brand-earthen rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-300 bg-white/50"
+                    className={`w-full p-3 text-lg border-2 rounded-2xl focus:outline-none transition-all duration-300 bg-white/50 ${
+                      formErrors.email ? 'border-red-500' : 'border-brand-earthen focus:border-yellow-400'
+                    }`}
+                    aria-invalid={!!formErrors.email}
+                    aria-describedby={formErrors.email ? 'email-error' : undefined}
                   />
+                  {formErrors.email && (
+                    <p id="email-error" className="text-red-500 text-sm mt-1" role="alert">
+                      {formErrors.email}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -703,8 +742,17 @@ const DonatePage = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="+91 98765 43210"
-                    className="w-full p-3 text-lg border-2 border-brand-earthen rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-300 bg-white/50"
+                    className={`w-full p-3 text-lg border-2 rounded-2xl focus:outline-none transition-all duration-300 bg-white/50 ${
+                      formErrors.phone ? 'border-red-500' : 'border-brand-earthen focus:border-yellow-400'
+                    }`}
+                    aria-invalid={!!formErrors.phone}
+                    aria-describedby={formErrors.phone ? 'phone-error' : undefined}
                   />
+                  {formErrors.phone && (
+                    <p id="phone-error" className="text-red-500 text-sm mt-1" role="alert">
+                      {formErrors.phone}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -714,6 +762,8 @@ const DonatePage = () => {
                   type="submit"
                   disabled={isLoading || !razorpayLoaded}
                   className="pay-btn"
+                  aria-label="Process donation payment"
+                  aria-describedby="payment-status"
                 >
                   <span className="btn-text">
                     {isLoading ? (
@@ -768,13 +818,14 @@ const DonatePage = () => {
                 
                 {/* Retry Button and Error Message */}
                 {razorpayError && (
-                  <div className="text-center">
+                  <div className="text-center" role="alert" aria-live="polite">
                     <p className="text-red-600 text-sm mb-2">
                       Unable to load payment gateway. This might be due to network issues or firewall restrictions.
                     </p>
                     <button
                       onClick={retryRazorpayLoad}
                       className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors text-sm"
+                      aria-label="Retry loading payment gateway"
                     >
                       Retry Loading Payment Gateway
                     </button>
@@ -783,7 +834,7 @@ const DonatePage = () => {
                 
                 {/* Debug Info */}
                 {!razorpayLoaded && !razorpayError && (
-                  <p className="text-gray-500 text-xs text-center">
+                  <p id="payment-status" className="text-gray-500 text-xs text-center">
                     Loading payment gateway... This may take a few seconds.
                   </p>
                 )}
@@ -868,25 +919,25 @@ const DonatePage = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-6 bg-gradient-to-r from-yellow-200 to-amber-300 rounded-2xl p-4 text-gray-800 text-center max-w-2xl mx-auto"
+          className="mt-6 bg-gradient-to-r from-yellow-200 to-amber-300 rounded-2xl p-4 text-gray-800 text-center max-w-4xl mx-auto"
         >
           <h3 className="text-xl font-serif mb-4">Our Impact So Far</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
             <div>
-              <div className="text-2xl font-bold mb-1">₹2.5M+</div>
-              <div className="text-gray-600">Raised</div>
+              <div className="text-lg md:text-2xl font-bold mb-1">₹2.5M+</div>
+              <div className="text-xs md:text-sm text-gray-600">Raised</div>
             </div>
             <div>
-              <div className="text-2xl font-bold mb-1">500+</div>
-              <div className="text-gray-600">Artifacts Preserved</div>
+              <div className="text-lg md:text-2xl font-bold mb-1">500+</div>
+              <div className="text-xs md:text-sm text-gray-600">Artifacts Preserved</div>
             </div>
             <div>
-              <div className="text-2xl font-bold mb-1">50+</div>
-              <div className="text-gray-600">Projects Funded</div>
+              <div className="text-lg md:text-2xl font-bold mb-1">50+</div>
+              <div className="text-xs md:text-sm text-gray-600">Projects Funded</div>
             </div>
             <div>
-              <div className="text-2xl font-bold mb-1">1000+</div>
-              <div className="text-gray-600">Lives Impacted</div>
+              <div className="text-lg md:text-2xl font-bold mb-1">1000+</div>
+              <div className="text-xs md:text-sm text-gray-600">Lives Impacted</div>
             </div>
           </div>
         </motion.div>

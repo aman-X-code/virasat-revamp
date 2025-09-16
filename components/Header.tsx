@@ -12,7 +12,7 @@ const navItems = [
   { name: "Events", href: "/events" },
   { name: "About Reach", href: "/about" },
   { name: "Gallery", href: "/gallery" },
-  { name: "News/Blogs", href: "/blogs" },
+  { name: "News", href: "/blogs" },
   { name: "Contact Us", href: "/contact" },
 ]
 
@@ -198,6 +198,7 @@ const Header = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="btn-donate"
+              aria-label="Donate to support Virasat Festival"
             >
             </motion.button>
           </Link>
@@ -205,7 +206,13 @@ const Header = () => {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-brand-white">
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            className="text-brand-white"
+            aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
+          >
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
@@ -213,6 +220,7 @@ const Header = () => {
 
       {/* Mobile Navigation */}
       <motion.nav
+        id="mobile-navigation"
         initial={false}
         animate={{
           height: isMenuOpen ? "auto" : 0,
@@ -223,6 +231,7 @@ const Header = () => {
           ease: [0.25, 0.46, 0.45, 0.94],
         }}
         className="md:hidden overflow-hidden bg-brand-black bg-opacity-95"
+        aria-label="Mobile navigation menu"
       >
         <motion.div
           initial={false}
@@ -346,6 +355,7 @@ const Header = () => {
                   whileTap={{ scale: 0.95 }}
                   className="btn-donate mt-2"
                   onClick={() => setIsMenuOpen(false)}
+                  aria-label="Donate to support Virasat Festival"
                 >
                 </motion.button>
               </Link>

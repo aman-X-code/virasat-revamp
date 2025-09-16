@@ -11,7 +11,6 @@ import {
   Instagram, 
   Palette, 
   Heart, 
-  DollarSign, 
   MessageCircle,
   Upload,
   Calendar,
@@ -25,10 +24,27 @@ import {
 
 type ContactType = 'artist' | 'volunteer' | 'sponsor' | 'general';
 
+// Custom Rupee Icon Component
+const RupeeIcon = ({ className, size }: { className?: string; size?: number }) => (
+  <span className={className} style={{ fontSize: size || 16, fontWeight: 'bold' }}>
+    ₹
+  </span>
+);
+
 const ContactPage = () => {
   const [activeTab, setActiveTab] = useState<ContactType>('general');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<string>('');
+
+  // Formspree form IDs - configured with your actual Formspree form IDs
+  const FORMSPREE_ENDPOINTS = {
+    artist: 'https://formspree.io/f/mpwjedzr',
+    volunteer: 'https://formspree.io/f/mkgvarnz', 
+    sponsor: 'https://formspree.io/f/mvgbnaob',
+    general: 'https://formspree.io/f/mrbavqgo'
+  };
 
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -68,7 +84,7 @@ const ContactPage = () => {
       id: 'sponsor' as ContactType,
       title: 'Sponsor Partnership',
       description: 'Support our cultural initiatives',
-      icon: DollarSign,
+      icon: RupeeIcon,
       color: 'from-slate-700 to-slate-800',
       bgColor: 'bg-slate-50',
       borderColor: 'border-slate-200',
@@ -76,7 +92,7 @@ const ContactPage = () => {
     },
     {
       id: 'general' as ContactType,
-      title: 'General Inquiry',
+      title: 'General Enquiry/Stall Booking',
       description: 'Questions, feedback, or support',
       icon: MessageCircle,
       color: 'from-rose-600 to-pink-600',
@@ -86,41 +102,72 @@ const ContactPage = () => {
     }
   ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     
-    setIsSubmitting(false);
-    setSubmitted(true);
+    // Add form type to distinguish between different forms
+    formData.append('form_type', activeTab);
     
-    // Reset after 3 seconds
-    setTimeout(() => setSubmitted(false), 3000);
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINTS[activeTab], {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        setSubmitted(true);
+        form.reset();
+        // Reset after 5 seconds
+        setTimeout(() => setSubmitted(false), 5000);
+      } else {
+        const data = await response.json();
+        if (data.errors) {
+          setError(data.errors.map((error: any) => error.message).join(', '));
+        } else {
+          setError('There was a problem submitting the form. Please try again.');
+        }
+      }
+    } catch (error) {
+      setError('There was a network error. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderArtistForm = () => (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+          {error}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Full Name *</label>
-          <input type="text" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
+          <input type="text" name="name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
         </div>
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Email *</label>
-          <input type="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
+          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Phone Number</label>
-          <input type="tel" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
+          <input type="tel" name="phone" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
         </div>
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Art Form *</label>
-          <select required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
+          <select name="art_form" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
             <option value="">Select your art form</option>
             <option value="classical-dance">Classical Dance</option>
             <option value="music">Music</option>
@@ -148,22 +195,25 @@ const ContactPage = () => {
 
       <div>
         <label className="block text-gray-700 font-sans mb-1 text-sm">Portfolio/Website</label>
-        <input type="url" placeholder="https://yourportfolio.com" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
+        <input type="url" name="portfolio_url" placeholder="https://yourportfolio.com" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
       </div>
 
       <div>
-        <label className="block text-gray-700 font-sans mb-1 text-sm">Upload Portfolio Images</label>
-        <div className="border-2 border-dashed border-amber-300 rounded-md p-4 text-center hover:border-amber-400 transition-colors">
-          <Upload className="mx-auto text-amber-400 mb-1" size={24} />
-          <p className="text-brand-earthen text-sm">Click to upload or drag and drop</p>
-          <p className="text-xs text-gray-500">PNG, JPG up to 10MB each</p>
-          <input type="file" multiple accept="image/*" className="hidden" />
-        </div>
+        <label className="block text-gray-700 font-sans mb-1 text-sm">Portfolio/Work Samples (Google Drive Link)</label>
+        <input 
+          type="url" 
+          name="portfolio_drive_link" 
+          placeholder="https://drive.google.com/drive/folders/your-folder-id" 
+          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" 
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Upload your portfolio images, documents, and work samples to Google Drive, make the folder public, and share the link here.
+        </p>
       </div>
 
       <div>
         <label className="block text-gray-700 font-sans mb-1 text-sm">Tell us about your artistic journey *</label>
-        <textarea required rows={3} placeholder="Share your story, inspirations, and what drives your passion for art..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"></textarea>
+        <textarea name="artistic_journey" required rows={3} placeholder="Share your story, inspirations, and what drives your passion for art..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"></textarea>
       </div>
 
       <motion.button
@@ -180,25 +230,30 @@ const ContactPage = () => {
 
   const renderVolunteerForm = () => (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+          {error}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Full Name *</label>
-          <input type="text" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
+          <input type="text" name="name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
         </div>
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Email *</label>
-          <input type="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
+          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Phone Number *</label>
-          <input type="tel" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
+          <input type="tel" name="phone" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
         </div>
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Age</label>
-          <input type="number" min="16" max="100" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
+          <input type="number" name="age" min="16" max="100" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
         </div>
       </div>
 
@@ -207,7 +262,7 @@ const ContactPage = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {['Event Management', 'Social Media', 'Photography', 'Teaching', 'Translation', 'Administration', 'Fundraising', 'Technical Support', 'Cultural Knowledge'].map((skill) => (
             <label key={skill} className="flex items-center space-x-2 cursor-pointer text-xs">
-              <input type="checkbox" value={skill} className="text-emerald-500 rounded" />
+              <input type="checkbox" name="skills" value={skill} className="text-emerald-500 rounded" />
               <span className="font-sans">{skill}</span>
             </label>
           ))}
@@ -219,7 +274,7 @@ const ContactPage = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {['Weekdays', 'Weekends', 'Evenings', 'Flexible'].map((time) => (
             <label key={time} className="flex items-center space-x-2 cursor-pointer text-xs">
-              <input type="checkbox" value={time} className="text-emerald-500 rounded" />
+              <input type="checkbox" name="availability" value={time} className="text-emerald-500 rounded" />
               <span className="font-sans">{time}</span>
             </label>
           ))}
@@ -228,12 +283,12 @@ const ContactPage = () => {
 
       <div>
         <label className="block text-gray-700 font-sans mb-1 text-sm">Previous Volunteer Experience</label>
-        <textarea rows={2} placeholder="Tell us about any previous volunteer work or relevant experience..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"></textarea>
+        <textarea name="previous_experience" rows={2} placeholder="Tell us about any previous volunteer work or relevant experience..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"></textarea>
       </div>
 
       <div>
         <label className="block text-gray-700 font-sans mb-1 text-sm">Why do you want to volunteer with us? *</label>
-        <textarea required rows={3} placeholder="Share your motivation and what you hope to contribute..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"></textarea>
+        <textarea name="motivation" required rows={3} placeholder="Share your motivation and what you hope to contribute..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"></textarea>
       </div>
 
       <motion.button
@@ -250,25 +305,30 @@ const ContactPage = () => {
 
   const renderSponsorForm = () => (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+          {error}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Company/Organization Name *</label>
-          <input type="text" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
+          <input type="text" name="company_name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
         </div>
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Contact Person *</label>
-          <input type="text" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
+          <input type="text" name="contact_person" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Email *</label>
-          <input type="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
+          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
         </div>
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Phone Number *</label>
-          <input type="tel" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
+          <input type="tel" name="phone" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
         </div>
       </div>
 
@@ -277,7 +337,7 @@ const ContactPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {['Financial Sponsorship', 'In-Kind Support', 'Media Partnership', 'Event Co-hosting', 'Educational Programs', 'Technology Support'].map((type) => (
             <label key={type} className="flex items-center space-x-2 cursor-pointer text-xs">
-              <input type="checkbox" value={type} className="text-slate-500 rounded" />
+              <input type="checkbox" name="partnership_type" value={type} className="text-slate-500 rounded" />
               <span className="font-sans">{type}</span>
             </label>
           ))}
@@ -286,30 +346,30 @@ const ContactPage = () => {
 
       <div>
         <label className="block text-gray-700 font-sans mb-1 text-sm">Budget Range</label>
-        <select className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm">
+        <select name="budget_range" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm">
           <option value="">Select budget range</option>
-          <option value="under-10k">Under $10,000</option>
-          <option value="10k-25k">$10,000 - $25,000</option>
-          <option value="25k-50k">$25,000 - $50,000</option>
-          <option value="50k-100k">$50,000 - $100,000</option>
-          <option value="over-100k">Over $100,000</option>
+          <option value="under-10k">Under ₹8,00,000</option>
+          <option value="10k-25k">₹8,00,000 - ₹20,00,000</option>
+          <option value="25k-50k">₹20,00,000 - ₹40,00,000</option>
+          <option value="50k-100k">₹40,00,000 - ₹80,00,000</option>
+          <option value="over-100k">Over ₹80,00,000</option>
           <option value="discuss">Prefer to discuss</option>
         </select>
       </div>
 
       <div>
         <label className="block text-gray-700 font-sans mb-1 text-sm">Company Website</label>
-        <input type="url" placeholder="https://yourcompany.com" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
+        <input type="url" name="company_website" placeholder="https://yourcompany.com" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm" />
       </div>
 
       <div>
         <label className="block text-gray-700 font-sans mb-1 text-sm">Tell us about your organization *</label>
-        <textarea required rows={2} placeholder="Brief description of your company and its values..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm"></textarea>
+        <textarea name="organization_description" required rows={2} placeholder="Brief description of your company and its values..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm"></textarea>
       </div>
 
       <div>
         <label className="block text-gray-700 font-sans mb-1 text-sm">How would you like to support our mission? *</label>
-        <textarea required rows={3} placeholder="Describe your partnership goals and how you'd like to collaborate..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm"></textarea>
+        <textarea name="support_mission" required rows={3} placeholder="Describe your partnership goals and how you'd like to collaborate..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-slate-500 focus:border-transparent text-sm"></textarea>
       </div>
 
       <motion.button
@@ -326,22 +386,34 @@ const ContactPage = () => {
 
   const renderGeneralForm = () => (
     <form onSubmit={handleSubmit} className="pb-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm mb-4">
+          {error}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Name *</label>
-          <input type="text" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm" />
+          <input type="text" name="name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm" />
         </div>
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Email *</label>
-          <input type="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm" />
+          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm" />
         </div>
       </div>
       
       <div className="mb-4">
         <label className="block text-gray-700 font-sans mb-1 text-sm">Subject *</label>
-        <select required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm">
+        <select 
+          name="subject" 
+          required 
+          value={selectedSubject}
+          onChange={(e) => setSelectedSubject(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm"
+        >
           <option value="">Select a topic</option>
           <option value="general-inquiry">General Inquiry</option>
+          <option value="stall-booking">Stall Booking</option>
           <option value="event-info">Event Information</option>
           <option value="booking-support">Booking Support</option>
           <option value="feedback">Feedback</option>
@@ -350,9 +422,25 @@ const ContactPage = () => {
         </select>
       </div>
 
+      {selectedSubject === 'stall-booking' && (
+        <div className="mb-4">
+          <label className="block text-gray-700 font-sans mb-1 text-sm">Stall Images & Information (Google Drive Link) *</label>
+          <input 
+            type="url" 
+            name="stall_drive_link" 
+            required
+            placeholder="https://drive.google.com/drive/folders/your-folder-id" 
+            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm" 
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Upload your stall images, product information, and any relevant documents to Google Drive, make the folder public, and share the link here.
+          </p>
+        </div>
+      )}
+
       <div className="mb-4">
         <label className="block text-gray-700 font-sans mb-1 text-sm">Message *</label>
-        <textarea required rows={4} placeholder="How can we help you?" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm"></textarea>
+        <textarea name="message" required rows={4} placeholder="How can we help you?" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm"></textarea>
       </div>
 
       <motion.button
@@ -417,7 +505,11 @@ const ContactPage = () => {
                 }`}
               >
                 <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${type.color} flex items-center justify-center mb-3 mx-auto`}>
-                  <Icon className="text-white" size={16} />
+                  {type.id === 'sponsor' ? (
+                    <RupeeIcon className="text-white" size={16} />
+                  ) : (
+                    <Icon className="text-white" size={16} />
+                  )}
                 </div>
                 <h3 className="text-sm font-serif text-gray-800 mb-1">{type.title}</h3>
                 <p className="text-xs font-sans text-gray-600">{type.description}</p>
@@ -439,7 +531,12 @@ const ContactPage = () => {
           >
             <div className="flex items-center mb-4">
               <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${contactTypes.find(t => t.id === activeTab)?.color} flex items-center justify-center mr-3`}>
-                {React.createElement(contactTypes.find(t => t.id === activeTab)?.icon || MessageCircle, { className: "text-white", size: 16 })}
+                {activeTab === 'sponsor' ? (
+                  <RupeeIcon className="text-white" size={16} />
+                ) : (() => {
+                  const IconComponent = contactTypes.find(t => t.id === activeTab)?.icon || MessageCircle;
+                  return <IconComponent className="text-white" size={16} />;
+                })()}
               </div>
               <h2 className="text-2xl font-serif text-gray-800">
                 {contactTypes.find(t => t.id === activeTab)?.title}

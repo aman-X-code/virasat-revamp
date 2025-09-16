@@ -9,6 +9,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FloatingGetTicketsButton from '@/components/FloatingGetTicketsButton';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { trackWebVitals } from '@/lib/performance';
 
 const LoadingScreen = dynamic(() => import('@/components/LoadingScreen'), { ssr: false });
 
@@ -17,6 +18,7 @@ const playfairDisplay = Playfair_Display({
   weight: ['400', '600'],
   variable: '--font-playfair-display',
   display: 'swap',
+  preload: true,
 });
 
 const lato = Lato({
@@ -24,6 +26,7 @@ const lato = Lato({
   weight: ['400', '700'],
   variable: '--font-lato',
   display: 'swap',
+  preload: true,
 });
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -31,6 +34,7 @@ const cormorantGaramond = Cormorant_Garamond({
   weight: ['400', '600'],
   variable: '--font-cormorant-garamond',
   display: 'swap',
+  preload: false, // Not critical, load later
 });
 
 const cinzel = Cinzel({
@@ -38,6 +42,7 @@ const cinzel = Cinzel({
   weight: ['400', '600'],
   variable: '--font-cinzel',
   display: 'swap',
+  preload: false, // Not critical, load later
 });
 
 export default function RootLayout({
@@ -52,6 +57,10 @@ export default function RootLayout({
 
   const handleLoadingComplete = () => {
     setLoading(false);
+    // Track performance metrics after loading
+    if (typeof window !== 'undefined') {
+      trackWebVitals();
+    }
   };
 
   return (
@@ -81,6 +90,12 @@ export default function RootLayout({
         <link rel="preload" href="/images/textured-background.svg" as="image" />
       </head>
       <body className={`${playfairDisplay.variable} ${lato.variable} ${cormorantGaramond.variable} ${cinzel.variable} font-sans bg-brand-white`}>
+        <noscript>
+          <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#fef3c7', border: '1px solid #f59e0b', margin: '10px' }}>
+            <h2>JavaScript Required</h2>
+            <p>This website requires JavaScript to function properly. Please enable JavaScript in your browser to continue.</p>
+          </div>
+        </noscript>
         {loading ? (
           <LoadingScreen onLoadingComplete={handleLoadingComplete} />
         ) : (

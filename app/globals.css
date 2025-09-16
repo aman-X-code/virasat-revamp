@@ -313,11 +313,34 @@ a::-moz-selection {
 /* Traditional Sand Particle Scrollbar */
 ::-webkit-scrollbar {
   width: 12px;
+  background: transparent !important;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: transparent !important;
   border: none;
+  box-shadow: none;
+}
+
+/* Ensure page-level scrollbars inherit transparency (Safari/Chrome) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 12px;
+  background: transparent !important;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: transparent !important;
+  border: none;
+  box-shadow: none;
+}
+
+/* Additional WebKit parts */
+::-webkit-scrollbar-track-piece,
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-corner {
+  background: transparent !important;
 }
 
 
@@ -400,12 +423,12 @@ a::-moz-selection {
 
 /* Clean Dot Cursor - Premium Blackish Grey */
 * {
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="%23374151" stroke="%23111827" stroke-width="1"/></svg>'), auto;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="6" fill="%23374151" stroke="%23111827" stroke-width="1"/></svg>'), auto;
 }
 
 /* Interactive cursor - Larger See-through Dot */
 a, button, [role="button"], input, textarea, select {
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="%23374151" fill-opacity="0.4" stroke="%23111827" stroke-width="1.5"/></svg>'), pointer;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="%23374151" fill-opacity="0.4" stroke="%23111827" stroke-width="1.2"/></svg>'), pointer;
 }
 
 /* Text cursor - Standard I-beam */
@@ -415,18 +438,18 @@ input[type="text"], input[type="email"], input[type="password"], textarea {
 
 /* Loading cursor - Spinning Dot */
 .loading, [aria-busy="true"] {
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="%23374151" stroke="%23111827" stroke-width="1" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/></circle></svg>'), wait;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7" fill="%23374151" stroke="%23111827" stroke-width="1" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/></circle></svg>'), wait;
 }
 
 /* Disabled cursor - Faded Dot */
 [disabled], .disabled {
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="%236B7280" stroke="%234B5563" stroke-width="1" opacity="0.5"/></svg>'), not-allowed;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13"><circle cx="6.5" cy="6.5" r="4.5" fill="%236B7280" stroke="%234B5563" stroke-width="1" opacity="0.5"/></svg>'), not-allowed;
 }
 
 /* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #8B4513 rgba(139, 69, 19, 0.1);
+  scrollbar-color: #8B4513 transparent;
 }
 
 /* Swiper Marquee Animation */

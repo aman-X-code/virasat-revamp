@@ -1,37 +1,27 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
 import SmallLoader from '@/components/SmallLoader';
 import { useLoading } from '@/hooks/useLoading';
 
-const blogPosts = [
+// Poster-style news items linking to PDFs
+const newsItems = [
   {
-    slug: 'the-revival-of-classical-arts',
-    title: 'The Revival of Classical Arts in the Digital Age',
-    image: '/images/blogs/blog1.jpg',
-    excerpt: 'Exploring how technology is breathing new life into ancient art forms.',
-    author: 'Elena Petrova',
-    date: 'October 26, 2023',
+    id: 'pdf-1',
+    title: 'Press Release 1',
+    cover: '/images/news/poster-1.png',
+    pdfUrl: '/pdfs/news-1.pdf',
+    downloadName: 'Press_Release_1.pdf'
   },
   {
-    slug: 'a-journey-through-textiles',
-    title: 'A Journey Through the Rich Textiles of India',
-    image: '/images/blogs/blog2.jpg',
-    excerpt: 'From silk to cotton, a look at the stories woven into fabrics.',
-    author: 'Samuel Chen',
-    date: 'October 22, 2023',
-  },
-  {
-    slug: 'the-architecture-of-empires',
-    title: 'The Enduring Legacy of Imperial Architecture',
-    image: '/images/blogs/blog3.jpg',
-    excerpt: 'How the grand designs of the past continue to inspire modern architects.',
-    author: 'Aisha Khan',
-    date: 'October 18, 2023',
-  },
+    id: 'pdf-2',
+    title: 'Press Release 2',
+    cover: '/images/news/poster-2.png',
+    pdfUrl: '/pdfs/news-2.pdf',
+    downloadName: 'Press_Release_2.pdf'
+  }
 ];
 
 const BlogsPage = () => {
@@ -60,52 +50,36 @@ const BlogsPage = () => {
       <SmallLoader isLoading={isLoading} />
       {!isLoading && (
         <div className="text-brand-black pt-20" style={{ backgroundColor: '#FFF6F4' }}>
-      <section className="py-12 px-6 container mx-auto">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-serif text-brand-brown mb-4">News & Insights</h1>
-          <p className="text-base font-sans text-brand-earthen max-w-2xl mx-auto">
-            Stay updated with the latest stories, articles, and announcements from the world of Virasat.
-          </p>
-        </div>
+          <section className="py-6 px-6 container mx-auto">
+            <div className="text-center mb-4">
+              <h1 className="text-4xl md:text-5xl font-serif text-brand-brown mb-2">News</h1>
+              <p className="text-base font-sans text-brand-earthen max-w-2xl mx-auto">Download our latest press releases and announcements.</p>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogPosts.map((post, index) => (
-            <motion.div
-              key={post.slug}
-              className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-brand-earthen-light transform hover:-translate-y-2 transition-transform duration-300"
-              custom={index}
-              initial="initial"
-              whileInView="animate"
-              variants={fadeIn}
-              viewport={{ once: true }}
-            >
-              <Link href={`/blogs/${post.slug}`} passHref>
-                <div className="relative h-56">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                </div>
-              </Link>
-              <div className="p-4">
-                <p className="text-sm text-brand-earthen mb-2">{post.date} • {post.author}</p>
-                <h3 className="text-xl font-serif text-brand-black mb-2">
-                  <Link href={`/blogs/${post.slug}`} className="hover:text-brand-red transition-colors">
-                    {post.title}
-                  </Link>
-                </h3>
-                <p className="font-sans text-brand-earthen mb-3 text-sm">{post.excerpt}</p>
-                <div className="w-1/4 h-px bg-brand-red my-3"></div>
-                <Link href={`/blogs/${post.slug}`} className="font-sans font-semibold text-brand-red hover:underline text-sm">
-                  Read More
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">
+              {newsItems.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  className="bg-white rounded-xl overflow-hidden border-2 border-brand-earthen-light shadow-sm w-full max-w-[385px]"
+                  custom={index}
+                  initial="initial"
+                  whileInView="animate"
+                  variants={fadeIn}
+                  viewport={{ once: true }}
+                >
+                  <a href={item.pdfUrl} download={item.downloadName} target="_blank" rel="noopener noreferrer" className="group block">
+                    <div className="relative w-full pb-[120%]">
+                      <Image src={item.cover} alt={item.title} fill style={{ objectFit: 'cover' }} />
+                    </div>
+                    <div className="p-3 flex items-center justify-between">
+                      <h3 className="text-lg font-serif text-brand-black">{item.title}</h3>
+                      <span className="text-sm font-semibold text-brand-red group-hover:underline">Download PDF</span>
+                    </div>
+                  </a>
+                </motion.div>
+              ))}
+            </div>
+          </section>
         </div>
       )}
     </>

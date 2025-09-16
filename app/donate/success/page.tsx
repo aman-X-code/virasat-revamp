@@ -46,7 +46,8 @@ const DonationSuccessPage = () => {
     
     try {
       // Dynamically import jsPDF only when needed
-      const { jsPDF } = await import('jspdf');
+      const jsPDFModule = await import('jspdf');
+      const jsPDF = jsPDFModule.default;
       
       // Create PDF using jsPDF
       const doc = new jsPDF();

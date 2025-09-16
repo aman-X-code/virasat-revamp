@@ -7,22 +7,22 @@ import Image from 'next/image';
 import HeroSection from '@/components/HeroSection';
 
 const FAQSection = dynamic(() => import('@/components/FAQSection'), { 
-  loading: () => <div className="animate-pulse bg-gray-100 h-32 rounded-lg mx-6"></div>
+  loading: () => <div className="animate-pulse bg-gray-100 h-32 rounded-lg mx-6" role="status" aria-label="Loading FAQ section"></div>
 });
 const PartnersSection = dynamic(() => import('@/components/PartnersSection'), { 
-  loading: () => <div className="animate-pulse bg-gray-100 h-24 rounded-lg mx-6"></div>
+  loading: () => <div className="animate-pulse bg-gray-100 h-24 rounded-lg mx-6" role="status" aria-label="Loading partners section"></div>
 });
 const HighlightsSection = dynamic(() => import('@/components/HighlightsSection'), { 
-  loading: () => <div className="animate-pulse bg-gray-100 h-40 rounded-lg mx-6"></div>
+  loading: () => <div className="animate-pulse bg-gray-100 h-40 rounded-lg mx-6" role="status" aria-label="Loading highlights section"></div>
 });
 const ParallaxArtistSection = dynamic(() => import('@/components/ParallaxArtistSection'), { 
-  loading: () => <div className="animate-pulse bg-gray-100 h-96 rounded-lg mx-6"></div>
+  loading: () => <div className="animate-pulse bg-gray-100 h-96 rounded-lg mx-6" role="status" aria-label="Loading artists section"></div>
 });
 const EventsSection = dynamic(() => import('@/components/EventsSection'), { 
-  loading: () => <div className="animate-pulse bg-gray-100 h-80 rounded-lg mx-6"></div>
+  loading: () => <div className="animate-pulse bg-gray-100 h-80 rounded-lg mx-6" role="status" aria-label="Loading events section"></div>
 });
 const GalleryPreview = dynamic(() => import('@/components/GalleryPreview'), { 
-  loading: () => <div className="animate-pulse bg-gray-100 h-64 rounded-lg mx-6"></div>
+  loading: () => <div className="animate-pulse bg-gray-100 h-64 rounded-lg mx-6" role="status" aria-label="Loading gallery section"></div>
 });
 
 const HomePage = () => {
@@ -70,7 +70,7 @@ const HomePage = () => {
           >
             <Image
               src="/images/rangoli-about.png"
-              alt="Decorative Rangoli"
+              alt="Traditional Indian rangoli pattern decoration"
               width={224}
               height={224}
               className="w-full h-full object-contain filter drop-shadow-lg"
