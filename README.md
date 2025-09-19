@@ -14,7 +14,7 @@ A modern, responsive website celebrating India's cultural heritage and tradition
 
 ### 🎯 Key Highlights
 - 🎪 **15-day Cultural Festival** - Complete event management and booking system
-- 💳 **Razorpay Payment Integration** - Secure donation processing with Indian payment methods
+- 💳 **PayU Biz Payment Integration** - Secure donation processing with Indian payment methods
 - 📧 **Automated Email System** - Professional receipt emails with PDF attachments
 - 🎨 **Advanced Animations** - GSAP and Framer Motion powered interactions
 - 📱 **Fully Responsive** - Optimized for all devices and screen sizes
@@ -58,10 +58,9 @@ A modern, responsive website celebrating India's cultural heritage and tradition
    CLOUDINARY_API_KEY=your_api_key
    CLOUDINARY_API_SECRET=your_api_secret
    
-   # Razorpay (for payments)
-   NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id
-   RAZORPAY_KEY_SECRET=your_razorpay_key_secret
-   RAZORPAY_WEBHOOK_SECRET=your_webhook_secret
+   # PayU Biz (for payments)
+   PAYUBIZ_MERCHANT_KEY=your_payubiz_merchant_key
+   PAYUBIZ_MERCHANT_SALT=your_payubiz_merchant_salt
    
    # App Configuration
    NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -101,10 +100,11 @@ virasat/
 │   ├── 📁 about/                    # About page
 │   │   └── page.tsx                 # About page component
 │   ├── 📁 api/                      # API Routes
-│   │   ├── 📁 razorpay/            # Razorpay payment integration
-│   │   │   ├── 📁 create-order/    # Create payment order
-│   │   │   ├── 📁 verify-payment/  # Verify payment status
-│   │   │   └── 📁 webhook/         # Payment webhook handler
+│   │   ├── 📁 payubiz/             # PayU Biz payment integration
+│   │   │   ├── 📁 create-transaction/ # Create payment transaction
+│   │   │   ├── 📁 verify-payment/     # Verify payment status
+│   │   │   ├── 📁 webhook/            # Payment webhook handler
+│   │   │   └── 📁 get-key/            # Get merchant key
 │   │   ├── 📁 send-email/          # Email sending API
 │   │   └── 📁 test-email/          # Email testing API
 │   ├── 📁 blogs/                    # News system (PDF downloads)
@@ -114,7 +114,7 @@ virasat/
 │   ├── 📁 donate/                   # Donation system
 │   │   ├── 📁 success/             # Donation success page
 │   │   ├── 📁 failure/             # Donation failure page
-│   │   └── page.tsx                 # Donation form with Razorpay
+│   │   └── page.tsx                 # Donation form with PayU Biz
 │   ├── 📁 events/                   # Events system
 │   │   ├── 📁 [id]/                # Dynamic event pages
 │   │   │   ├── 📁 booking/         # Event booking
@@ -386,7 +386,7 @@ section {
   "cloudinary": "^2.7.0",              // Image optimization
   "react-hook-form": "^7.53.0",        // Form handling
   "zod": "^3.23.8",                    // Schema validation
-  "razorpay": "^2.9.6",                // Payment gateway integration
+  // PayU Biz integration (form-based, no package needed)
   "nodemailer": "^7.0.6",              // Email sending
   "jspdf": "^3.0.2",                   // PDF generation
   "critters": "^0.0.24"                // CSS inlining for performance
@@ -431,9 +431,9 @@ section {
 
 ## 🎯 Key Features & Functionality
 
-### 💳 Payment System (Razorpay Integration)
-- **Secure Payment Processing**: Razorpay integration with Indian payment methods
-- **Multiple Payment Options**: Cards, UPI, Net Banking, Wallets
+### 💳 Payment System (PayU Biz Integration)
+- **Secure Payment Processing**: PayU Biz integration with Indian payment methods
+- **Multiple Payment Options**: Cards, UPI, Net Banking, Wallets, EMI, PayLater
 - **Real-time Verification**: Payment status verification and webhook handling
 - **Donation Form**: Complete donor information collection (name, email, phone)
 - **Success/Failure Pages**: Professional post-payment experience
@@ -476,61 +476,74 @@ section {
 - **Security Headers**: XSS protection, frame options, etc.
 - **Input Validation**: Zod schema validation
 - **Error Boundaries**: Graceful error handling
-- **Webhook Signature Verification**: Razorpay webhook security
+- **Webhook Hash Verification**: PayU Biz webhook security
 - **Environment Variable Protection**: Secure API key management
 
 ## 🔌 API Documentation
 
 ### 💳 Payment APIs
 
-#### `POST /api/razorpay/create-order`
-Creates a new Razorpay payment order for donations.
+#### `POST /api/payubiz/create-transaction`
+Creates a new PayU Biz payment transaction for donations.
 
 **Request Body:**
 ```json
 {
   "amount": 2000,
   "currency": "INR",
-  "receipt": "donation_1234567890",
-  "notes": {
-    "donor_name": "John Doe",
-    "donor_email": "john@example.com",
-    "donor_phone": "+91 98765 43210"
-  }
+  "firstName": "John Doe",
+  "email": "john@example.com",
+  "phone": "+91 98765 43210",
+  "productInfo": "Donation for Heritage Preservation"
 }
 ```
 
 **Response:**
 ```json
 {
-  "order": {
-    "id": "order_ABC123",
+  "success": true,
+  "transactionData": {
+    "key": "merchant_key",
+    "txnid": "TXN_1234567890_ABC123",
     "amount": 2000,
-    "currency": "INR",
-    "receipt": "donation_1234567890"
-  }
+    "productinfo": "Donation for Heritage Preservation",
+    "firstname": "John Doe",
+    "email": "john@example.com",
+    "phone": "+91 98765 43210",
+    "surl": "https://your-domain.com/donate/success",
+    "furl": "https://your-domain.com/donate/failure",
+    "hash": "generated_hash_string"
+  },
+  "txnid": "TXN_1234567890_ABC123",
+  "hash": "generated_hash_string"
 }
 ```
 
-#### `POST /api/razorpay/verify-payment`
-Verifies payment status after Razorpay callback.
+#### `POST /api/payubiz/verify-payment`
+Verifies payment status after PayU Biz callback.
 
 **Request Body:**
 ```json
 {
-  "razorpay_order_id": "order_ABC123",
-  "razorpay_payment_id": "pay_XYZ789",
-  "razorpay_signature": "signature_hash"
+  "txnid": "TXN_1234567890_ABC123",
+  "amount": "2000",
+  "productinfo": "Donation for Heritage Preservation",
+  "firstname": "John Doe",
+  "email": "john@example.com",
+  "status": "success",
+  "hash": "verification_hash",
+  "mihpayid": "pay_XYZ789",
+  "mode": "CC"
 }
 ```
 
-#### `POST /api/razorpay/webhook`
-Handles Razorpay webhook events for payment processing.
+#### `POST /api/payubiz/webhook`
+Handles PayU Biz webhook events for payment processing.
 
 **Events Handled:**
-- `payment.captured` - Triggers email sending
-- `payment.failed` - Logs failed payments
-- `order.paid` - Handles order completion
+- `success` - Triggers email sending for successful payments
+- `failure` - Logs failed payments
+- `pending` - Handles pending payment status
 
 ### 📧 Email APIs
 
@@ -654,14 +667,13 @@ npm run export       # Export static files for hosting
 1. **Connect Repository**: Link your GitHub repository to Vercel
 2. **Environment Variables**: Add all required environment variables in Vercel dashboard
 3. **Domain Configuration**: Set up custom domain (optional)
-4. **Webhook Configuration**: Configure Razorpay webhook URL
+4. **Webhook Configuration**: Configure PayU Biz webhook URL
 
 #### Required Environment Variables for Production
 ```bash
-# Razorpay Configuration
-NEXT_PUBLIC_RAZORPAY_KEY_ID=your_production_razorpay_key_id
-RAZORPAY_KEY_SECRET=your_production_razorpay_key_secret
-RAZORPAY_WEBHOOK_SECRET=your_webhook_secret
+# PayU Biz Configuration
+PAYUBIZ_MERCHANT_KEY=your_production_payubiz_merchant_key
+PAYUBIZ_MERCHANT_SALT=your_production_payubiz_merchant_salt
 
 # App Configuration
 NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
@@ -677,10 +689,10 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
-#### Razorpay Webhook Setup
-1. **Webhook URL**: `https://your-domain.vercel.app/api/razorpay/webhook`
-2. **Active Events**: `payment.captured`, `payment.failed`, `order.paid`
-3. **Secret**: Use the same secret in `RAZORPAY_WEBHOOK_SECRET`
+#### PayU Biz Webhook Setup
+1. **Webhook URL**: `https://your-domain.vercel.app/api/payubiz/webhook`
+2. **Active Events**: `success`, `failure`, `pending`
+3. **Hash Verification**: Uses merchant salt for hash verification
 
 ## 🎨 Animation & Effects System
 
@@ -882,7 +894,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### 🌟 Key Achievements
 - ✅ **Fully Responsive** - Works perfectly on all devices
 - ✅ **Performance Optimized** - Fast loading and smooth animations (97% bundle size reduction)
-- ✅ **Payment Integration** - Complete Razorpay donation system with Indian payment methods
+- ✅ **Payment Integration** - Complete PayU Biz donation system with Indian payment methods
 - ✅ **Email Automation** - Professional receipt emails with PDF attachments
 - ✅ **Webhook Integration** - Real-time payment processing and notifications
 - ✅ **Accessibility Compliant** - WCAG 2.1 AA standards

@@ -5,6 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Heart, Star, Crown, Filter, ChevronDown, Play, Pause, ChevronLeft, ChevronRight, Building2, Shield, UserCheck, Briefcase, Lightbulb, Film } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import 'yet-another-react-lightbox/styles.css';
+
+const Lightbox = dynamic(() => import('yet-another-react-lightbox'), {
+  loading: () => <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-red"></div></div>,
+  ssr: false,
+});
 
 // Helper function to generate Cloudinary URLs
 const getCloudinaryImageUrl = (folder: string, publicId: string, width: number = 100) => {
@@ -236,7 +243,7 @@ const teamCategories: Record<string, {
         role: 'Founder Chairman',
         image: 'Shri._Rajendra_Prasad_Joshi',
         folder: 'loving-memory',
-        bio: 'DGP Uttar Pradesh & Director Intelligence Bureau (DIB)\nLater Founder Chairman Emeritus',
+        bio: 'DGP Uttar Pradesh & Director Intelligence Bureau (DIB)\nLater Founder Chairman Emeritus\nउच्च शिक्षा इलाहाबाद विश्वविद्यालय',
         years: '1995-2020'
       },
       {
@@ -343,7 +350,7 @@ const teamCategories: Record<string, {
     ]
   },
   'reach-trustees': {
-    title: 'REACH (Trustees)',
+    title: 'REACH Trustees',
     shortTitle: 'Trustees',
     icon: <Shield className="w-6 h-6" />,
     color: 'from-blue-500 to-indigo-500',
@@ -363,7 +370,7 @@ const teamCategories: Record<string, {
     ]
   },
   'reach-office-bearers': {
-    title: 'REACH (Office Bearers)',
+    title: 'REACH Core Committee',
     shortTitle: 'Office Bearers',
     icon: <Building2 className="w-6 h-6" />,
     color: 'from-emerald-500 to-cyan-500',
@@ -449,12 +456,16 @@ const AboutPage = () => {
   const [currentCard, setCurrentCard] = useState(0);
   const [scrollContainerRef, setScrollContainerRef] = useState<HTMLDivElement | null>(null);
   
-  // Memorial carousel states
-  const [focusedMemorialIndex, setFocusedMemorialIndex] = useState(0);
-  const [isMemorialCarouselPlaying, setIsMemorialCarouselPlaying] = useState(true);
+  // Carousel states for all tabs
+  const [focusedMemberIndex, setFocusedMemberIndex] = useState(0);
+  const [isCarouselPlaying, setIsCarouselPlaying] = useState(true);
   
   // Read more states for bios
   const [expandedBios, setExpandedBios] = useState<{[key: string]: boolean}>({});
+  
+  // Lightbox states for image expansion
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -477,13 +488,16 @@ const AboutPage = () => {
     setCurrentCard(Math.min(Math.max(currentCardIndex, 0), teamCategories[activeCategory].members.length - 1));
   };
 
-  // Memorial carousel controls
-  const toggleMemorialCarousel = () => {
-    setIsMemorialCarouselPlaying(prev => !prev);
+  // Carousel controls for all tabs
+  const toggleCarousel = () => {
+    setIsCarouselPlaying(prev => !prev);
   };
 
-  const goToMemorialCard = (index: number) => {
-    setFocusedMemorialIndex(index);
+  const goToMemberCard = (index: number) => {
+    const members = teamCategories[activeCategory]?.members || [];
+    if (index >= 0 && index < members.length) {
+      setFocusedMemberIndex(index);
+    }
   };
 
   // Toggle read more for bios
@@ -492,6 +506,12 @@ const AboutPage = () => {
       ...prev,
       [memberKey]: !prev[memberKey]
     }));
+  };
+
+  // Open lightbox for image expansion
+  const openLightbox = (index: number = 0) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
   };
 
   // Helper function to determine if bio needs read more (more than 200 characters)
@@ -504,23 +524,35 @@ const AboutPage = () => {
     return bio.length > 200 ? bio.substring(0, 200) + '...' : bio;
   };
 
-  // Reset memorial carousel when switching to memorial section
+  // Reset carousel when switching categories
   useEffect(() => {
-    if (activeCategory === 'in-loving-memory') {
-      setFocusedMemorialIndex(0);
-      setIsMemorialCarouselPlaying(true);
-    }
+    setFocusedMemberIndex(0);
+    setIsCarouselPlaying(true);
   }, [activeCategory]);
 
-  // Auto-advance carousel effect
+  // Get current focused member with bounds checking
+  const getCurrentFocusedMember = () => {
+    const members = teamCategories[activeCategory]?.members || [];
+    const index = Math.min(focusedMemberIndex, members.length - 1);
+    return members[index] || members[0] || null;
+  };
+
+  const currentFocusedMember = getCurrentFocusedMember();
+
+  // Auto-advance carousel effect for all tabs
   useEffect(() => {
-    if (activeCategory !== 'in-loving-memory' || !isMemorialCarouselPlaying) {
+    if (!isCarouselPlaying) {
+      return;
+    }
+
+    const members = teamCategories[activeCategory]?.members || [];
+    if (members.length === 0) {
       return;
     }
 
     const interval = setInterval(() => {
-      setFocusedMemorialIndex((prevIndex) => {
-        const nextIndex = (prevIndex + 1) % teamCategories['in-loving-memory'].members.length;
+      setFocusedMemberIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % members.length;
         return nextIndex;
       });
     }, 4000);
@@ -528,7 +560,7 @@ const AboutPage = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [activeCategory, isMemorialCarouselPlaying]);
+  }, [activeCategory, isCarouselPlaying]);
 
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -628,30 +660,30 @@ const AboutPage = () => {
           transition: background 0s;
         }
 
-        /* Memorial specific styles */
-        .memorial-glow {
-          box-shadow: 0 0 20px rgba(147, 51, 234, 0.3), 0 0 40px rgba(236, 72, 153, 0.2);
+        /* Member card specific styles */
+        .member-glow {
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.1), 0 0 40px rgba(0, 0, 0, 0.05);
         }
         
-        .memorial-card-hover {
+        .member-card-hover {
           transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .memorial-card-hover:hover {
+        .member-card-hover:hover {
           transform: translateY(-8px) scale(1.02);
-          box-shadow: 0 25px 50px -12px rgba(147, 51, 234, 0.25), 0 0 0 1px rgba(236, 72, 153, 0.1);
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.1);
         }
 
-        /* Enhanced focus effects for memorial cards */
+        /* Enhanced focus effects for member cards */
         .memorial-card-focused {
           transform: translateY(-4px) scale(1.05);
           box-shadow: 
-            0 15px 30px -8px rgba(147, 51, 234, 0.25),
-            0 0 0 2px rgba(147, 51, 234, 0.4),
-            0 0 20px rgba(236, 72, 153, 0.15),
+            0 15px 30px -8px rgba(0, 0, 0, 0.15),
+            0 0 0 2px rgba(0, 0, 0, 0.2),
+            0 0 20px rgba(0, 0, 0, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
-          border-color: rgba(147, 51, 234, 0.6) !important;
-          background: linear-gradient(135deg, rgba(147, 51, 234, 0.03), rgba(236, 72, 153, 0.03)) !important;
+          border-color: rgba(0, 0, 0, 0.3) !important;
+          background: linear-gradient(135deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.01)) !important;
         }
 
         .memorial-card-unfocused {
@@ -661,27 +693,27 @@ const AboutPage = () => {
 
         .memorial-card-unfocused:hover {
           transform: translateY(-2px) scale(1.02);
-          box-shadow: 0 8px 25px -8px rgba(147, 51, 234, 0.2);
+          box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.1);
         }
 
         /* Pulsing glow effect for focused card */
-        @keyframes memorial-pulse {
+        @keyframes member-pulse {
           0%, 100% { 
             box-shadow: 
-              0 15px 30px -8px rgba(147, 51, 234, 0.25),
-              0 0 0 2px rgba(147, 51, 234, 0.4),
-              0 0 20px rgba(236, 72, 153, 0.15);
+              0 15px 30px -8px rgba(0, 0, 0, 0.15),
+              0 0 0 2px rgba(0, 0, 0, 0.2),
+              0 0 20px rgba(0, 0, 0, 0.1);
           }
           50% { 
             box-shadow: 
-              0 18px 35px -8px rgba(147, 51, 234, 0.3),
-              0 0 0 2px rgba(147, 51, 234, 0.5),
-              0 0 25px rgba(236, 72, 153, 0.2);
+              0 18px 35px -8px rgba(0, 0, 0, 0.2),
+              0 0 0 2px rgba(0, 0, 0, 0.3),
+              0 0 25px rgba(0, 0, 0, 0.15);
           }
         }
 
         .memorial-card-focused {
-          animation: memorial-pulse 2s ease-in-out infinite;
+          animation: member-pulse 2s ease-in-out infinite;
         }
 
         /* Timeline animation */
@@ -719,6 +751,25 @@ const AboutPage = () => {
         
         .tab-hover:hover {
           transform: translateY(-2px);
+        }
+
+        /* Custom scrollbar for biography section */
+        .biography-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .biography-scroll::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.05);
+          border-radius: 3px;
+        }
+        
+        .biography-scroll::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 3px;
+        }
+        
+        .biography-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.3);
         }
       `}</style>
       <div className="text-brand-black pt-28" style={{ backgroundColor: '#FFF7F5F4' }}>
@@ -832,7 +883,7 @@ const AboutPage = () => {
           >
             {/* Left side decorative pattern */}
             <motion.div
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-16 h-16 md:w-20 md:h-20"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-16 h-16 md:w-20 md:h-20 pointer-events-none"
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
             >
@@ -848,7 +899,7 @@ const AboutPage = () => {
             
             {/* Right side decorative pattern */}
             <motion.div
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-16 h-16 md:w-20 md:h-20"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-16 h-16 md:w-20 md:h-20 pointer-events-none"
               animate={{ rotate: -360 }}
               transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
             >
@@ -866,7 +917,7 @@ const AboutPage = () => {
             {[...Array(6)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute w-2 h-2 bg-brand-red rounded-full"
+                className="absolute w-2 h-2 bg-brand-red rounded-full pointer-events-none"
                 style={{
                   left: `${15 + i * 15}%`,
                   top: `${20 + (i % 3) * 25}%`,
@@ -896,33 +947,50 @@ const AboutPage = () => {
             >
               <div className="relative group">
                 {/* Decorative background elements */}
-                <div className="absolute -top-6 -left-6 w-12 h-12 bg-brand-red/20 rounded-full animate-pulse"></div>
-                <div className="absolute -bottom-4 -right-4 w-8 h-8 bg-brand-brown/30 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                <div className="absolute top-1/2 -left-8 w-6 h-6 bg-brand-red/25 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute -top-6 -left-6 w-12 h-12 bg-brand-red/20 rounded-full animate-pulse pointer-events-none"></div>
+                <div className="absolute -bottom-4 -right-4 w-8 h-8 bg-brand-brown/30 rounded-full animate-pulse pointer-events-none" style={{ animationDelay: '0.5s' }}></div>
+                <div className="absolute top-1/2 -left-8 w-6 h-6 bg-brand-red/25 rounded-full animate-pulse pointer-events-none" style={{ animationDelay: '1s' }}></div>
                 
                 {/* Main image container */}
                 <div className="relative">
                   {/* Rotated background shadow */}
-                  <div className="absolute -inset-4 bg-gradient-to-br from-brand-red/10 to-brand-brown/10 rounded-2xl transform rotate-3 group-hover:rotate-6 transition-transform duration-500"></div>
+                  <div className="absolute -inset-4 bg-gradient-to-br from-brand-red/10 to-brand-brown/10 rounded-2xl transform rotate-3 group-hover:rotate-6 transition-transform duration-500 pointer-events-none"></div>
                   
                   {/* Image frame */}
-                  <div className="relative bg-white p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <div 
+                    className="relative bg-white p-4 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow duration-300 cursor-pointer z-10"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      openLightbox(0);
+                    }}
+                    style={{ zIndex: 10 }}
+                  >
                     <Image
-                      src="/images/REACH (2).png"
+                      src="/images/REACH (2).jpg"
                       alt="REACH - Rural Entrepreneurship for Art & Cultural Heritage"
                       width={280}
                       height={210}
-                      className="rounded-lg group-hover:scale-105 transition-transform duration-500"
+                      className="rounded-lg group-hover:scale-105 transition-transform duration-500 pointer-events-none"
                     />
                     
                     {/* Overlay gradient for depth */}
-                    <div className="absolute inset-4 bg-gradient-to-t from-black/5 via-transparent to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-4 bg-gradient-to-t from-black/5 via-transparent to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    
+                    {/* Click indicator */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg">
+                        <svg className="w-6 h-6 text-brand-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                   
                 </div>
                 
                 {/* Subtle border glow */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-red/5 via-transparent to-brand-brown/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-red/5 via-transparent to-brand-brown/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               </div>
             </motion.div>
 
@@ -1190,14 +1258,12 @@ const AboutPage = () => {
             animate="visible"
             exit="hidden"
           >
-            {/* Special Layout for In Loving Memory */}
-            {activeCategory === 'in-loving-memory' ? (
+            {/* Big Box + Small Cards Layout for All Tabs */}
+            {teamCategories[activeCategory]?.members?.length > 0 ? (
               <div className={`${isMobile ? 'block' : 'grid grid-cols-1 lg:grid-cols-7'} gap-6`}>
                 {/* Large Focus Box - Left Side - Visible on Mobile */}
                 <div className={`${isMobile ? 'w-full mb-6' : 'lg:col-span-4'}`}>
-                    <div className={`relative bg-white rounded-3xl ${isMobile ? 'p-4' : 'p-6'} shadow-2xl border border-purple-100 h-full ${isMobile ? 'min-h-[400px]' : 'min-h-[500px]'} overflow-hidden`}>
-                      
-                      
+                  <div className={`relative bg-white rounded-3xl ${isMobile ? 'p-4' : 'p-6'} shadow-2xl border ${teamCategories[activeCategory].borderColor} ${isMobile ? 'h-[450px]' : 'h-[540px]'} overflow-hidden`}>
 
                       {/* Carousel Controls */}
                       <div className="absolute top-6 right-6 z-50 pointer-events-auto">
@@ -1206,16 +1272,16 @@ const AboutPage = () => {
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            toggleMemorialCarousel();
+                          toggleCarousel();
                           }}
                           className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 cursor-pointer border-0 outline-none focus:outline-none ${
-                            isMemorialCarouselPlaying 
-                              ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600' 
+                          isCarouselPlaying 
+                            ? `bg-gradient-to-r ${teamCategories[activeCategory].color} text-white hover:opacity-90` 
                               : 'bg-gradient-to-r from-gray-500 to-gray-600 text-white hover:from-gray-600 hover:to-gray-700'
                           }`}
                           style={{ zIndex: 1000, pointerEvents: 'auto' }}
                         >
-                          {isMemorialCarouselPlaying ? (
+                        {isCarouselPlaying ? (
                             <>
                               <Pause className="w-4 h-4" />
                               Pause
@@ -1229,26 +1295,26 @@ const AboutPage = () => {
                         </button>
                         <div className="text-xs text-center mt-2">
                           <span className={`px-2 py-1 rounded-full text-xs ${
-                            isMemorialCarouselPlaying 
-                              ? 'bg-purple-100 text-purple-700' 
+                          isCarouselPlaying 
+                            ? `${teamCategories[activeCategory].bgColor} ${teamCategories[activeCategory].textColor}` 
                               : 'bg-gray-100 text-gray-600'
                           }`}>
-                            {isMemorialCarouselPlaying ? 'Auto-playing' : 'Paused'}
+                          {isCarouselPlaying ? 'Auto-playing' : 'Paused'}
                           </span>
                         </div>
                       </div>
 
-                      {/* Focused Memorial Content */}
+                    {/* Focused Member Content */}
                       <AnimatePresence mode="wait">
                         <motion.div
-                          key={focusedMemorialIndex}
+                        key={focusedMemberIndex}
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.5, ease: "easeInOut" }}
                           className="relative z-10 h-full flex flex-col"
                         >
-                          {/* Memorial Header */}
+                        {/* Member Header */}
                           <div className="text-center mb-6">
                             <div className="relative inline-block mb-4">
                               {/* Animated rings around profile picture */}
@@ -1262,7 +1328,7 @@ const AboutPage = () => {
                                   repeat: Infinity,
                                   ease: "linear"
                                 }}
-                                className="absolute inset-0 w-32 h-32 mx-auto rounded-full border-2 border-purple-200/30"
+                              className={`absolute inset-0 w-32 h-32 mx-auto rounded-full border-2 ${teamCategories[activeCategory].borderColor} opacity-30`}
                               />
                               <motion.div
                                 animate={{ 
@@ -1274,21 +1340,23 @@ const AboutPage = () => {
                                   repeat: Infinity,
                                   ease: "linear"
                                 }}
-                                className="absolute inset-0 w-36 h-36 mx-auto rounded-full border border-pink-200/20"
+                              className={`absolute inset-0 w-36 h-36 mx-auto rounded-full border ${teamCategories[activeCategory].borderColor} opacity-20`}
                               />
                               
-                              <div className="w-32 h-32 mx-auto rounded-full overflow-hidden relative z-10">
+                              <div className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} mx-auto rounded-full overflow-hidden relative z-10`}>
                                 {/* Enhanced Border with Multiple Layers */}
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 p-1">
-                                  <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-100 to-pink-100 p-1">
-                                    <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50">
+                              <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${teamCategories[activeCategory].color} p-1`}>
+                                <div className={`w-full h-full rounded-full ${teamCategories[activeCategory].bgColor} p-1`}>
+                                  <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                                    {currentFocusedMember && (
                                       <Image
-                                        src={getCloudinaryImageUrl(teamCategories[activeCategory].members[focusedMemorialIndex].folder, teamCategories[activeCategory].members[focusedMemorialIndex].image, 128)}
-                                        alt={teamCategories[activeCategory].members[focusedMemorialIndex].name}
+                                        src={getCloudinaryImageUrl(currentFocusedMember.folder, currentFocusedMember.image, 128)}
+                                        alt={currentFocusedMember.name}
                                         width={128}
                                         height={128}
                                         className="w-full h-full object-cover"
                                       />
+                                    )}
                                     </div>
                                   </div>
                                 </div>
@@ -1304,7 +1372,7 @@ const AboutPage = () => {
                                     repeat: Infinity,
                                     ease: "linear"
                                   }}
-                                  className="absolute -inset-2 rounded-full border border-purple-200/30"
+                                className={`absolute -inset-2 rounded-full border ${teamCategories[activeCategory].borderColor} opacity-30`}
                                 />
                                 <motion.div
                                   animate={{ 
@@ -1316,11 +1384,11 @@ const AboutPage = () => {
                                     repeat: Infinity,
                                     ease: "linear"
                                   }}
-                                  className="absolute -inset-4 rounded-full border border-pink-200/20"
+                                className={`absolute -inset-4 rounded-full border ${teamCategories[activeCategory].borderColor} opacity-20`}
                                 />
                               </div>
                               
-                              {/* Enhanced Memorial Heart with sophisticated animation */}
+                            {/* Category-specific badge with sophisticated animation */}
                               <motion.div 
                                 animate={{ 
                                   scale: [1, 1.3, 1],
@@ -1332,7 +1400,7 @@ const AboutPage = () => {
                                   repeat: Infinity,
                                   ease: "easeInOut"
                                 }}
-                                className="absolute -top-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 shadow-lg shadow-pink-400/60 ring-2 ring-pink-300/40"
+                              className={`absolute -top-2 -right-2 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 bg-gradient-to-r ${teamCategories[activeCategory].color} shadow-lg ring-2 ring-opacity-40`}
                               >
                                 <motion.div
                                   animate={{ 
@@ -1346,7 +1414,9 @@ const AboutPage = () => {
                                     delay: 0.5
                                   }}
                                 >
-                                  <Heart className="w-5 h-5 text-white fill-current drop-shadow-sm" />
+                                {React.cloneElement(teamCategories[activeCategory].icon, { 
+                                  className: "w-5 h-5 text-white fill-current drop-shadow-sm" 
+                                })}
                                 </motion.div>
                                 
                                 {/* Pulsing ring effect */}
@@ -1360,24 +1430,24 @@ const AboutPage = () => {
                                     repeat: Infinity,
                                     ease: "easeOut"
                                   }}
-                                  className="absolute inset-0 rounded-full border-2 border-pink-300/50"
+                                className={`absolute inset-0 rounded-full border-2 ${teamCategories[activeCategory].borderColor} opacity-50`}
                                 />
                               </motion.div>
                             </div>
 
-                            <h3 className="text-xl md:text-2xl font-serif text-purple-800 leading-tight mb-2">
-                              {teamCategories[activeCategory].members[focusedMemorialIndex].name}
+                          <h3 className={`${isMobile ? 'text-2xl' : 'text-xl md:text-2xl'} font-serif ${teamCategories[activeCategory].textColor} leading-tight mb-2`}>
+                            {currentFocusedMember?.name || 'Loading...'}
                             </h3>
-                            <p className="text-purple-600 font-semibold text-base mb-4">
-                              {teamCategories[activeCategory].members[focusedMemorialIndex].role}
+                          <p className={`${teamCategories[activeCategory].textColor} font-semibold ${isMobile ? 'text-lg' : 'text-base'} mb-4 opacity-80`}>
+                            {currentFocusedMember?.role || 'Loading...'}
                             </p>
                           </div>
 
-                          {/* Enhanced Memorial Content */}
-                          <div className="space-y-4 flex-1">
-                            <div className="relative">
-                              
-                              <h4 className="text-base font-serif text-purple-800 mb-2 relative">
+                        {/* Enhanced Member Content */}
+                        <div className="space-y-4 flex-1 overflow-hidden">
+                          <div className="relative h-full flex flex-col">
+                            
+                            <h4 className={`${isMobile ? 'text-lg' : 'text-base'} font-serif ${teamCategories[activeCategory].textColor} mb-2 relative flex-shrink-0`}>
                                 <motion.span
                                   animate={{ 
                                     backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
@@ -1387,7 +1457,7 @@ const AboutPage = () => {
                                     repeat: Infinity,
                                     ease: "linear"
                                   }}
-                                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-[length:200%_100%] bg-clip-text text-transparent font-semibold"
+                                className={`bg-gradient-to-r ${teamCategories[activeCategory].color} bg-[length:200%_100%] bg-clip-text text-transparent font-semibold`}
                                 >
                                   Biography
                                 </motion.span>
@@ -1404,32 +1474,33 @@ const AboutPage = () => {
                                     ease: "easeInOut",
                                     delay: 1
                                   }}
-                                  className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"
+                                className={`absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r ${teamCategories[activeCategory].color} rounded-full`}
                                 />
                               </h4>
-                              <div className="relative">
+                            <div className="relative flex-1 overflow-hidden">
                                 {/* Enhanced Biography Text Container */}
                                 <motion.div
                                   initial={{ opacity: 0, y: 15 }}
                                   animate={{ opacity: 1, y: 0 }}
                                   transition={{ duration: 0.8, delay: 0.2 }}
-                                  className="relative bg-gradient-to-br from-purple-50/30 to-pink-50/30 rounded-xl p-4 border border-purple-100/50 shadow-sm"
+                                className={`relative ${teamCategories[activeCategory].bgColor} rounded-xl p-4 border ${teamCategories[activeCategory].borderColor} shadow-sm h-full overflow-y-auto biography-scroll`}
                                 >
                                   
-                                  <div className="relative z-10 text-gray-700 text-base leading-relaxed text-justify">
-                                    {teamCategories[activeCategory].members[focusedMemorialIndex].bio}
+                                <div className={`relative z-10 text-gray-700 ${isMobile ? 'text-lg' : 'text-base'} leading-relaxed text-justify`}>
+                                  {currentFocusedMember?.bio || 'Loading biography...'}
                                   </div>
                                   
                                 </motion.div>
                                 
-                                {teamCategories[activeCategory].members[focusedMemorialIndex].name === 'Shri. Rajendra Prasad Joshi' && (
+                              {/* Special content for specific members */}
+                              {currentFocusedMember?.name?.includes('Rajendra Prasad Joshi') && (
                                   <motion.div
                                     initial={{ opacity: 0, y: 15 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.4 }}
-                                    className="relative bg-gradient-to-br from-purple-50/20 to-pink-50/20 rounded-lg p-3 mt-3 border border-purple-100/30 shadow-sm"
+                                  className={`relative ${teamCategories[activeCategory].bgColor} rounded-lg p-3 mt-3 border ${teamCategories[activeCategory].borderColor} shadow-sm`}
                                   >
-                                    <div className="text-gray-700 text-base leading-relaxed text-justify font-medium">
+                                    <div className={`text-gray-700 ${isMobile ? 'text-lg' : 'text-base'} leading-relaxed text-justify font-medium`}>
                                       उच्च शिक्षा इलाहाबाद विश्वविद्यालय
                                     </div>
                                   </motion.div>
@@ -1448,33 +1519,33 @@ const AboutPage = () => {
                 <div className={`${isMobile ? 'w-full' : 'lg:col-span-3'}`}>
                   <div className="space-y-4">
                     
-                    {/* Small Memorial Cards - 3x3 Grid */}
+                  {/* Small Member Cards - 3x3 Grid */}
                     <div className="grid grid-cols-3 gap-3">
                       {teamCategories[activeCategory].members.map((member: any, index: number) => (
                         <motion.div
                           key={member.name}
                           className="cursor-pointer transition-all duration-300"
-                          onClick={() => goToMemorialCard(index)}
+                        onClick={() => goToMemberCard(index)}
                           variants={memberVariants}
                         >
                           <div className={`bg-white rounded-2xl ${isMobile ? 'p-2' : 'p-3'} border-2 aspect-square flex flex-col relative overflow-hidden ${
-                            index === focusedMemorialIndex 
-                              ? 'memorial-card-focused' 
-                              : 'memorial-card-unfocused border-purple-200'
+                          index === focusedMemberIndex 
+                            ? `memorial-card-focused border-${teamCategories[activeCategory].color.split('-')[1]}-400` 
+                            : `memorial-card-unfocused ${teamCategories[activeCategory].borderColor}`
                           }`}>
                             
                             <div className="flex flex-col items-center text-center h-full justify-between">
                               {/* Profile Image Section - Fixed height */}
                               <div className={`relative flex-shrink-0 ${isMobile ? 'mb-1' : 'mb-2'}`}>
                                 <div className={`${isMobile ? 'w-14 h-14' : 'w-16 h-16'} rounded-full overflow-hidden transition-all duration-300 relative ${
-                                  index === focusedMemorialIndex 
-                                    ? 'shadow-lg shadow-purple-400/50 ring-2 ring-purple-300/40' 
-                                    : 'shadow-md shadow-purple-300/30'
+                                index === focusedMemberIndex 
+                                  ? `shadow-lg ring-2 ring-${teamCategories[activeCategory].color.split('-')[1]}-300/40` 
+                                  : `shadow-md`
                                 }`}>
                                   {/* Enhanced border with gradient */}
-                                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 p-0.5">
+                                <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${teamCategories[activeCategory].color} p-0.5`}>
                                     <div className="w-full h-full rounded-full bg-white p-0.5">
-                                      <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50">
+                                    <div className={`w-full h-full rounded-full overflow-hidden ${teamCategories[activeCategory].bgColor}`}>
                                         <Image
                                           src={getCloudinaryImageUrl(member.folder, member.image, isMobile ? 56 : 64)}
                                           alt={member.name}
@@ -1487,9 +1558,9 @@ const AboutPage = () => {
                                   </div>
                                 </div>
                                 
-                                {/* Enhanced Memorial Heart */}
+                              {/* Category-specific badge */}
                                 <motion.div 
-                                  animate={index === focusedMemorialIndex ? {
+                                animate={index === focusedMemberIndex ? {
                                     scale: [1, 1.2, 1],
                                     rotate: [0, 5, -5, 0]
                                   } : {}}
@@ -1499,15 +1570,17 @@ const AboutPage = () => {
                                     ease: "easeInOut"
                                   }}
                                   className={`absolute -top-1 -right-1 ${isMobile ? 'w-3 h-3' : 'w-4 h-4'} rounded-full flex items-center justify-center transition-all duration-300 ${
-                                    index === focusedMemorialIndex 
-                                      ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 shadow-lg shadow-pink-400/60 ring-2 ring-pink-300/40' 
-                                      : 'bg-gradient-to-r from-purple-400 to-pink-400 shadow-md shadow-purple-400/30'
-                                  }`}
-                                >
-                                  <Heart className={`${isMobile ? 'w-1.5 h-1.5' : 'w-2 h-2'} text-white fill-current drop-shadow-sm`} />
+                                  index === focusedMemberIndex 
+                                    ? `bg-gradient-to-r ${teamCategories[activeCategory].color} shadow-lg ring-2 ring-opacity-40` 
+                                    : `bg-gradient-to-r ${teamCategories[activeCategory].color} shadow-md`
+                                }`}
+                              >
+                                {React.cloneElement(teamCategories[activeCategory].icon, { 
+                                  className: `${isMobile ? 'w-1.5 h-1.5' : 'w-2 h-2'} text-white fill-current drop-shadow-sm` 
+                                })}
                                   
                                   {/* Pulsing ring for focused cards */}
-                                  {index === focusedMemorialIndex && (
+                                {index === focusedMemberIndex && (
                                     <motion.div
                                       animate={{ 
                                         scale: [1, 1.5, 1],
@@ -1518,7 +1591,7 @@ const AboutPage = () => {
                                         repeat: Infinity,
                                         ease: "easeOut"
                                       }}
-                                      className="absolute inset-0 rounded-full border border-pink-300/50"
+                                    className={`absolute inset-0 rounded-full border ${teamCategories[activeCategory].borderColor} opacity-50`}
                                     />
                                   )}
                                 </motion.div>
@@ -1527,16 +1600,16 @@ const AboutPage = () => {
                               {/* Text Content Section - Flexible height */}
                               <div className={`w-full flex flex-col ${isMobile ? 'gap-0.5' : 'gap-1'} flex-1 justify-center px-1`}>
                                 <h4 className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-serif leading-tight transition-colors duration-300 ${isMobile ? 'truncate' : ''} ${
-                                  index === focusedMemorialIndex 
-                                    ? 'text-purple-800 font-bold' 
-                                    : 'text-purple-700'
+                                index === focusedMemberIndex 
+                                  ? `${teamCategories[activeCategory].textColor} font-bold` 
+                                  : `${teamCategories[activeCategory].textColor} opacity-80`
                                 }`}>
                                   {isMobile ? member.name.split(' ').slice(0, 2).join(' ') : member.name}
                                 </h4>
                                 <p className={`font-semibold ${isMobile ? 'text-[9px]' : 'text-xs'} leading-tight ${isMobile ? 'truncate' : ''} ${
-                                  index === focusedMemorialIndex 
-                                    ? 'text-purple-700 font-bold' 
-                                    : 'text-purple-600'
+                                index === focusedMemberIndex 
+                                  ? `${teamCategories[activeCategory].textColor} font-bold opacity-90` 
+                                  : `${teamCategories[activeCategory].textColor} opacity-70`
                                 }`}>
                                   {isMobile ? member.role.split(' ').slice(0, 3).join(' ') : member.role}
                                 </p>
@@ -1551,195 +1624,8 @@ const AboutPage = () => {
                 </div>
               </div>
             ) : (
-              /* Regular Grid Layout for Patrons and Current Team */
-            <div className={`${isMobile ? 'hidden' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'} gap-6`}>
-              {teamCategories[activeCategory].members.map((member: any, index: number) => (
-                <motion.div
-                  key={member.name}
-                  className={`bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group border-2 ${teamCategories[activeCategory].borderColor} hover:border-opacity-60`}
-                  variants={memberVariants}
-                  style={{
-                    background: `linear-gradient(135deg, ${teamCategories[activeCategory].bgColor.replace('bg-gradient-to-br ', '')}, white)`
-                  }}
-                >
-                  <div className="text-center">
-                    <div className="relative mb-6">
-                      <div className={`w-20 h-20 mx-auto rounded-full overflow-hidden border-4 transition-all duration-300 relative`}
-                           style={{ borderColor: teamCategories[activeCategory].color.replace('from-', '').replace(' to-', ', ') }}>
-                        <Image
-                          src={getCloudinaryImageUrl(member.folder, member.image, 80)}
-                          alt={member.name}
-                          width={80}
-                          height={80}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      
-                      {/* Special badges for different categories */}
-                      {activeCategory === 'patrons' && (
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
-                          <Crown className="w-3 h-3 text-white fill-current" />
-                        </div>
-                      )}
-                      {activeCategory === 'reach-trustees' && (
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
-                          <Shield className="w-3 h-3 text-white fill-current" />
-                        </div>
-                      )}
-                      {activeCategory === 'reach-office-bearers' && (
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full flex items-center justify-center">
-                          <Building2 className="w-3 h-3 text-white fill-current" />
-                        </div>
-                      )}
-                      {activeCategory === 'virasat-organising-committee' && (
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
-                          <Briefcase className="w-3 h-3 text-white fill-current" />
-                        </div>
-                      )}
-                      {activeCategory === 'advisors' && (
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
-                          <Lightbulb className="w-3 h-3 text-white fill-current" />
-                        </div>
-                      )}
-                      {activeCategory === 'reach-talkies' && (
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full flex items-center justify-center">
-                          <Film className="w-3 h-3 text-white fill-current" />
-                        </div>
-                      )}
-                      {activeCategory === 'in-loving-memory' && (
-                        <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
-                          <Heart className="w-3 h-3 text-white fill-current" />
-                        </div>
-                      )}
-                    </div>
-                    
-                    <h3 className={`text-lg font-serif ${teamCategories[activeCategory].textColor} leading-tight mb-2`}>
-                      {member.name}
-                    </h3>
-                    <p className="text-brand-red font-semibold text-base mb-3">{member.role}</p>
-                    
-                    {/* Additional info based on category */}
-                    
-                    <div className="text-brand-earthen text-base leading-relaxed mb-3 text-justify whitespace-pre-line">
-                      {shouldShowReadMore(member.bio) && !expandedBios[`${activeCategory}-${member.name}`] 
-                        ? getTruncatedBio(member.bio)
-                        : member.bio
-                      }
-                      {shouldShowReadMore(member.bio) && (
-                        <button
-                          onClick={() => toggleBioExpansion(`${activeCategory}-${member.name}`)}
-                          className="ml-2 text-brand-red font-semibold hover:underline focus:outline-none"
-                        >
-                          {expandedBios[`${activeCategory}-${member.name}`] ? 'Read Less' : 'Read More'}
-                        </button>
-                      )}
-                    </div>
-                    
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-            )}
-
-            {/* Mobile Layout - Only for Patrons and Current Team */}
-            {isMobile && activeCategory !== 'in-loving-memory' && (
-              <div className="relative">
-                <div 
-                  ref={setScrollContainerRef}
-                  className="flex overflow-x-auto overflow-y-hidden scrollbar-hide gap-4 pb-4"
-                  onScroll={handleScroll}
-                  style={{
-                    scrollSnapType: 'x mandatory',
-                    scrollBehavior: 'smooth',
-                    WebkitOverflowScrolling: 'touch'
-                  }}
-                >
-                  {teamCategories[activeCategory].members.map((member: any, index: number) => (
-                    <motion.div
-                      key={member.name}
-                      className={`bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group border-2 ${teamCategories[activeCategory].borderColor} hover:border-opacity-60 flex-shrink-0 w-72`}
-                      style={{
-                        scrollSnapAlign: 'start',
-                        background: `linear-gradient(135deg, ${teamCategories[activeCategory].bgColor.replace('bg-gradient-to-br ', '')}, white)`
-                      }}
-                    >
-                      <div className="text-center">
-                        <div className="relative mb-6">
-                          <div className={`w-20 h-20 mx-auto rounded-full overflow-hidden border-4 transition-all duration-300 relative`}
-                               style={{ borderColor: teamCategories[activeCategory].color.replace('from-', '').replace(' to-', ', ') }}>
-                            <Image
-                              src={getCloudinaryImageUrl(member.folder, member.image, 80)}
-                              alt={member.name}
-                              width={80}
-                              height={80}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          
-                          {/* Special badges for different categories */}
-                          {activeCategory === 'patrons' && (
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
-                              <Crown className="w-3 h-3 text-white fill-current" />
-                            </div>
-                          )}
-                          {activeCategory === 'reach-trustees' && (
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
-                              <Shield className="w-3 h-3 text-white fill-current" />
-                            </div>
-                          )}
-                          {activeCategory === 'reach-office-bearers' && (
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full flex items-center justify-center">
-                              <Building2 className="w-3 h-3 text-white fill-current" />
-                            </div>
-                          )}
-                          {activeCategory === 'virasat-organising-committee' && (
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
-                              <Briefcase className="w-3 h-3 text-white fill-current" />
-                            </div>
-                          )}
-                          {activeCategory === 'advisors' && (
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
-                              <Lightbulb className="w-3 h-3 text-white fill-current" />
-                            </div>
-                          )}
-                          {activeCategory === 'reach-talkies' && (
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full flex items-center justify-center">
-                              <Film className="w-3 h-3 text-white fill-current" />
-                            </div>
-                          )}
-                          {activeCategory === 'in-loving-memory' && (
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center">
-                              <Heart className="w-3 h-3 text-white fill-current" />
-                            </div>
-                          )}
-                        </div>
-                        
-                        <h3 className={`text-lg font-serif ${teamCategories[activeCategory].textColor} leading-tight mb-2`}>
-                          {member.name}
-                        </h3>
-                        <p className="text-brand-red font-semibold text-base mb-3">{member.role}</p>
-                        
-                        {/* Additional info based on category */}
-                        
-                        <div className="text-brand-earthen text-base leading-relaxed mb-3 text-justify whitespace-pre-line">
-                          {shouldShowReadMore(member.bio) && !expandedBios[`${activeCategory}-${member.name}`] 
-                            ? getTruncatedBio(member.bio)
-                            : member.bio
-                          }
-                          {shouldShowReadMore(member.bio) && (
-                            <button
-                              onClick={() => toggleBioExpansion(`${activeCategory}-${member.name}`)}
-                              className="ml-2 text-brand-red font-semibold hover:underline focus:outline-none"
-                            >
-                              {expandedBios[`${activeCategory}-${member.name}`] ? 'Read Less' : 'Read More'}
-                            </button>
-                          )}
-                        </div>
-                        
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No members found for this category.</p>
               </div>
             )}
           </motion.div>
@@ -1773,6 +1659,46 @@ const AboutPage = () => {
           </Link>
         </motion.div>
       </motion.section>
+      
+      {/* Lightbox for image expansion */}
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        slides={[
+          {
+            type: 'image',
+            src: '/images/REACH (2).jpg',
+            width: 1200,
+            height: 900,
+            alt: 'REACH - Rural Entrepreneurship for Art & Cultural Heritage',
+          }
+        ]}
+        index={lightboxIndex}
+        render={{
+          buttonPrev: () => null,
+          buttonNext: () => null,
+        }}
+        carousel={{
+          finite: true,
+        }}
+        controller={{
+          closeOnBackdropClick: true,
+          closeOnPullDown: false,
+          closeOnPullUp: false,
+        }}
+        styles={{
+          container: { 
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            backdropFilter: "blur(10px)"
+          },
+          slide: {
+            border: 'none',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            borderRadius: '12px',
+            padding: '0'
+          }
+        }}
+      />
       </div>
     </>
   );

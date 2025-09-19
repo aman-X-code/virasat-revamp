@@ -1151,17 +1151,6 @@ export const EventsSection = () => {
                       </div>
                     </div>
 
-                    {/* View Details Button */}
-                    <Link href={`/events/${event.id}`}>
-                      <motion.button
-                        className="bg-brand-red hover:bg-brand-red-dark text-white px-3 py-1.5 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1 flex-shrink-0 text-xs"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        View
-                        <ArrowRight className="w-3 h-3" />
-                      </motion.button>
-                    </Link>
                   </>
                 ) : (
                   <>
@@ -1184,22 +1173,6 @@ export const EventsSection = () => {
                     </span>
                   </div>
                   
-                  {/* Featured Badge */}
-                  {event.featured && (
-                    <div className="absolute top-4 right-4 flex flex-col gap-2">
-                      <span className="bg-brand-red text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-current" />
-                        Featured
-                      </span>
-                      {/* Countdown Timer */}
-                      <div className="bg-black/80 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-xs">
-                        <div className="flex items-center gap-1">
-                          <Timer className="w-3 h-3" />
-                          <span>{timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Event Content */}
@@ -1239,23 +1212,6 @@ export const EventsSection = () => {
                      </div>
                    </div>
                   
-                  {/* Status + CTA */}
-                  <div className="flex items-center justify-between gap-2 sm:gap-3 mt-auto px-1">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                      <span className="text-sm font-medium text-brand-earthen">Booking starts soon</span>
-                    </div>
-                    <Link href={`/events/${event.id}`}>
-                      <motion.button
-                        className="bg-brand-earthen-light/20 hover:bg-brand-earthen-light/30 text-brand-earthen px-3 py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1 sm:gap-1.5 group/btn border border-brand-earthen-light h-9"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <span className="text-xs sm:text-sm whitespace-nowrap">View Details</span>
-                        <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                      </motion.button>
-                    </Link>
-                  </div>
                 </div>
                 </>
                 )}

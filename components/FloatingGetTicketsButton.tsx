@@ -22,15 +22,15 @@ const FloatingGetTicketsButton = () => {
       <Link href="/events">
         <button className="floating-tickets-button">
           <p className="button__text">
-            <span style={{ '--index': 0 } as React.CSSProperties}>G</span>
-            <span style={{ '--index': 1 } as React.CSSProperties}>E</span>
-            <span style={{ '--index': 2 } as React.CSSProperties}>T</span>
-            <span style={{ '--index': 3 } as React.CSSProperties}> </span>
-            <span style={{ '--index': 4 } as React.CSSProperties}>T</span>
-            <span style={{ '--index': 5 } as React.CSSProperties}>I</span>
-            <span style={{ '--index': 6 } as React.CSSProperties}>C</span>
-            <span style={{ '--index': 7 } as React.CSSProperties}>K</span>
-            <span style={{ '--index': 8 } as React.CSSProperties}>E</span>
+            <span style={{ '--index': 0 } as React.CSSProperties}>V</span>
+            <span style={{ '--index': 1 } as React.CSSProperties}>I</span>
+            <span style={{ '--index': 2 } as React.CSSProperties}>E</span>
+            <span style={{ '--index': 3 } as React.CSSProperties}>W</span>
+            <span style={{ '--index': 4 } as React.CSSProperties}> </span>
+            <span style={{ '--index': 5 } as React.CSSProperties}>E</span>
+            <span style={{ '--index': 6 } as React.CSSProperties}>V</span>
+            <span style={{ '--index': 7 } as React.CSSProperties}>E</span>
+            <span style={{ '--index': 8 } as React.CSSProperties}>N</span>
             <span style={{ '--index': 9 } as React.CSSProperties}>T</span>
             <span style={{ '--index': 10 } as React.CSSProperties}>S</span>
           </p>
@@ -102,15 +102,15 @@ const FloatingGetTicketsButton = () => {
          }
          
          /* Custom positioning for better letter spacing */
-         .button__text > span:nth-child(1) { transform: rotate(0deg); } /* G */
-         .button__text > span:nth-child(2) { transform: rotate(30deg); } /* E */
-         .button__text > span:nth-child(3) { transform: rotate(60deg); } /* T */
-         .button__text > span:nth-child(4) { transform: rotate(90deg); } /* space */
-         .button__text > span:nth-child(5) { transform: rotate(120deg); } /* T */
-         .button__text > span:nth-child(6) { transform: rotate(150deg); } /* I */
-         .button__text > span:nth-child(7) { transform: rotate(180deg); } /* C */
-         .button__text > span:nth-child(8) { transform: rotate(210deg); } /* K */
-         .button__text > span:nth-child(9) { transform: rotate(240deg); } /* E */
+         .button__text > span:nth-child(1) { transform: rotate(0deg); } /* V */
+         .button__text > span:nth-child(2) { transform: rotate(30deg); } /* I */
+         .button__text > span:nth-child(3) { transform: rotate(60deg); } /* E */
+         .button__text > span:nth-child(4) { transform: rotate(90deg); } /* W */
+         .button__text > span:nth-child(5) { transform: rotate(120deg); } /* space */
+         .button__text > span:nth-child(6) { transform: rotate(150deg); } /* E */
+         .button__text > span:nth-child(7) { transform: rotate(180deg); } /* V */
+         .button__text > span:nth-child(8) { transform: rotate(210deg); } /* E */
+         .button__text > span:nth-child(9) { transform: rotate(240deg); } /* N */
          .button__text > span:nth-child(10) { transform: rotate(270deg); } /* T */
          .button__text > span:nth-child(11) { transform: rotate(300deg); } /* S */
 

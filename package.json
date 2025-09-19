@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "upload-cloudinary": "node scripts/upload-to-cloudinary.js"
+    "upload-cloudinary": "node scripts/upload-to-cloudinary.js",
+    "test-payubiz": "node scripts/test-payubiz.js",
+    "validate-production": "node scripts/validate-production.js",
+    "build-production": "NODE_ENV=production npm run build"
   },
   "dependencies": {
     "@cloudinary/url-gen": "^1.22.0",
@@ -37,7 +40,6 @@
     "next": "13.5.1",
     "nodemailer": "^7.0.6",
     "postcss": "8.4.30",
-    "razorpay": "^2.9.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.53.0",

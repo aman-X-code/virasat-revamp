@@ -5,9 +5,9 @@
 Create a `.env.local` file in the root directory with the following variables:
 
 ```bash
-# Razorpay Configuration (REQUIRED)
-RAZORPAY_KEY_ID=your_razorpay_key_id_here
-RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
+# PayU Biz Configuration (REQUIRED)
+PAYUBIZ_MERCHANT_KEY=your_payubiz_merchant_key_here
+PAYUBIZ_MERCHANT_SALT=your_payubiz_merchant_salt_here
 
 # App Configuration
 NEXT_PUBLIC_APP_URL=https://your-domain.com
@@ -18,7 +18,7 @@ NODE_ENV=production
 
 ### 1. Payment Security
 - ✅ Removed exposed environment variables from client-side code
-- ✅ Created secure API endpoint for Razorpay key retrieval
+- ✅ Created secure API endpoint for PayU Biz key retrieval
 - ✅ Added input validation using security utilities
 - ✅ Implemented rate limiting on payment endpoints
 - ✅ Added proper error handling without exposing sensitive information
@@ -62,7 +62,7 @@ The application now includes:
 
 ## Security Notes
 
-- Razorpay keys are now server-side only
+- PayU Biz keys are now server-side only
 - Payment endpoints are rate-limited
 - Input validation prevents malicious data
 - Error messages don't expose sensitive information

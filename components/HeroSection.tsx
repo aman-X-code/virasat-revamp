@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import ComponentErrorBoundary from "./ComponentErrorBoundary";
 
 const HeroCarousel = dynamic(() => import("./HeroCarousel"), {
@@ -33,19 +34,19 @@ const HeroSection = () => {
   const gridItems = [
     {
       id: 1,
-      video: "https://res.cloudinary.com/digilabs/video/upload/f_auto,q_auto/prod/hero/prod/hero/second.mp4",
+      video: "https://res.cloudinary.com/digilabs/video/upload/f_auto,q_auto/v1758275716/prod/hero/prod/hero/second.mp4",
       className: "col-span-1 row-span-2",
       delay: 0.2,
     },
     {
       id: 2,
-      video: "https://res.cloudinary.com/digilabs/video/upload/f_auto,q_auto/prod/hero/prod/hero/third.mp4",
+      video: "https://res.cloudinary.com/digilabs/video/upload/f_auto,q_auto/v1758276111/prod/hero/prod/hero/third.mp4",
       className: "col-span-1 row-span-1",
       delay: 0.4,
     },
     {
       id: 3,
-      video: "https://res.cloudinary.com/digilabs/video/upload/f_auto,q_auto/prod/hero/prod/hero/forth.mp4",
+      video: "https://res.cloudinary.com/digilabs/video/upload/f_auto,q_auto/v1758277639/prod/hero/prod/hero/fourth.mp4",
       className: "col-span-1 row-span-1",
       delay: 0.6,
     },
@@ -237,10 +238,12 @@ const HeroSection = () => {
                       ease: "linear",
                     }}
                   >
-                    <img
+                    <Image
                       src="https://res.cloudinary.com/digilabs/raw/upload/prod/hero/prod/hero/rangoli.svg"
                       alt="Rangoli"
-                      className="w-full h-full object-contain"
+                      fill
+                      className="object-contain"
+                      priority
                     />
                   </motion.div>
                 </div>

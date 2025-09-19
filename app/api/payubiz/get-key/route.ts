@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    // Check if Razorpay key is configured
-    if (!process.env.RAZORPAY_KEY_ID) {
+    // Check if PayU Biz key is configured
+    if (!process.env.PAYUBIZ_MERCHANT_KEY) {
       return NextResponse.json(
         { error: 'Payment gateway not configured' },
         { status: 500 }
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     // Return only the public key (safe to expose)
     return NextResponse.json({
       success: true,
-      key: process.env.RAZORPAY_KEY_ID,
+      key: process.env.PAYUBIZ_MERCHANT_KEY,
     });
   } catch (error) {
     return NextResponse.json(
@@ -22,3 +22,5 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+

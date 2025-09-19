@@ -11,16 +11,18 @@ const DonationSuccessPage = () => {
   const [paymentDetails, setPaymentDetails] = useState<any>(null);
 
   useEffect(() => {
-    // Get payment details from URL params
-    const paymentId = searchParams.get('payment_id');
-    const orderId = searchParams.get('order_id');
+    // Get payment details from URL params (PayU Biz format)
+    const paymentId = searchParams.get('mihpayid') || searchParams.get('payment_id');
+    const transactionId = searchParams.get('txnid') || searchParams.get('order_id');
     const amount = searchParams.get('amount');
+    const status = searchParams.get('status');
     
-    if (paymentId && orderId && amount) {
+    
+    if (paymentId && transactionId && amount && status === 'success') {
       setPaymentDetails({
         paymentId,
-        orderId,
-        amount: parseInt(amount),
+        orderId: transactionId,
+        amount: parseFloat(amount),
       });
     }
   }, [searchParams]);

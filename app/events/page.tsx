@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, MapPin, Users, Star, ArrowRight, Timer, Calendar, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { Clock, MapPin, Users, ArrowRight, Calendar, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { allEvents, dayOrder, type Event } from '@/lib/events';
 
@@ -21,12 +21,6 @@ function getEventImageUrl(title: string): string {
 
 const EventsPage = () => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
   const [selectedDay, setSelectedDay] = useState<string>('All');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false);
@@ -68,26 +62,6 @@ const EventsPage = () => {
     return dayA - dayB;
   });
 
-  // Countdown timer for featured events
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const eventDate = new Date();
-      eventDate.setDate(eventDate.getDate() + 3); // 3 days from now
-      const distance = eventDate.getTime() - now;
-
-      if (distance > 0) {
-        setTimeLeft({
-          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((distance % (1000 * 60)) / 1000)
-        });
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   // Calculate dropdown position
   const calculateDropdownPosition = (buttonRef: React.RefObject<HTMLButtonElement>) => {
@@ -340,22 +314,6 @@ const EventsPage = () => {
                             </span>
                           </div>
                           
-                          {/* Featured Badge */}
-                          {event.featured && (
-                            <div className="absolute top-4 right-4 flex flex-col gap-2">
-                              <span className="bg-brand-red text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                                <Star className="w-3 h-3 fill-current" />
-                                Featured
-                              </span>
-                              {/* Countdown Timer */}
-                              <div className="bg-black/80 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-xs">
-                                <div className="flex items-center gap-1">
-                                  <Timer className="w-3 h-3" />
-                                  <span>{timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m</span>
-                                </div>
-                              </div>
-                            </div>
-                          )}
                         </div>
 
                         {/* Event Content */}
@@ -395,51 +353,7 @@ const EventsPage = () => {
                              </div>
                            </div>
                           
-                          {/* Price and Buy Button - Temporarily commented out for future use */}
-                          {/* <div className="flex items-center justify-between gap-2 sm:gap-3 mt-auto px-1">
-                            <div className="flex items-baseline gap-1">
-                              <span className="text-lg sm:text-xl md:text-2xl font-bold text-brand-black leading-none">{event.price}</span>
-                              <span className="text-xs text-brand-earthen-light leading-tight whitespace-nowrap">per person</span>
-                            </div>
-                            
-                            <Link href={`/events/${event.id}`}>
-                              <motion.button
-                                className="bg-brand-red hover:bg-brand-red-dark text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1 sm:gap-1.5 group/btn flex-shrink-0 h-8 sm:h-9"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => {
-                                  console.log('Events page Book Now clicked for event:', event.id, event.title);
-                                  console.log('Events page Event Details URL:', `/events/${event.id}`);
-                                }}
-                              >
-                                <span className="text-xs sm:text-sm whitespace-nowrap">Book Now</span>
-                                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                              </motion.button>
-                            </Link>
-                          </div> */}
                           
-                          {/* Booking Status Message */}
-                          <div className="flex items-center justify-between gap-2 sm:gap-3 mt-auto px-1">
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                              <span className="text-sm font-medium text-brand-earthen">Booking starts soon</span>
-                            </div>
-                            
-                            <Link href={`/events/${event.id}`}>
-                              <motion.button
-                                className="bg-brand-earthen-light/20 hover:bg-brand-earthen-light/30 text-brand-earthen px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1 sm:gap-1.5 group/btn flex-shrink-0 h-8 sm:h-9 border border-brand-earthen-light"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => {
-                                  console.log('Events page View Details clicked for event:', event.id, event.title);
-                                  console.log('Events page Event Details URL:', `/events/${event.id}`);
-                                }}
-                              >
-                                <span className="text-xs sm:text-sm whitespace-nowrap">View Details</span>
-                                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                              </motion.button>
-                            </Link>
-                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -496,17 +410,6 @@ const EventsPage = () => {
                           </div>
                         </div>
 
-                        {/* View Details Button */}
-                        <Link href={`/events/${event.id}`}>
-                          <motion.button
-                            className="bg-brand-red hover:bg-brand-red-dark text-white px-3 py-1.5 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1 flex-shrink-0 text-xs"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            View
-                            <ArrowRight className="w-3 h-3" />
-                          </motion.button>
-                        </Link>
                       </div>
                     </motion.div>
                   ))}
@@ -548,22 +451,6 @@ const EventsPage = () => {
                           </span>
                         </div>
                         
-                        {/* Featured Badge */}
-                        {event.featured && (
-                          <div className="absolute top-4 right-4 flex flex-col gap-2">
-                            <span className="bg-brand-red text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                              <Star className="w-3 h-3 fill-current" />
-                              Featured
-                            </span>
-                            {/* Countdown Timer */}
-                            <div className="bg-black/80 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-xs">
-                              <div className="flex items-center gap-1">
-                                <Timer className="w-3 h-3" />
-                                <span>{timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
                       </div>
 
                       {/* Event Content */}
@@ -603,51 +490,7 @@ const EventsPage = () => {
                            </div>
                          </div>
                         
-                        {/* Price and Buy Button - Temporarily commented out for future use */}
-                        {/* <div className="flex items-center justify-between gap-2 sm:gap-3 mt-auto px-1">
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-lg sm:text-xl md:text-2xl font-bold text-brand-black leading-none">{event.price}</span>
-                            <span className="text-xs text-brand-earthen-light leading-tight whitespace-nowrap">per person</span>
-                          </div>
-                          
-                          <Link href={`/events/${event.id}`}>
-                            <motion.button
-                              className="bg-brand-red hover:bg-brand-red-dark text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1 sm:gap-1.5 group/btn flex-shrink-0 h-8 sm:h-9"
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() => {
-                                console.log('Events page Book Now clicked for event:', event.id, event.title);
-                                console.log('Events page Event Details URL:', `/events/${event.id}`);
-                              }}
-                            >
-                              <span className="text-xs sm:text-sm whitespace-nowrap">Book Now</span>
-                              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                            </motion.button>
-                          </Link>
-                        </div> */}
                         
-                        {/* Booking Status Message */}
-                        <div className="flex items-center justify-between gap-2 sm:gap-3 mt-auto px-1">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm font-medium text-brand-earthen">Booking starts soon</span>
-                          </div>
-                          
-                          <Link href={`/events/${event.id}`}>
-                            <motion.button
-                              className="bg-brand-earthen-light/20 hover:bg-brand-earthen-light/30 text-brand-earthen px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1 sm:gap-1.5 group/btn flex-shrink-0 h-8 sm:h-9 border border-brand-earthen-light"
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() => {
-                                console.log('Events page View Details clicked for event:', event.id, event.title);
-                                console.log('Events page Event Details URL:', `/events/${event.id}`);
-                              }}
-                            >
-                              <span className="text-xs sm:text-sm whitespace-nowrap">View Details</span>
-                              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                            </motion.button>
-                          </Link>
-                        </div>
                       </div>
                     </div>
                   </motion.div>

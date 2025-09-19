@@ -68,9 +68,9 @@ export default function RootLayout({
       <head>
         {/* Performance optimizations */}
         <link rel="dns-prefetch" href="//res.cloudinary.com" />
-        <link rel="dns-prefetch" href="//checkout.razorpay.com" />
+        <link rel="dns-prefetch" href="//secure.payu.in" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://checkout.razorpay.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://secure.payu.in" crossOrigin="anonymous" />
         <link rel="preload" href="/images/rangoli-about.png" as="image" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

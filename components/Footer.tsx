@@ -24,7 +24,7 @@ const Footer = () => {
             <div className="grid grid-cols-2 gap-2 md:gap-2 font-sans text-sm md:text-base">
               <Link href="/" className="hover:text-brand-red transition-colors">Home</Link>
               <Link href="/events" className="hover:text-brand-red transition-colors">Events</Link>
-              <Link href="/about" className="hover:text-brand-red transition-colors">About Reach</Link>
+              <Link href="/about" className="hover:text-brand-red transition-colors">About Us</Link>
               <Link href="/gallery" className="hover:text-brand-red transition-colors">Gallery</Link>
               <Link href="/blogs" className="hover:text-brand-red transition-colors">News</Link>
               <Link href="/contact" className="hover:text-brand-red transition-colors">Contact Us</Link>
@@ -63,9 +63,22 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-brand-brown text-center text-brand-earthen font-sans text-sm md:text-base">
-          <p>&copy; {new Date().getFullYear()} VIRASAT. All Rights Reserved.</p>
+        {/* Legal Links */}
+        <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-brand-brown">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-4">
+            <Link href="/terms" className="text-brand-earthen hover:text-brand-red transition-colors font-sans text-sm md:text-base">
+              Terms & Conditions
+            </Link>
+            <Link href="/privacy" className="text-brand-earthen hover:text-brand-red transition-colors font-sans text-sm md:text-base">
+              Privacy Policy
+            </Link>
+            <Link href="/refund" className="text-brand-earthen hover:text-brand-red transition-colors font-sans text-sm md:text-base">
+              Refund Policy
+            </Link>
+          </div>
+          <div className="text-center text-brand-earthen font-sans text-sm md:text-base">
+            <p>&copy; {new Date().getFullYear()} VIRASAT. All Rights Reserved.</p>
+          </div>
         </div>
       </div>
     </footer>

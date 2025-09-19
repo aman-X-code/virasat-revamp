@@ -13,6 +13,17 @@ const emailConfig = {
     },
   },
   
+  // Custom SMTP configuration (for name.com or other providers)
+  smtp: {
+    host: process.env.EMAIL_HOST || 'smtp.yourdomain.com',
+    port: parseInt(process.env.EMAIL_PORT || '587'),
+    secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
+    auth: {
+      user: process.env.EMAIL_USER, // Full email address
+      pass: process.env.EMAIL_PASSWORD, // Email password
+    },
+  },
+  
   // Resend configuration (for future switch)
   resend: {
     host: 'smtp.resend.com',

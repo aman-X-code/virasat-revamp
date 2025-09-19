@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { sendEmail, emailTemplates, generateReceiptPDF } from '@/lib/email';
+import { NextRequest, NextResponse } from "next/server";
+import { sendEmail, emailTemplates, generateReceiptPDF } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
 
     if (!donationData) {
       return NextResponse.json(
-        { error: 'Donation data is required' },
+        { error: "Donation data is required" },
         { status: 400 }
       );
     }
@@ -16,13 +16,13 @@ export async function POST(request: NextRequest) {
     let result;
 
     switch (type) {
-      case 'donation_receipt':
+      case "donation_receipt":
         // Generate PDF attachment
         const pdfBuffer = await generateReceiptPDF(donationData);
-        
+
         // Create email template
         const receiptTemplate = emailTemplates.donationReceipt(donationData);
-        
+
         // Send email with PDF attachment
         result = await sendEmail(
           receiptTemplate.to,
@@ -33,16 +33,16 @@ export async function POST(request: NextRequest) {
             {
               filename: `donation-receipt-${donationData.paymentId}.pdf`,
               content: Buffer.from(pdfBuffer),
-              contentType: 'application/pdf',
+              contentType: "application/pdf",
             },
           ]
         );
         break;
 
-      case 'admin_notification':
+      case "admin_notification":
         // Create admin notification template
         const adminTemplate = emailTemplates.adminNotification(donationData);
-        
+
         // Send admin notification
         result = await sendEmail(
           adminTemplate.to,
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
       default:
         return NextResponse.json(
-          { error: 'Invalid email type' },
+          { error: "Invalid email type" },
           { status: 400 }
         );
     }
@@ -62,19 +62,19 @@ export async function POST(request: NextRequest) {
     if (result.success) {
       return NextResponse.json({
         success: true,
-        message: 'Email sent successfully',
+        message: "Email sent successfully",
         messageId: result.messageId,
       });
     } else {
       return NextResponse.json(
-        { error: 'Failed to send email', details: result.error },
+        { error: "Failed to send email", details: result.error },
         { status: 500 }
       );
     }
   } catch (error) {
-    console.error('Email API error:', error);
+    console.error("Email API error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

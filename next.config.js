@@ -67,16 +67,16 @@ const nextConfig = {
         key: 'Content-Security-Policy',
         value: [
           "default-src 'self'",
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://js.razorpay.com https://fonts.googleapis.com https://vercel.live blob:",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://secure.payu.in https://test.payu.in https://fonts.googleapis.com https://vercel.live blob:",
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
           "font-src 'self' https://fonts.gstatic.com",
           "img-src 'self' data: https: blob: https://res.cloudinary.com",
           "media-src 'self' https: blob: https://res.cloudinary.com",
-          "connect-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://res.cloudinary.com https://vercel.live https://lumberjack.razorpay.com https://cdn.jsdelivr.net https://maps.googleapis.com https://maps.gstatic.com",
-          "frame-src 'self' https://checkout.razorpay.com https://vercel.live https://api.razorpay.com https://www.google.com",
+          "connect-src 'self' https://secure.payu.in https://test.payu.in https://res.cloudinary.com https://vercel.live https://cdn.jsdelivr.net https://maps.googleapis.com https://maps.gstatic.com",
+          "frame-src 'self' https://secure.payu.in https://test.payu.in https://vercel.live https://www.google.com",
           "object-src 'none'",
           "base-uri 'self'",
-          "form-action 'self'"
+          "form-action 'self' https://secure.payu.in https://test.payu.in"
         ].join('; '),
       });
     }
@@ -86,7 +86,7 @@ const nextConfig = {
         source: '/(.*)',
         headers,
       },
-      // Special headers for donate page - more permissive CSP
+      // Special headers for donate page - more permissive CSP for PayU Biz
       {
         source: '/donate',
         headers: [
@@ -104,7 +104,7 @@ const nextConfig = {
               "frame-src 'self' https:",
               "object-src 'none'",
               "base-uri 'self'",
-              "form-action 'self'"
+              "form-action 'self' https://secure.payu.in https://test.payu.in"
             ].join('; '),
           }
         ],

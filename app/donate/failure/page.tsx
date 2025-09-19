@@ -11,16 +11,17 @@ const DonationFailurePage = () => {
   const [errorDetails, setErrorDetails] = useState<any>(null);
 
   useEffect(() => {
-    // Get error details from URL params
+    // Get error details from URL params (PayU Biz format)
     const errorCode = searchParams.get('error_code');
     const errorDescription = searchParams.get('error_description');
-    const orderId = searchParams.get('order_id');
+    const transactionId = searchParams.get('txnid') || searchParams.get('order_id');
+    const status = searchParams.get('status');
     
-    if (errorCode || errorDescription || orderId) {
+    if (errorCode || errorDescription || transactionId || status === 'failure') {
       setErrorDetails({
         errorCode,
-        errorDescription,
-        orderId,
+        errorDescription: errorDescription || 'Payment was not successful',
+        orderId: transactionId,
       });
     }
   }, [searchParams]);
