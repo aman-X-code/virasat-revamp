@@ -103,7 +103,7 @@ const Header = () => {
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-4">
           <Image src="/images/reach.png" alt="REACH Logo" width={80} height={50} className="h-12 w-auto" />
-          <Image src="/images/vir.png" alt="VIR Logo" width={80} height={50} className="h-12 w-auto" />
+          <Image src="/images/vir.png" alt="VIR Logo" width={80} height={50} className="h-12 w-auto" priority />
         </Link>
 
         {/* Desktop Navigation */}

@@ -167,7 +167,7 @@ const DonatePage = () => {
       const submitPayubizForm = () => {
         try {
           // Debug: Log transaction data
-          console.log("Transaction Data:", transactionData.transactionData);
+          // Transaction data prepared
 
           // Create form HTML as a string first
           let formHTML = `<form id="payuForm" method="POST" action="https://test.payu.in/_payment" target="_blank">`;
@@ -176,7 +176,6 @@ const DonatePage = () => {
           Object.entries(transactionData.transactionData).forEach(
             ([key, value]) => {
               formHTML += `<input type="hidden" name="${key}" value="${value}" />`;
-              console.log(`Form field: ${key} = ${value}`);
             }
           );
 
@@ -216,12 +215,7 @@ const DonatePage = () => {
               return;
             }
 
-            console.log(
-              "Submitting form to PayU with",
-              form.elements.length,
-              "fields"
-            );
-            console.log("Form HTML:", form.outerHTML);
+            // Form submitted to PayU
 
             // Submit the form
             form.submit();

@@ -820,10 +820,8 @@ const AboutPage = () => {
               className="w-full h-full object-contain filter drop-shadow-lg"
               style={{ opacity: 0.8 }}
               onError={(e) => {
-                console.log('Rangoli image failed to load:', e);
                 e.currentTarget.style.display = 'none';
               }}
-              onLoad={() => console.log('Rangoli image loaded successfully')}
             />
           </motion.div>
           
@@ -843,10 +841,8 @@ const AboutPage = () => {
               className="w-full h-full object-contain filter drop-shadow-lg scale-x-[-1]"
               style={{ opacity: 0.4 }}
               onError={(e) => {
-                console.log('Rangoli image failed to load:', e);
                 e.currentTarget.style.display = 'none';
               }}
-              onLoad={() => console.log('Rangoli image loaded successfully')}
             />
           </motion.div>
           
@@ -866,10 +862,8 @@ const AboutPage = () => {
               className="w-full h-full object-contain filter drop-shadow-lg"
               style={{ opacity: 0.35 }}
               onError={(e) => {
-                console.log('Rangoli image failed to load:', e);
                 e.currentTarget.style.display = 'none';
               }}
-              onLoad={() => console.log('Rangoli image loaded successfully')}
             />
           </motion.div>
           
@@ -1206,33 +1200,26 @@ const AboutPage = () => {
                 onClick={() => setActiveCategory(key)}
                       className={`relative group transition-all duration-300 ease-out ${
                         activeCategory === key ? 'z-10' : 'z-0'
-                      } ${shouldCenter ? 'col-span-2 justify-self-center' : ''}`}
+                      } ${shouldCenter ? 'col-span-2 justify-self-center max-w-[calc(50%-0.25rem)]' : ''}`}
                 variants={memberVariants}
                       whileTap={{ scale: 0.98 }}
                     >
-                      {/* Mobile Tab Button */}
-                      <div className={`relative px-4 py-3 rounded-lg transition-all duration-300 ${
+                      {/* Mobile Tab Button - Compact Size */}
+                      <div className={`relative w-full h-12 px-2 py-1.5 rounded-lg transition-all duration-300 flex flex-col justify-center ${
                     activeCategory === key 
                           ? `bg-gradient-to-r ${category.color} text-white shadow-md` 
                           : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200'
                       }`}>
-                        {/* Content */}
-                        <div className="flex items-center gap-2">
-                          <div className={`transition-all duration-300 ${
-                            activeCategory === key ? 'text-white' : 'text-gray-500'
-                          }`}>
-                            {React.cloneElement(category.icon, { 
-                              className: `w-4 h-4 ${activeCategory === key ? 'text-white' : 'text-gray-500'}`
-                            })}
-                          </div>
-                          <span className={`font-semibold text-xs leading-tight ${
+                        {/* Content - Mobile optimized without icons */}
+                        <div className="flex items-center justify-between w-full">
+                          <span className={`font-semibold text-[11px] leading-tight flex-1 pr-2 ${
                             activeCategory === key ? 'text-white' : 'text-gray-700'
                           }`}>
-                            {category.shortTitle}
+                            {category.title}
                           </span>
-                          <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ml-auto ${
+                          <span className={`text-[10px] px-2 py-1 rounded-full font-bold flex-shrink-0 ${
                             activeCategory === key 
-                              ? 'bg-white/20 text-white' 
+                              ? 'bg-white/25 text-white' 
                               : 'bg-gray-100 text-gray-600'
                   }`}>
                     {category.members.length}

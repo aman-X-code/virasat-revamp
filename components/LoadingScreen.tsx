@@ -24,83 +24,102 @@ export default function LoadingScreen({ onLoadingComplete }: LoadingScreenProps)
       }
     });
 
-    // Set initial states
-    gsap.set(textRef.current, { opacity: 0, scale: 0.8 });
-    gsap.set(lettersRef.current, { opacity: 0, y: 30, rotationX: -90 });
-    gsap.set(particlesRef.current, { scale: 0, opacity: 0 });
-    gsap.set(glowRef.current, { scale: 0, opacity: 0 });
+    // Set initial states with null checks
+    if (textRef.current) gsap.set(textRef.current, { opacity: 0, scale: 0.8 });
+    if (lettersRef.current.length > 0) gsap.set(lettersRef.current, { opacity: 0, y: 30, rotationX: -90 });
+    if (particlesRef.current.length > 0) gsap.set(particlesRef.current, { scale: 0, opacity: 0 });
+    if (glowRef.current) gsap.set(glowRef.current, { scale: 0, opacity: 0 });
 
     // Phase 1: Fade in text container
-    tl.to(textRef.current, {
-      opacity: 1,
-      scale: 1,
-      duration: 0.8,
-      ease: "power2.out",
-      force3D: true
-    })
+    if (textRef.current) {
+      tl.to(textRef.current, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.8,
+        ease: "power2.out",
+        force3D: true
+      });
+    }
     
     // Phase 2: Reveal letters with 3D effect
-    .to(lettersRef.current, {
-      opacity: 1,
-      y: 0,
-      rotationX: 0,
-      duration: 0.8,
-      stagger: 0.08,
-      ease: "back.out(1.7)",
-      force3D: true
-    }, "-=0.4")
+    if (lettersRef.current.length > 0) {
+      tl.to(lettersRef.current, {
+        opacity: 1,
+        y: 0,
+        rotationX: 0,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: "back.out(1.7)",
+        force3D: true
+      }, "-=0.4");
+    }
     
     // Phase 3: Glow effect appears
-    .to(glowRef.current, {
-      scale: 1.5,
-      opacity: 0.8,
-      duration: 0.6,
-      ease: "power2.out"
-    }, "-=0.3")
+    if (glowRef.current) {
+      tl.to(glowRef.current, {
+        scale: 1.5,
+        opacity: 0.8,
+        duration: 0.6,
+        ease: "power2.out"
+      }, "-=0.3");
+    }
     
     // Phase 4: Particles appear and animate
-    .to(particlesRef.current, {
-      scale: 1,
-      opacity: 1,
-      duration: 0.5,
-      stagger: 0.03,
-      ease: "power2.out"
-    }, "-=0.4")
+    if (particlesRef.current.length > 0) {
+      tl.to(particlesRef.current, {
+        scale: 1,
+        opacity: 1,
+        duration: 0.5,
+        stagger: 0.03,
+        ease: "power2.out"
+      }, "-=0.4");
+    }
     
     // Phase 5: Hold the text for a moment
-    .to({}, { duration: 0.8 })
+    tl.to({}, { duration: 0.8 });
     
     // Phase 6: Zoom transition through letter T
-    .to(containerRef.current, {
-      scale: 50,
-      duration: 3,
-      ease: "power2.inOut",
-      onStart: () => {
-        if (containerRef.current) {
-          containerRef.current.style.transformOrigin = '50% 50%';
+    if (containerRef.current) {
+      tl.to(containerRef.current, {
+        scale: 50,
+        duration: 3,
+        ease: "power2.inOut",
+        onStart: () => {
+          if (containerRef.current) {
+            containerRef.current.style.transformOrigin = '50% 50%';
+          }
+        },
+        onUpdate: () => {
+          // Add subtle perspective changes during zoom for enhanced 3D effect
+          if (containerRef.current) {
+            const progress = tl.progress();
+            const perspective = 2000 + (progress * 3000);
+            containerRef.current.style.perspective = `${perspective}px`;
+          }
         }
-      },
-      onUpdate: () => {
-        // Add subtle perspective changes during zoom for enhanced 3D effect
-        if (containerRef.current) {
-          const progress = tl.progress();
-          const perspective = 2000 + (progress * 3000);
-          containerRef.current.style.perspective = `${perspective}px`;
-        }
-      }
-    }, "-=0.2")
+      }, "-=0.2");
+    }
     
     // Phase 7: Fade out the loading text & overlay
-    .to([textRef.current, glowRef.current], {
-      opacity: 0,
-      duration: 1,
-      ease: "power2.out"
-    }, "-=1.5")
-    .to(overlayRef.current, {
-      opacity: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    }, "-=0.5");
+    const fadeOutElements = [];
+    if (textRef.current) fadeOutElements.push(textRef.current);
+    if (glowRef.current) fadeOutElements.push(glowRef.current);
+    
+    if (fadeOutElements.length > 0) {
+      tl.to(fadeOutElements, {
+        opacity: 0,
+        duration: 1,
+        ease: "power2.out"
+      }, "-=1.5");
+    }
+    
+    if (overlayRef.current) {
+      tl.to(overlayRef.current, {
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.5");
+    }
 
     return () => {
       tl.kill();

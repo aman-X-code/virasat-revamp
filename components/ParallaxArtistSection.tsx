@@ -507,7 +507,7 @@ const ParallaxArtistSection = () => {
                           src={artist.image}
                           alt={artist.name}
                           className="w-full h-full object-cover"
-                          onLoad={() => console.log(`Image loaded: ${artist.name}`)}
+                          onLoad={() => {}}
                           onError={(e) => console.error(`Image failed to load: ${artist.name}`, e)}
                         />
                       </div>
@@ -527,7 +527,7 @@ const ParallaxArtistSection = () => {
                           alt="Decorative Ring"
                           className="w-full h-full object-contain"
                           onError={(e) => {
-                            console.log('Ring image failed to load, falling back to CSS border');
+                            // Ring image failed to load, falling back to CSS border
                             e.currentTarget.style.display = 'none';
                             // Fallback to CSS border if image fails
                             if (e.currentTarget.parentElement) {

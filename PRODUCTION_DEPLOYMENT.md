@@ -37,7 +37,7 @@
   # Required for production
   PAYUBIZ_MERCHANT_KEY=your_production_key
   PAYUBIZ_MERCHANT_SALT=your_production_salt
-  NEXT_PUBLIC_APP_URL=https://yourdomain.com
+  NEXT_PUBLIC_APP_URL=https://reachvirasat.org
   NODE_ENV=production
   
   # Email configuration

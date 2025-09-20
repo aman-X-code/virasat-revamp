@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -16,17 +16,7 @@ const PaymentStatusPage = () => {
   const txnid = searchParams.get('txnid');
   const type = searchParams.get('type');
 
-  useEffect(() => {
-    if (!txnid) {
-      router.push('/donate/failure?error_description=Missing transaction ID');
-      return;
-    }
-
-    // Start checking payment status
-    checkPaymentStatus();
-  }, [txnid]);
-
-  const checkPaymentStatus = async () => {
+  const checkPaymentStatus = useCallback(async () => {
     try {
       // Get all URL parameters that PayU Biz might have sent
       const urlParams = new URLSearchParams(window.location.search);
@@ -47,7 +37,7 @@ const PaymentStatusPage = () => {
 
       // If we have payment status in URL, verify it
       if (paymentParams.status && paymentParams.hash) {
-        console.log('Payment data found in URL:', paymentParams);
+        // Payment data found in URL
         
         const verifyResponse = await fetch('/api/payubiz/verify-payment', {
           method: 'POST',
@@ -105,7 +95,17 @@ const PaymentStatusPage = () => {
         router.push(`/donate/failure?txnid=${txnid}&error_description=Payment verification error`);
       }, 2000);
     }
-  };
+  }, [txnid, router, attempts]);
+
+  useEffect(() => {
+    if (!txnid) {
+      router.push('/donate/failure?error_description=Missing transaction ID');
+      return;
+    }
+
+    // Start checking payment status
+    checkPaymentStatus();
+  }, [txnid, checkPaymentStatus, router]);
 
   const handleManualCheck = () => {
     setStatus('checking');
@@ -202,7 +202,7 @@ const PaymentStatusPage = () => {
               </h1>
               
               <p className="text-gray-600 mb-6">
-                We couldn't verify your payment. Redirecting to error page...
+                We couldn&apos;t verify your payment. Redirecting to error page...
               </p>
             </>
           )}
@@ -223,7 +223,7 @@ const PaymentStatusPage = () => {
               </h1>
               
               <p className="text-gray-600 mb-6">
-                We couldn't get your payment status in time. This might be due to network issues.
+                We couldn&apos;t get your payment status in time. This might be due to network issues.
               </p>
               
               <button

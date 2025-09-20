@@ -30,7 +30,7 @@ export function trackPagePerformance(): PerformanceMetrics {
 export function logPerformanceMetrics(pageName: string) {
   if (process.env.NODE_ENV === 'development') {
     const metrics = trackPagePerformance();
-    console.log(`Performance metrics for ${pageName}:`, metrics);
+    // Performance metrics logged for ${pageName}
   }
 }
 
@@ -46,7 +46,7 @@ export function trackWebVitals() {
           if (entry.entryType === 'largest-contentful-paint') {
             const lcp = entry.startTime;
             if (process.env.NODE_ENV === 'development') {
-              console.log('LCP:', lcp);
+              // LCP tracked
             }
           }
         }

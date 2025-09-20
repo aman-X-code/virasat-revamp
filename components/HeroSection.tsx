@@ -194,7 +194,11 @@ const HeroSection = () => {
                     muted
                     playsInline
                     preload="metadata"
-                    poster={`https://res.cloudinary.com/digilabs/image/upload/f_auto,q_auto,w_800,c_limit/prod/hero/prod/hero/${item.video.split("/").pop()?.replace(".mp4", ".jpg")}`}
+                    controls={false}
+                    disablePictureInPicture
+                    controlsList="nodownload nofullscreen noremoteplayback"
+                    onContextMenu={(e) => e.preventDefault()}
+                    poster=""
                     onError={(e) => {
                       console.error('Video failed to load:', item.video);
                       // Fallback to poster image if video fails

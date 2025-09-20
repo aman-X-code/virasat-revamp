@@ -2,9 +2,10 @@
 
 import './globals.css';
 import { Playfair_Display, Lato, Cormorant_Garamond, Cinzel } from 'next/font/google';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import FloatingGetTicketsButton from '@/components/FloatingGetTicketsButton';
@@ -53,7 +54,26 @@ export default function RootLayout({
   // This state will be true on first load and on every refresh.
   // It will persist as `false` across client-side navigations.
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
+  // Suppress Next.js router scroll warnings in development
+  useEffect(() => {
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      const originalConsoleWarn = console.warn;
+      console.warn = function(...args) {
+        const message = args[0];
+        if (typeof message === 'string' && message.includes('Skipping auto-scroll behavior due to')) {
+          // Suppress this specific warning as it's expected behavior
+          return;
+        }
+        originalConsoleWarn.apply(console, args);
+      };
+      
+      return () => {
+        console.warn = originalConsoleWarn;
+      };
+    }
+  }, []);
 
   const handleLoadingComplete = () => {
     setLoading(false);

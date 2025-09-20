@@ -10,7 +10,7 @@ PAYUBIZ_MERCHANT_KEY=your_payubiz_merchant_key_here
 PAYUBIZ_MERCHANT_SALT=your_payubiz_merchant_salt_here
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://your-domain.com
+NEXT_PUBLIC_APP_URL=https://reachvirasat.org
 NODE_ENV=production
 ```
 

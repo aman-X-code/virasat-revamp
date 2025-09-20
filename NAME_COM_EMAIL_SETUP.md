@@ -1,5 +1,9 @@
 # 📧 Name.com Email Configuration Guide
 
+## 🚨 URGENT: DNS Records Required
+
+If you're seeing "Action required for reachvirasat.org: To send and receive emails, you need to set your domain's MX & SPF records correctly", **jump to Step 6** immediately to configure DNS records.
+
 ## Overview
 
 This guide helps you configure your custom email purchased from name.com with the Virasat Foundation donation system.
@@ -50,14 +54,14 @@ EMAIL_PASSWORD=your_email_password
 
 ## Step 3: Common Name.com SMTP Configurations
 
-### Configuration Option 1 (Most Common)
+### Configuration Option 1 (Titan Email - Most Common)
 
 ```bash
 EMAIL_SERVICE=smtp
-EMAIL_HOST=mail.yourdomain.com
+EMAIL_HOST=smtp.titan.email
 EMAIL_PORT=587
 EMAIL_SECURE=false
-EMAIL_USER=info@yourdomain.com
+EMAIL_USER=noreply@reachvirasat.org
 EMAIL_PASSWORD=your_password
 ```
 
@@ -144,33 +148,94 @@ EMAIL_SECURE=true
 - Verify sender email is properly configured
 - Check if domain has proper SPF/DKIM records
 
-## Step 6: DNS Configuration (Optional but Recommended)
+#### Issue: "Action required for reachvirasat.org: To send and receive emails, you need to set your domain's MX & SPF records correctly"
 
-To improve email deliverability, configure these DNS records:
+**Solution**: Configure DNS records immediately
 
-### SPF Record
+1. **Add MX Records** (see Step 6 above)
+2. **Add SPF Record** (see Step 6 above)
+3. **Wait for DNS propagation** (up to 48 hours)
+4. **Test email delivery** after DNS changes take effect
+
+**How to verify DNS records are working:**
+
+```bash
+# Check MX records
+nslookup -type=MX reachvirasat.org
+
+# Check SPF record
+nslookup -type=TXT reachvirasat.org
+```
+
+Or use online tools like:
+- https://mxtoolbox.com/
+- https://dnschecker.org/
+
+## Step 6: DNS Configuration (REQUIRED for Name.com Email)
+
+⚠️ **CRITICAL**: These DNS records are REQUIRED for Name.com email to work properly.
+
+### MX Records (Mail Exchange) - REQUIRED
+
+For **Titan Email** (Name.com's email service), configure these MX records:
+
+```
+Type: MX
+Name: @
+Priority: 10
+Value: mx1.titan.email
+
+Type: MX
+Name: @
+Priority: 20
+Value: mx2.titan.email
+```
+
+**IMPORTANT**: Delete the existing `mail.reachvirasat.org` MX record and replace with the Titan MX records above.
+
+### SPF Record - REQUIRED
+
+For **Titan Email**, use this SPF record:
 
 ```
 Type: TXT
 Name: @
-Value: v=spf1 include:_spf.name.com ~all
+Value: v=spf1 include:_spf.titan.email ~all
 ```
 
-### DKIM Record
+**IMPORTANT**: Update the existing SPF record to use `_spf.titan.email` instead of `spf.name.com`.
+
+### DKIM Record - RECOMMENDED
 
 ```
 Type: TXT
 Name: default._domainkey
-Value: (provided by name.com)
+Value: (provided by name.com - check your email dashboard)
 ```
 
-### DMARC Record
+### DMARC Record - RECOMMENDED
 
 ```
 Type: TXT
 Name: _dmarc
-Value: v=DMARC1; p=quarantine; rua=mailto:dmarc@yourdomain.com
+Value: v=DMARC1; p=quarantine; rua=mailto:dmarc@reachvirasat.org
 ```
+
+## How to Configure DNS Records
+
+### If DNS is managed by Name.com:
+
+1. Login to your Name.com account
+2. Go to "My Domains" → Select your domain
+3. Click "DNS Records" or "Manage DNS"
+4. Add the MX and TXT records listed above
+
+### If DNS is managed elsewhere (Cloudflare, etc.):
+
+1. Login to your DNS provider
+2. Navigate to DNS management for reachvirasat.org
+3. Add the MX and TXT records listed above
+4. Wait 24-48 hours for DNS propagation
 
 ## Step 7: Production Deployment
 

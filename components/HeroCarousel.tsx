@@ -28,6 +28,10 @@ const HeroCarousel = ({ items }: { items: { id: number; video: string }[] }) => 
                 loop
                 muted
                 playsInline
+                controls={false}
+                disablePictureInPicture
+                controlsList="nodownload nofullscreen noremoteplayback"
+                onContextMenu={(e) => e.preventDefault()}
                 onError={(e) => {
                   console.error('Carousel video failed to load:', item.video);
                   // Fallback to gradient background if video fails
