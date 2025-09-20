@@ -864,6 +864,7 @@ interface Artist {
 5. Commit changes: `git commit -m 'Add amazing feature'`
 6. Push to branch: `git push origin feature/amazing-feature`
 7. Open a Pull Request
+8.done
 
 ### 📋 Code Standards
 - **TypeScript**: Strict type checking enabled
