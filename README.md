@@ -65,10 +65,13 @@ A modern, responsive website celebrating India's cultural heritage and tradition
    # App Configuration
    NEXT_PUBLIC_APP_URL=http://localhost:3000
    
-   # Email Configuration (Gmail for demo)
-   EMAIL_SERVICE=gmail
-   EMAIL_USER=your-gmail@gmail.com
-   EMAIL_APP_PASSWORD=your-16-character-app-password
+   # Email Configuration (Custom SMTP)
+   EMAIL_SERVICE=smtp
+   EMAIL_HOST=mail.reachvirasat.org
+   EMAIL_PORT=587
+   EMAIL_SECURE=false
+   EMAIL_USER=noreply@reachvirasat.org
+   EMAIL_PASSWORD=your_email_password
    ```
 
 4. **Run development server**
@@ -469,9 +472,9 @@ section {
 ### 📧 Email System (Automated Notifications)
 - **Professional Email Templates**: Branded HTML emails with Virasat styling
 - **PDF Receipt Attachments**: Automatic PDF generation and email attachment
-- **Gmail SMTP Integration**: Demo setup with Gmail (easily switchable to professional services)
+- **Custom SMTP Integration**: Professional email setup with custom domain (reachvirasat.org)
 - **Webhook-triggered Emails**: Automatic email sending on successful payments
-- **Multi-service Support**: Easy switching between Gmail, Resend, SendGrid
+- **Professional Domain**: Uses reachvirasat.org for enhanced credibility
 - **Tax Information**: Section 80G tax deduction details in emails
 - **Auto-generated Disclaimer**: Prevents reply confusion
 
@@ -660,23 +663,58 @@ Tests email functionality for development.
 
 ### 🔧 Email Configuration
 
-#### Gmail Setup (Demo)
+#### Custom SMTP Setup (Production)
 ```bash
-# Environment Variables
-EMAIL_SERVICE=gmail
-EMAIL_USER=your-gmail@gmail.com
-EMAIL_APP_PASSWORD=your-16-character-app-password
+# Environment Variables for Custom Domain
+EMAIL_SERVICE=smtp
+EMAIL_HOST=mail.reachvirasat.org
+EMAIL_PORT=587
+EMAIL_SECURE=false
+EMAIL_USER=noreply@reachvirasat.org
+EMAIL_PASSWORD=your_email_password
 ```
 
-#### Professional Services
+#### Alternative SMTP Configurations
 ```bash
-# Resend
-EMAIL_SERVICE=resend
-RESEND_API_KEY=your_resend_api_key
+# For SSL/TLS (Port 465)
+EMAIL_SERVICE=smtp
+EMAIL_HOST=mail.reachvirasat.org
+EMAIL_PORT=465
+EMAIL_SECURE=true
+EMAIL_USER=noreply@reachvirasat.org
+EMAIL_PASSWORD=your_email_password
 
-# SendGrid
-EMAIL_SERVICE=sendgrid
-SENDGRID_API_KEY=your_sendgrid_api_key
+# For Titan Email (Name.com)
+EMAIL_SERVICE=smtp
+EMAIL_HOST=smtp.titan.email
+EMAIL_PORT=587
+EMAIL_SECURE=false
+EMAIL_USER=noreply@reachvirasat.org
+EMAIL_PASSWORD=your_email_password
+```
+
+#### DNS Configuration Required
+For custom email domain to work properly, ensure these DNS records are configured:
+
+**MX Records (Mail Exchange):**
+```
+Type: MX, Name: @, Priority: 10, Value: mx1.titan.email
+Type: MX, Name: @, Priority: 20, Value: mx2.titan.email
+```
+
+**SPF Record (Sender Policy Framework):**
+```
+Type: TXT, Name: @, Value: v=spf1 include:_spf.titan.email ~all
+```
+
+**DKIM Record (DomainKeys Identified Mail):**
+```
+Type: TXT, Name: default._domainkey, Value: (provided by email provider)
+```
+
+**DMARC Record (Domain-based Message Authentication):**
+```
+Type: TXT, Name: _dmarc, Value: v=DMARC1; p=quarantine; rua=mailto:dmarc@reachvirasat.org
 ```
 
 ## 🚀 Deployment & Hosting
@@ -761,10 +799,13 @@ PAYUBIZ_MERCHANT_SALT=your_production_payubiz_merchant_salt
 # App Configuration
 NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 
-# Email Configuration
-EMAIL_SERVICE=gmail
-EMAIL_USER=your-production-email@gmail.com
-EMAIL_APP_PASSWORD=your-gmail-app-password
+# Email Configuration (Custom SMTP)
+EMAIL_SERVICE=smtp
+EMAIL_HOST=mail.reachvirasat.org
+EMAIL_PORT=587
+EMAIL_SECURE=false
+EMAIL_USER=noreply@reachvirasat.org
+EMAIL_PASSWORD=your_email_password
 
 # Cloudinary Configuration
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
@@ -797,7 +838,7 @@ npm run build-production
 - [ ] `NEXT_PUBLIC_APP_URL` - Production domain (HTTPS required)
 - [ ] `EMAIL_SERVICE` - Email service configuration
 - [ ] `EMAIL_USER` - Email service username
-- [ ] `EMAIL_APP_PASSWORD` - Email service password
+- [ ] `EMAIL_PASSWORD` - Email account password
 - [ ] `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` - Cloudinary cloud name
 - [ ] `CLOUDINARY_API_KEY` - Cloudinary API key
 - [ ] `CLOUDINARY_API_SECRET` - Cloudinary API secret
