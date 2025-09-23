@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import Image from 'next/image';
+import { useEffect, useRef } from 'react';
 import 'swiper/css';
 
 const partners = [
@@ -28,6 +29,18 @@ export const PartnersSection = () => {
   const sectionBgColor = '#FFF7F5F4'; // Matching Cultural Heritage Festival background
   const sponsors = partners.filter((p: any) => (p as any).sponsorType);
   const regularPartners = partners.filter((p: any) => !(p as any).sponsorType);
+  const swiperRef = useRef<any>(null);
+
+  // Simple effect to restart autoplay when component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (swiperRef.current && swiperRef.current.swiper && swiperRef.current.swiper.autoplay) {
+        swiperRef.current.swiper.autoplay.start();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <motion.section
@@ -93,6 +106,7 @@ export const PartnersSection = () => {
         {/* Infinite Marquee with Swiper */}
         <div className="marquee-swiper-container">
           <Swiper
+            ref={swiperRef}
             modules={[Autoplay]}
             slidesPerView="auto"
             spaceBetween={20}
@@ -102,6 +116,7 @@ export const PartnersSection = () => {
             autoplay={{
               delay: 1,
               disableOnInteraction: false,
+              pauseOnMouseEnter: false,
             }}
             className="marquee-swiper"
           >

@@ -100,11 +100,16 @@ virasat/
 │   ├── 📁 about/                    # About page
 │   │   └── page.tsx                 # About page component
 │   ├── 📁 api/                      # API Routes
+│   │   ├── 📁 debug/               # Development debugging endpoints
+│   │   │   └── 📁 env-check/       # Environment validation endpoint
 │   │   ├── 📁 payubiz/             # PayU Biz payment integration
 │   │   │   ├── 📁 create-transaction/ # Create payment transaction
 │   │   │   ├── 📁 verify-payment/     # Verify payment status
 │   │   │   ├── 📁 webhook/            # Payment webhook handler
-│   │   │   └── 📁 get-key/            # Get merchant key
+│   │   │   ├── 📁 get-key/            # Get merchant key
+│   │   │   ├── 📁 test-config/        # Test PayU Biz configuration
+│   │   │   ├── 📁 check-status/       # Check payment status
+│   │   │   └── 📁 redirect-handler/   # Handle PayU Biz redirects
 │   │   ├── 📁 send-email/          # Email sending API
 │   │   └── 📁 test-email/          # Email testing API
 │   ├── 📁 blogs/                    # News system (PDF downloads)
@@ -114,6 +119,9 @@ virasat/
 │   ├── 📁 donate/                   # Donation system
 │   │   ├── 📁 success/             # Donation success page
 │   │   ├── 📁 failure/             # Donation failure page
+│   │   ├── 📁 dev-complete/        # Development payment completion helper
+│   │   ├── 📁 payment-status/      # Payment status checking page
+│   │   ├── 📁 status/              # Payment status verification page
 │   │   └── page.tsx                 # Donation form with PayU Biz
 │   ├── 📁 events/                   # Events system
 │   │   ├── 📁 [id]/                # Dynamic event pages
@@ -127,6 +135,12 @@ virasat/
 │   │   └── page.tsx                 # Events listing
 │   ├── 📁 gallery/                  # Gallery page
 │   │   └── page.tsx                 # Photo/video gallery
+│   ├── 📁 refund/                   # Refund policy page
+│   │   └── page.tsx                 # Refund terms and conditions
+│   ├── 📁 terms/                    # Terms and conditions page
+│   │   └── page.tsx                 # Legal terms and conditions
+│   ├── 📁 privacy/                  # Privacy policy page
+│   │   └── page.tsx                 # Privacy policy and data protection
 │   ├── globals.css                  # Global styles
 │   ├── layout.tsx                   # Root layout
 │   └── page.tsx                     # Home page
@@ -178,10 +192,14 @@ virasat/
 │   ├── cloudinary-loader.ts         # Cloudinary image loader
 │   ├── cloudinary.ts                # Cloudinary configuration
 │   ├── email.ts                     # Email templates and PDF generation
+│   ├── env-validation.ts            # Environment variable validation
 │   ├── event-preloader.ts           # Event data preloading
 │   ├── events-ssg.ts                # Static site generation
 │   ├── events.ts                    # Events data & API simulation
+│   ├── rate-limit.ts                # In-memory rate limiting
+│   ├── redis-rate-limit.ts          # Redis-based rate limiting
 │   ├── security.ts                  # Security utilities
+│   ├── webhook-security.ts          # Webhook security validation
 │   └── utils.ts                     # General utilities
 ├── 📁 public/                       # Static assets
 │   └── 📁 images/                   # Image assets
@@ -196,8 +214,10 @@ virasat/
 │       ├── reach.png
 │       ├── textured-background.svg
 │       └── vir.png
-├── 📁 scripts/                      # Build scripts
-│   └── upload-to-cloudinary.js      # Cloudinary upload script
+├── 📁 scripts/                      # Build and utility scripts
+│   ├── test-payubiz.js              # PayU Biz configuration testing
+│   ├── upload-to-cloudinary.js      # Cloudinary upload script
+│   └── validate-production.js       # Production deployment validation
 ├── components.json                  # shadcn/ui configuration
 ├── next.config.js                   # Next.js configuration
 ├── package.json                     # Dependencies & scripts
@@ -358,6 +378,12 @@ section {
 - **`/blogs`** - News and press releases (PDF downloads)
 - **`/contact`** - Contact information and forms
 - **`/donate`** - Donation page for supporting heritage preservation
+- **`/donate/dev-complete`** - Development payment completion helper (dev only)
+- **`/donate/payment-status`** - Payment status checking page
+- **`/donate/status`** - Payment status verification with polling
+- **`/refund`** - Comprehensive refund policy and terms
+- **`/terms`** - Terms and conditions for donations
+- **`/privacy`** - Privacy policy and data protection information
 
 ## 🛠️ Technology Stack
 
@@ -545,6 +571,63 @@ Handles PayU Biz webhook events for payment processing.
 - `failure` - Logs failed payments
 - `pending` - Handles pending payment status
 
+#### `GET /api/payubiz/test-config`
+Tests PayU Biz configuration in development mode.
+
+**Response:**
+```json
+{
+  "success": true,
+  "errors": [],
+  "environment": "development",
+  "hasKey": true,
+  "hasSalt": true,
+  "hasAppUrl": true,
+  "keyLength": 16,
+  "saltLength": 32
+}
+```
+
+#### `POST /api/payubiz/check-status`
+Checks payment status for a given transaction ID.
+
+**Request Body:**
+```json
+{
+  "txnid": "TXN_1234567890_ABC123"
+}
+```
+
+#### `GET /api/payubiz/redirect-handler`
+Handles PayU Biz payment redirects and forwards to appropriate success/failure pages.
+
+**Query Parameters:**
+- `txnid` - Transaction ID
+- `amount` - Payment amount
+- `status` - Payment status
+- `mihpayid` - PayU payment ID
+- `hash` - Verification hash
+
+#### `GET /api/debug/env-check`
+Development-only endpoint to check environment configuration.
+
+**Query Parameters:**
+- `debug=true` - Enable debug mode
+
+**Response:**
+```json
+{
+  "environment": "development",
+  "hasPayUKey": true,
+  "hasPayUSalt": true,
+  "hasAppUrl": true,
+  "appUrl": "http://localhost:3000",
+  "payuKeyLength": 16,
+  "payuSaltLength": 32,
+  "payuKeyPreview": "abc1..."
+}
+```
+
 ### 📧 Email APIs
 
 #### `POST /api/send-email`
@@ -694,6 +777,45 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 2. **Active Events**: `success`, `failure`, `pending`
 3. **Hash Verification**: Uses merchant salt for hash verification
 
+### 🚀 Production Deployment Checklist
+
+#### Pre-Deployment Validation
+```bash
+# Validate production configuration
+npm run validate-production
+
+# Test PayU Biz configuration
+npm run test-payubiz
+
+# Build production bundle
+npm run build-production
+```
+
+#### Environment Variables Checklist
+- [ ] `PAYUBIZ_MERCHANT_KEY` - Production PayU Biz merchant key
+- [ ] `PAYUBIZ_MERCHANT_SALT` - Production PayU Biz merchant salt
+- [ ] `NEXT_PUBLIC_APP_URL` - Production domain (HTTPS required)
+- [ ] `EMAIL_SERVICE` - Email service configuration
+- [ ] `EMAIL_USER` - Email service username
+- [ ] `EMAIL_APP_PASSWORD` - Email service password
+- [ ] `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` - Cloudinary cloud name
+- [ ] `CLOUDINARY_API_KEY` - Cloudinary API key
+- [ ] `CLOUDINARY_API_SECRET` - Cloudinary API secret
+
+#### PayU Biz Production Setup
+1. **Switch to Production Mode**: Update PayU Biz dashboard settings
+2. **Configure Webhook URL**: Set webhook to production domain
+3. **Test with Small Payment**: Process ₹1 test transaction
+4. **Verify Email Delivery**: Check receipt email functionality
+5. **Monitor Webhook Delivery**: Ensure webhooks are received
+
+#### Post-Deployment Testing
+1. **Payment Flow Test**: Complete end-to-end donation
+2. **Email Verification**: Confirm receipt emails are sent
+3. **Webhook Testing**: Verify webhook processing
+4. **Security Headers**: Check CSP and security headers
+5. **Performance Testing**: Run Lighthouse audit
+
 ## 🎨 Animation & Effects System
 
 ### 🎬 GSAP Animations
@@ -766,6 +888,38 @@ interface Artist {
 - **Types**: TypeScript interfaces for all data structures
 - **Hooks**: Custom hooks for reusable logic
 - **Utils**: Shared utility functions
+
+### 🧪 Development Testing & Validation
+
+#### PayU Biz Configuration Testing
+```bash
+# Test PayU Biz configuration
+npm run test-payubiz
+
+# Validate production readiness
+npm run validate-production
+```
+
+#### Development Payment Flow
+1. **Start Development Server**: `npm run dev`
+2. **Test Donation Flow**: Navigate to `/donate`
+3. **Complete Payment**: Use PayU Biz test credentials
+4. **Handle Redirects**: If localhost redirects fail, use `/donate/dev-complete`
+5. **Check Status**: Monitor payment status with `/donate/status`
+
+#### Environment Validation
+```bash
+# Check environment configuration
+curl "http://localhost:3000/api/debug/env-check?debug=true"
+
+# Test PayU Biz configuration
+curl "http://localhost:3000/api/payubiz/test-config"
+```
+
+#### Development Scripts
+- **`npm run test-payubiz`** - Validates PayU Biz configuration
+- **`npm run validate-production`** - Checks production readiness
+- **`npm run upload-cloudinary`** - Uploads images to Cloudinary
 
 ### ⚡ Performance Best Practices
 - **Image Optimization**: Proper sizing and lazy loading
