@@ -1,10 +1,10 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Clock, MapPin, Users, Star, Calendar, ArrowRight, Timer } from "lucide-react"
-import Link from "next/link"
-import ComponentErrorBoundary from "./ComponentErrorBoundary"
+import { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { gsap } from 'gsap';
+import ComponentErrorBoundary from './ComponentErrorBoundary';
 
 // Helper function to convert event title to Cloudinary image name
 function getEventImageUrl(title: string): string {
@@ -19,885 +19,202 @@ function getEventImageUrl(title: string): string {
   return `https://res.cloudinary.com/digilabs/image/upload/f_auto,q_auto,w_500/prod/events/prod/events/${kebabCase}.jpg`;
 }
 
+// Real events data (first 10 non-cancelled events)
 const rawEvents = [
   {
-    id: 1,
-    day: "Day 1",
-    date: "4th October, Saturday",
-    title: "Festival Inauguration",
-    description: "Join us for the grand opening ceremony of Virasat Festival 2024, marking the beginning of our cultural celebration.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "500 seats available",
-    price: "₹2000",
-    featured: true,
-    category: "Inauguration"
-  },
-  {
     id: 2,
-    day: "Day 1",
-    date: "4th October, Saturday",
     title: "Choliya – Folk Form of Uttarakhand",
-    description: "Experience the traditional folk dance of Uttarakhand, showcasing the rich cultural heritage of the Himalayan region.",
-    image: "/images/artists/zakir_hussain.jpg",
-    time: "7:30 PM",
-    location: "BR Ambedkar Ground",
-    seats: "300 seats available",
-    price: "₹1500",
-    featured: false,
-    category: "Folk Dance"
+    description: "Experience the traditional folk dance of Uttarakhand, showcasing the rich cultural heritage of the Himalayan region."
   },
   {
     id: 3,
-    day: "Day 1",
-    date: "4th October, Saturday",
     title: "Sarod recital by Ustad Amjad Ali Khan",
-    description: "An enchanting evening with the legendary sarod maestro, presenting classical ragas and timeless melodies.",
-    image: "/images/artists/ring.png",
-    time: "8:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "250 seats available",
-    price: "₹2500",
-    featured: true,
-    category: "Classical Music"
-  },
-  {
-    id: 4,
-    day: "Day 2",
-    date: "5th October, Sunday",
-    title: "Vintage Car Rally",
-    description: "Witness a spectacular display of vintage automobiles showcasing automotive heritage and craftsmanship.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "10:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "Open Event",
-    price: "₹500",
-    featured: false,
-    category: "Heritage"
+    description: "An enchanting evening with the legendary sarod maestro, presenting classical ragas and timeless melodies."
   },
   {
     id: 6,
-    day: "Day 2",
-    date: "5th October, Sunday",
     title: "Sitar recital by Adnan Khan",
-    description: "An evening of soulful sitar melodies by the renowned Adnan Khan, exploring the depths of Hindustani classical music.",
-    image: "/images/artists/naseeruddin_shah.jpg",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "180 seats available",
-    price: "₹2000",
-    featured: false,
-    category: "Classical Music"
+    description: "An evening of soulful sitar melodies by the renowned Adnan Khan, exploring the depths of Hindustani classical music."
   },
   {
     id: 7,
-    day: "Day 2",
-    date: "5th October, Sunday",
     title: "Osman Mir Live",
-    description: "A contemporary musical experience with Osman Mir, blending traditional and modern sounds in a unique performance.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "8:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "400 seats available",
-    price: "₹1200",
-    featured: false,
-    category: "Contemporary Music"
-  },
-  {
-    id: 8,
-    day: "Day 3",
-    date: "6th October, Monday",
-    title: "Virasat Saadhna",
-    description: "Morning spiritual session focusing on traditional practices and meditation techniques from Indian heritage.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "9:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "100 seats available",
-    price: "₹800",
-    featured: false,
-    category: "Spiritual"
+    description: "A contemporary musical experience with Osman Mir, blending traditional and modern sounds in a unique performance."
   },
   {
     id: 9,
-    day: "Day 3",
-    date: "6th October, Monday",
     title: "Folk performances from Uttarakhand",
-    description: "A vibrant showcase of traditional folk music and dance forms from the beautiful state of Uttarakhand.",
-    image: "/images/artists/zakir_hussain.jpg",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "300 seats available",
-    price: "₹1000",
-    featured: false,
-    category: "Folk Music"
+    description: "A vibrant showcase of traditional folk music and dance forms from the beautiful state of Uttarakhand."
   },
   {
     id: 10,
-    day: "Day 3",
-    date: "6th October, Monday",
     title: "Sarod recital by Pratik Shrivastava",
-    description: "An intimate performance by the talented sarod artist Pratik Shrivastava, presenting classical compositions.",
-    image: "/images/artists/ring.png",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "150 seats available",
-    price: "₹1500",
-    featured: false,
-    category: "Classical Music"
+    description: "An intimate performance by the talented sarod artist Pratik Shrivastava, presenting classical compositions."
   },
   {
     id: 11,
-    day: "Day 3",
-    date: "6th October, Monday",
     title: "Hindustani vocal by Pt Ulhas Kashalkar",
-    description: "An evening of classical vocal music by the renowned Pandit Ulhas Kashalkar, master of the Gwalior gharana.",
-    image: "/images/artists/shubha_mudgal.jpg",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹2200",
-    featured: true,
-    category: "Classical Vocal"
-  },
-  {
-    id: 12,
-    day: "Day 4",
-    date: "7th October, Tuesday",
-    title: "Virasat Saadhna",
-    description: "Morning spiritual session focusing on traditional practices and meditation techniques from Indian heritage.",
-    image: "/images/artists/naseeruddin_shah.jpg",
-    time: "9:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "100 seats available",
-    price: "₹800",
-    featured: false,
-    category: "Spiritual"
+    description: "An evening of classical vocal music by the renowned Pandit Ulhas Kashalkar, master of the Gwalior gharana."
   },
   {
     id: 13,
-    day: "Day 4",
-    date: "7th October, Tuesday",
     title: "Sitar recital by Soumitra Thakur",
-    description: "An evening of classical sitar music by the talented Soumitra Thakur, exploring traditional ragas and compositions.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "180 seats available",
-    price: "₹1800",
-    featured: false,
-    category: "Classical Music"
+    description: "An evening of classical sitar music by the talented Soumitra Thakur, exploring traditional ragas and compositions."
   },
   {
     id: 14,
-    day: "Day 4",
-    date: "7th October, Tuesday",
     title: "Vocal recital by Aniruddh Aithal",
-    description: "A soulful vocal performance by Aniruddh Aithal, presenting classical Hindustani vocal music with traditional compositions.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "8:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹2000",
-    featured: false,
-    category: "Classical Vocal"
-  },
-  {
-    id: 15,
-    day: "Day 5",
-    date: "8th October, Wednesday",
-    title: "Virasat Saadhna",
-    description: "Morning spiritual session focusing on traditional practices and meditation techniques from Indian heritage.",
-    image: "/images/artists/zakir_hussain.jpg",
-    time: "9:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "100 seats available",
-    price: "₹800",
-    featured: false,
-    category: "Spiritual"
+    description: "A soulful vocal performance by Aniruddh Aithal, presenting classical Hindustani vocal music with traditional compositions."
   },
   {
     id: 16,
-    day: "Day 5",
-    date: "8th October, Wednesday",
     title: "Slide Guitar concert by Deepak Kshirsagar",
-    description: "A unique musical experience with slide guitar maestro Deepak Kshirsagar, blending traditional and contemporary sounds.",
-    image: "/images/artists/ring.png",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "150 seats available",
-    price: "₹1500",
-    featured: false,
-    category: "Contemporary Music"
-  },
-  {
-    id: 17,
-    day: "Day 5",
-    date: "8th October, Wednesday",
-    title: "Hindustani vocal by Pt. Sajan Mishra",
-    description: "An evening of classical vocal music by the legendary Pandit Sajan Mishra, master of the Banaras gharana.",
-    image: "/images/artists/shubha_mudgal.jpg",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "250 seats available",
-    price: "₹2500",
-    featured: true,
-    category: "Classical Vocal"
-  },
-  {
-    id: 18,
-    day: "Day 5",
-    date: "8th October, Wednesday",
-    title: "Across the Miles - Folk music and dance from Belarus",
-    description: "An international cultural exchange featuring traditional folk music and dance performances from Belarus.",
-    image: "/images/artists/naseeruddin_shah.jpg",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "300 seats available",
-    price: "₹1200",
-    featured: false,
-    category: "International Folk"
-  },
-  {
-    id: 19,
-    day: "Day 6",
-    date: "9th October, Thursday",
-    title: "Virasat Saadhna",
-    description: "Morning spiritual session focusing on traditional practices and meditation techniques from Indian heritage.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "9:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "100 seats available",
-    price: "₹800",
-    featured: false,
-    category: "Spiritual"
-  },
-  {
-    id: 20,
-    day: "Day 6",
-    date: "9th October, Thursday",
-    title: "Traditional songs of Garhwal, Kumaon, Jaunsar",
-    description: "A musical journey through the traditional songs and folk music of Garhwal, Kumaon, and Jaunsar regions.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "250 seats available",
-    price: "₹1000",
-    featured: false,
-    category: "Folk Music"
-  },
-  {
-    id: 21,
-    day: "Day 6",
-    date: "9th October, Thursday",
-    title: "Vocal recital by Deborshee Bhattacharjee",
-    description: "A classical vocal performance by Deborshee Bhattacharjee, presenting traditional Hindustani classical music.",
-    image: "/images/artists/zakir_hussain.jpg",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "180 seats available",
-    price: "₹1800",
-    featured: false,
-    category: "Classical Vocal"
-  },
-  {
-    id: 22,
-    day: "Day 6",
-    date: "9th October, Thursday",
-    title: "Sitar recital by Anupma Bhagwat",
-    description: "An enchanting sitar performance by Anupma Bhagwat, showcasing the beauty of classical Indian music.",
-    image: "/images/artists/ring.png",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹2000",
-    featured: false,
-    category: "Classical Music"
-  },
-  {
-    id: 23,
-    day: "Day 7",
-    date: "10th October, Friday",
-    title: "Folk forms of Goa",
-    description: "Experience the vibrant folk traditions of Goa with traditional music, dance, and cultural performances.",
-    image: "/images/artists/shubha_mudgal.jpg",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "300 seats available",
-    price: "₹1200",
-    featured: false,
-    category: "Folk Dance"
-  },
-  {
-    id: 24,
-    day: "Day 7",
-    date: "10th October, Friday",
-    title: "Violin recital by Yadnesh Raikar",
-    description: "A mesmerizing violin performance by Yadnesh Raikar, presenting classical compositions with technical brilliance.",
-    image: "/images/artists/naseeruddin_shah.jpg",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "150 seats available",
-    price: "₹1800",
-    featured: false,
-    category: "Classical Music"
-  },
-  {
-    id: 25,
-    day: "Day 7",
-    date: "10th October, Friday",
-    title: "Vocal recital by Omkar Dadarkar",
-    description: "A soulful vocal performance by Omkar Dadarkar, presenting classical Hindustani vocal music with traditional ragas.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "8:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹2000",
-    featured: false,
-    category: "Classical Vocal"
-  },
-  {
-    id: 26,
-    day: "Day 7",
-    date: "10th October, Friday",
-    title: "All women Band from Kirgistan",
-    description: "An international performance featuring an all-women band from Kyrgyzstan, showcasing Central Asian musical traditions.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "10:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "250 seats available",
-    price: "₹1500",
-    featured: false,
-    category: "International Music"
-  },
-  {
-    id: 27,
-    day: "Day 8",
-    date: "11th October, Saturday",
-    title: "Heritage Quiz",
-    description: "Test your knowledge of Indian cultural heritage in this engaging quiz competition with exciting prizes.",
-    image: "/images/artists/zakir_hussain.jpg",
-    time: "10:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "100 seats available",
-    price: "₹500",
-    featured: false,
-    category: "Educational"
-  },
-  {
-    id: 28,
-    day: "Day 8",
-    date: "11th October, Saturday",
-    title: "Folk Theatre – Chakravyuh of Uttarakhand",
-    description: "Experience traditional folk theatre from Uttarakhand with the classic tale of Chakravyuh, performed by local artists.",
-    image: "/images/artists/ring.png",
-    time: "1:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹1000",
-    featured: false,
-    category: "Folk Theatre"
-  },
-  {
-    id: 29,
-    day: "Day 8",
-    date: "11th October, Saturday",
-    title: "Vocal recital by Prabhakar Diwakar Kashyap",
-    description: "A classical vocal performance by Prabhakar Diwakar Kashyap, presenting traditional Hindustani classical music.",
-    image: "/images/artists/shubha_mudgal.jpg",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "180 seats available",
-    price: "₹1800",
-    featured: false,
-    category: "Classical Vocal"
-  },
-  {
-    id: 30,
-    day: "Day 8",
-    date: "11th October, Saturday",
-    title: "Violin recital by Dr. N Rajam",
-    description: "An evening of classical violin music by the legendary Dr. N Rajam, master of the Carnatic violin tradition.",
-    image: "/images/artists/naseeruddin_shah.jpg",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹2500",
-    featured: true,
-    category: "Classical Music"
-  },
-  {
-    id: 31,
-    day: "Day 9",
-    date: "12th October, Sunday",
-    title: "Virasat Super Bike Rally",
-    description: "Witness an exciting display of super bikes and motorcycles, showcasing automotive passion and heritage.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "10:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "Open Event",
-    price: "₹500",
-    featured: false,
-    category: "Heritage"
-  },
-  {
-    id: 32,
-    day: "Day 9",
-    date: "12th October, Sunday",
-    title: "Folk music and dance from Uttarakhand",
-    description: "A vibrant showcase of traditional folk music and dance forms from the beautiful state of Uttarakhand.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "300 seats available",
-    price: "₹1000",
-    featured: false,
-    category: "Folk Music"
-  },
-  {
-    id: 33,
-    day: "Day 9",
-    date: "12th October, Sunday",
-    title: "Santoor recital by Abhay Sopori",
-    description: "An enchanting santoor performance by Abhay Sopori, presenting classical compositions with traditional Kashmiri music.",
-    image: "/images/artists/zakir_hussain.jpg",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹2000",
-    featured: false,
-    category: "Classical Music"
-  },
-  {
-    id: 34,
-    day: "Day 9",
-    date: "12th October, Sunday",
-    title: "Usha Uthup Live in Concert",
-    description: "An electrifying performance by the legendary Usha Uthup, bringing her unique blend of Indian and Western music.",
-    image: "/images/artists/ring.png",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "500 seats available",
-    price: "₹3000",
-    featured: true,
-    category: "Contemporary Music"
-  },
-  {
-    id: 35,
-    day: "Day 10",
-    date: "13th October, Monday",
-    title: "Sit & Draw",
-    description: "A creative workshop where participants can sit and draw, expressing their artistic vision inspired by the festival.",
-    image: "/images/artists/shubha_mudgal.jpg",
-    time: "9:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "50 seats available",
-    price: "₹800",
-    featured: false,
-    category: "Workshop"
-  },
-  {
-    id: 36,
-    day: "Day 10",
-    date: "13th October, Monday",
-    title: "Saraswati Veena by Ramanna Balachandran",
-    description: "A classical veena performance by Ramanna Balachandran, presenting traditional Carnatic music compositions.",
-    image: "/images/artists/naseeruddin_shah.jpg",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "150 seats available",
-    price: "₹1800",
-    featured: false,
-    category: "Classical Music"
-  },
-  {
-    id: 37,
-    day: "Day 10",
-    date: "13th October, Monday",
-    title: "Flute recital by Pravin Godkhindi",
-    description: "A mesmerizing flute performance by Pravin Godkhindi, showcasing the beauty of classical Indian flute music.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "180 seats available",
-    price: "₹1800",
-    featured: false,
-    category: "Classical Music"
-  },
-  {
-    id: 38,
-    day: "Day 10",
-    date: "13th October, Monday",
-    title: "Hindustani vocal by Jayateerth Mewundi",
-    description: "A classical vocal performance by Jayateerth Mewundi, presenting traditional Hindustani classical music.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹2000",
-    featured: false,
-    category: "Classical Vocal"
-  },
-  {
-    id: 39,
-    day: "Day 11",
-    date: "14th October, Tuesday",
-    title: "Workshops",
-    description: "Interactive workshops covering various aspects of Indian culture, arts, and traditional practices.",
-    image: "/images/artists/zakir_hussain.jpg",
-    time: "9:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "100 seats available",
-    price: "₹800",
-    featured: false,
-    category: "Workshop"
-  },
-  {
-    id: 40,
-    day: "Day 11",
-    date: "14th October, Tuesday",
-    title: "Folk forms",
-    description: "A diverse showcase of folk forms from different regions of India, celebrating cultural diversity.",
-    image: "/images/artists/ring.png",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "300 seats available",
-    price: "₹1000",
-    featured: false,
-    category: "Folk Music"
-  },
-  {
-    id: 41,
-    day: "Day 11",
-    date: "14th October, Tuesday",
-    title: "Hindustani vocal by Sashwati Mandal",
-    description: "A classical vocal performance by Sashwati Mandal, presenting traditional Hindustani classical music.",
-    image: "/images/artists/shubha_mudgal.jpg",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "180 seats available",
-    price: "₹1800",
-    featured: false,
-    category: "Classical Vocal"
-  },
-  {
-    id: 42,
-    day: "Day 11",
-    date: "14th October, Tuesday",
-    title: "Patiala Kathak Ballet by Manjari Chatturvedi",
-    description: "A spectacular Kathak ballet performance by Manjari Chatturvedi, presenting the Patiala gharana style.",
-    image: "/images/artists/naseeruddin_shah.jpg",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "250 seats available",
-    price: "₹2200",
-    featured: true,
-    category: "Classical Dance"
-  },
-  {
-    id: 43,
-    day: "Day 12",
-    date: "15th October, Wednesday",
-    title: "Workshops",
-    description: "Interactive workshops covering various aspects of Indian culture, arts, and traditional practices.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "9:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "100 seats available",
-    price: "₹800",
-    featured: false,
-    category: "Workshop"
-  },
-  {
-    id: 44,
-    day: "Day 12",
-    date: "15th October, Wednesday",
-    title: "Folk forms",
-    description: "A diverse showcase of folk forms from different regions of India, celebrating cultural diversity.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "300 seats available",
-    price: "₹1000",
-    featured: false,
-    category: "Folk Music"
-  },
-  {
-    id: 45,
-    day: "Day 12",
-    date: "15th October, Wednesday",
-    title: "Kuchipudi dance by Arunima Kumar",
-    description: "A classical Kuchipudi dance performance by Arunima Kumar, showcasing the grace and beauty of this traditional form.",
-    image: "/images/artists/zakir_hussain.jpg",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹2000",
-    featured: false,
-    category: "Classical Dance"
-  },
-  {
-    id: 46,
-    day: "Day 12",
-    date: "15th October, Wednesday",
-    title: "Hindustani vocal by Parveen Sultana",
-    description: "An evening of classical vocal music by the legendary Parveen Sultana, master of the Patiala gharana.",
-    image: "/images/artists/ring.png",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "250 seats available",
-    price: "₹2500",
-    featured: true,
-    category: "Classical Vocal"
-  },
-  {
-    id: 47,
-    day: "Day 13",
-    date: "16th October, Thursday",
-    title: "Workshops",
-    description: "Interactive workshops covering various aspects of Indian culture, arts, and traditional practices.",
-    image: "/images/artists/shubha_mudgal.jpg",
-    time: "9:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "100 seats available",
-    price: "₹800",
-    featured: false,
-    category: "Workshop"
-  },
-  {
-    id: 48,
-    day: "Day 13",
-    date: "16th October, Thursday",
-    title: "Folk forms",
-    description: "A diverse showcase of folk forms from different regions of India, celebrating cultural diversity.",
-    image: "/images/artists/naseeruddin_shah.jpg",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "300 seats available",
-    price: "₹1000",
-    featured: false,
-    category: "Folk Music"
-  },
-  {
-    id: 49,
-    day: "Day 13",
-    date: "16th October, Thursday",
-    title: "Kathak by Sinjini Kulkarni",
-    description: "A classical Kathak dance performance by Sinjini Kulkarni, presenting traditional Kathak compositions.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹1800",
-    featured: false,
-    category: "Classical Dance"
-  },
-  {
-    id: 50,
-    day: "Day 13",
-    date: "16th October, Thursday",
-    title: "Hindustani vocal by Ashwini Bhide",
-    description: "A classical vocal performance by Ashwini Bhide, presenting traditional Hindustani classical music.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "200 seats available",
-    price: "₹2000",
-    featured: false,
-    category: "Classical Vocal"
-  },
-  {
-    id: 51,
-    day: "Day 14",
-    date: "17th October, Friday",
-    title: "Treasure Hunt",
-    description: "An exciting treasure hunt activity where participants can explore the festival grounds and discover hidden cultural treasures.",
-    image: "/images/artists/zakir_hussain.jpg",
-    time: "9:00 AM",
-    location: "BR Ambedkar Ground",
-    seats: "Open Event",
-    price: "₹500",
-    featured: false,
-    category: "Activity"
-  },
-  {
-    id: 52,
-    day: "Day 14",
-    date: "17th October, Friday",
-    title: "Folk forms",
-    description: "A diverse showcase of folk forms from different regions of India, celebrating cultural diversity.",
-    image: "/images/artists/ring.png",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "300 seats available",
-    price: "₹1000",
-    featured: false,
-    category: "Folk Music"
-  },
-  {
-    id: 53,
-    day: "Day 14",
-    date: "17th October, Friday",
-    title: "Flute recital by Debopriya & Shuchismita Chatterjee",
-    description: "A mesmerizing flute duet performance by Debopriya and Shuchismita Chatterjee, showcasing classical Indian flute music.",
-    image: "/images/artists/shubha_mudgal.jpg",
-    time: "7:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "180 seats available",
-    price: "₹1800",
-    featured: false,
-    category: "Classical Music"
-  },
-  {
-    id: 54,
-    day: "Day 14",
-    date: "17th October, Friday",
-    title: "Shaam e Gazal - Ustad Ahmed Mohd Hussain",
-    description: "An evening of soulful ghazals by Ustad Ahmed Mohd Hussain, presenting the beauty of Urdu poetry and music.",
-    image: "/images/artists/naseeruddin_shah.jpg",
-    time: "9:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "250 seats available",
-    price: "₹2200",
-    featured: true,
-    category: "Ghazal"
-  },
-  {
-    id: 55,
-    day: "Concluding Day",
-    date: "18th October, Saturday",
-    title: "Closing Ceremony",
-    description: "Join us for the grand closing ceremony of Virasat Festival 2024, celebrating the successful completion of our cultural journey.",
-    image: "/images/artists/birju_maharaj.png",
-    time: "6:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "500 seats available",
-    price: "₹2000",
-    featured: true,
-    category: "Closing"
-  },
-  {
-    id: 56,
-    day: "Concluding Day",
-    date: "18th October, Saturday",
-    title: "Manoj Tiwari Live",
-    description: "A grand finale performance by the popular Bhojpuri singer and politician Manoj Tiwari, bringing the festival to a spectacular close.",
-    image: "/images/artists/lata_mangeshkar.jpg",
-    time: "8:00 PM",
-    location: "BR Ambedkar Ground",
-    seats: "500 seats available",
-    price: "₹3000",
-    featured: true,
-    category: "Contemporary Music"
+    description: "A unique musical experience with slide guitar maestro Deepak Kshirsagar, blending traditional and contemporary sounds."
   }
-]
+];
 
-// Remove cancelled events across Home and Events pages
-const cancelledTitles = new Set([
-  "Festival Inauguration",
-  "Vintage Car Rally",
-  "Virasat Saadhna",
-  "Heritage Quiz",
-  "Virasat Super Bike Rally",
-  "Sit & Draw",
-  "Workshops",
-  "Treasure Hunt",
-  "Closing Ceremony",
-])
+// Generate Cloudinary image URLs for the carousel
+const eventImages = rawEvents.map(event => getEventImageUrl(event.title));
 
-const events = rawEvents.filter((e) => !cancelledTitles.has(e.title))
+const EventsSection = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const imagesRef = useRef<HTMLDivElement[]>([]);
+  let xPos = 0;
 
-export const EventsSection = () => {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [currentMobileCard, setCurrentMobileCard] = useState(0)
-  const [isMobile, setIsMobile] = useState(false)
-  const [scrollContainerRef, setScrollContainerRef] = useState<HTMLDivElement | null>(null)
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  })
-
-  // Check if mobile on mount and resize
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024) // lg breakpoint
+    if (!containerRef.current || !ringRef.current) return;
+
+    // Immediate setup for visibility
+    if (ringRef.current) {
+      gsap.set(ringRef.current, { rotationY: 180 });
+      
+      imagesRef.current.forEach((img, i) => {
+        if (img) {
+          gsap.set(img, {
+            rotateY: i * -36,
+            transformOrigin: '50% 50% 500px',
+            z: -500,
+            opacity: 1,
+            backgroundImage: `url(${eventImages[i] || eventImages[0]})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backfaceVisibility: 'hidden'
+          });
+        }
+      });
     }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
-  // Check if medium screen (for compact button layout)
-  const [isMediumScreen, setIsMediumScreen] = useState(false)
-  
-  useEffect(() => {
-    const checkMediumScreen = () => {
-      setIsMediumScreen(window.innerWidth >= 640 && window.innerWidth < 1024) // sm to lg
-    }
-    checkMediumScreen()
-    window.addEventListener('resize', checkMediumScreen)
-    return () => window.removeEventListener('resize', checkMediumScreen)
-  }, [])
+    // Wait for component to mount (reduced timeout)
+    const timer = setTimeout(() => {
+      if (!ringRef.current) return;
 
-  // Calculate total pages (4 cards per page for desktop, 2 for mobile)
-  const cardsPerPage = isMobile ? 2 : 4
-  const totalPages = Math.ceil(events.length / cardsPerPage)
-  
-  // Get current page events
-  const startIndex = isMobile ? 0 : currentPage * 4
-  const endIndex = isMobile ? events.length : startIndex + 4
-  const displayedEvents = isMobile ? events : events.slice(startIndex, endIndex)
+      // Initialize GSAP timeline
+      const tl = gsap.timeline();
+      
+      // Set initial rotation
+      tl.set(ringRef.current, { 
+        rotationY: 180
+      });
 
-  // Navigation functions
-  const nextPage = () => {
-    if (isMobile) {
-      setCurrentMobileCard((prev) => Math.min(prev + 1, events.length - 2))
-    } else {
-      setCurrentPage((prev) => (prev + 1) % totalPages)
-    }
-  }
+      // Set up each image with initial visibility
+      imagesRef.current.forEach((img, i) => {
+        if (img) {
+          gsap.set(img, {
+            rotateY: i * -36,
+            transformOrigin: '50% 50% 500px',
+            z: -500,
+            backgroundImage: `url(${eventImages[i] || eventImages[0]})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backfaceVisibility: 'hidden',
+            opacity: 1, // Ensure images are visible from start
+            y: 0 // Start at normal position
+          });
+        }
+      });
 
-  const prevPage = () => {
-    if (isMobile) {
-      setCurrentMobileCard((prev) => Math.max(prev - 1, 0))
-    } else {
-      setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages)
-    }
-  }
+      // Animate images in with a subtle entrance effect
+      tl.from(imagesRef.current.filter(Boolean), {
+        duration: 1.2,
+        scale: 0.8,
+        opacity: 0.3,
+        stagger: 0.1,
+        ease: 'power2.out'
+      });
 
-  // Handle scroll position for mobile
-  const handleScroll = () => {
-    if (!isMobile || !scrollContainerRef) return
-    
-    const scrollLeft = scrollContainerRef.scrollLeft
-    const cardWidth = 304 // w-72 + gap = 288 + 16 = 304px
-    const currentCard = Math.round(scrollLeft / cardWidth)
-    setCurrentMobileCard(Math.min(Math.max(currentCard, 0), events.length - 1))
-  }
+      // Add hover effects
+      imagesRef.current.forEach((img) => {
+        if (img) {
+          img.addEventListener('mouseenter', () => {
+            gsap.to(imagesRef.current.filter(Boolean), {
+              opacity: (i, t) => (t === img) ? 1 : 0.5,
+              ease: 'power3',
+              duration: 0.3
+            });
+          });
+          
+          img.addEventListener('mouseleave', () => {
+            gsap.to(imagesRef.current.filter(Boolean), {
+              opacity: 1,
+              ease: 'power2.inOut',
+              duration: 0.3
+            });
+          });
+        }
+      });
+    }, 50);
 
-  // Countdown timer for featured events
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date().getTime()
-      const eventDate = new Date()
-      eventDate.setDate(eventDate.getDate() + 3) // 3 days from now
-      const distance = eventDate.getTime() - now
-
-      if (distance > 0) {
-        setTimeLeft({
-          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((distance % (1000 * 60)) / 1000)
-        })
+    // Drag functionality
+    const handleDragStart = (e: MouseEvent | TouchEvent) => {
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      xPos = Math.round(clientX);
+      if (ringRef.current) {
+        gsap.set(ringRef.current, { cursor: 'grabbing' });
       }
-    }, 1000)
+      
+      document.addEventListener('mousemove', handleDrag);
+      document.addEventListener('touchmove', handleDrag);
+    };
 
-    return () => clearInterval(timer)
-  }, [])
+    const handleDrag = (e: MouseEvent | TouchEvent) => {
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      if (ringRef.current) {
+        gsap.to(ringRef.current, {
+          rotationY: '-=' + ((Math.round(clientX) - xPos) % 360),
+          duration: 0.1
+        });
+      }
+      xPos = Math.round(clientX);
+    };
+
+    const handleDragEnd = () => {
+      document.removeEventListener('mousemove', handleDrag);
+      document.removeEventListener('touchmove', handleDrag);
+      if (ringRef.current) {
+        gsap.set(ringRef.current, { cursor: 'grab' });
+      }
+    };
+
+    // Add event listeners
+    document.addEventListener('mousedown', handleDragStart);
+    document.addEventListener('touchstart', handleDragStart);
+    document.addEventListener('mouseup', handleDragEnd);
+    document.addEventListener('touchend', handleDragEnd);
+
+    // Cleanup
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('mousedown', handleDragStart);
+      document.removeEventListener('touchstart', handleDragStart);
+      document.removeEventListener('mouseup', handleDragEnd);
+      document.removeEventListener('touchend', handleDragEnd);
+      document.removeEventListener('mousemove', handleDrag);
+      document.removeEventListener('touchmove', handleDrag);
+    };
+  }, []);
 
   return (
     <ComponentErrorBoundary componentName="Events Section">
@@ -908,374 +225,119 @@ export const EventsSection = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="pt-4 pb-20 px-4 sm:px-6 min-h-screen relative overflow-hidden"
         style={{ 
-          backgroundColor: '#FFF7F5F4',
+          backgroundColor: '#000',
           contain: 'layout style paint',
           isolation: 'isolate'
         }}
       >
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Earthen floating elements */}
-        <motion.div
-          className="absolute top-20 left-10 w-20 h-20 bg-brand-earthen/20 rounded-full"
-          animate={{ 
-            y: [0, -20, 0],
-            scale: [1, 1.1, 1],
-            rotate: [0, 180, 360]
-          }}
-          transition={{ 
-            duration: 6, 
-            repeat: Infinity, 
-            ease: "easeInOut" 
-          }}
-        />
-        <motion.div
-          className="absolute top-40 right-20 w-16 h-16 bg-brand-brown/15 rounded-full"
-          animate={{ 
-            y: [0, 15, 0],
-            x: [0, 10, 0],
-            rotate: [0, -180, -360]
-          }}
-          transition={{ 
-            duration: 8, 
-            repeat: Infinity, 
-            ease: "easeInOut",
-            delay: 1
-          }}
-        />
-        <motion.div
-          className="absolute bottom-40 left-20 w-12 h-12 bg-brand-earthen-light/25 rounded-full"
-          animate={{ 
-            y: [0, -10, 0],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            duration: 4, 
-            repeat: Infinity, 
-            ease: "easeInOut",
-            delay: 2
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-24 h-24 bg-brand-earthen/10 rounded-full"
-          animate={{ 
-            scale: [1, 1.3, 1],
-            rotate: [0, 90, 180, 270, 360]
-          }}
-          transition={{ 
-            duration: 10, 
-            repeat: Infinity, 
-            ease: "linear"
-          }}
-        />
-        
-        {/* Subtle geometric patterns */}
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-2 h-2 bg-brand-brown/30 rounded-full"
-          animate={{ 
-            scale: [1, 2, 1],
-            opacity: [0.3, 0.8, 0.3]
-          }}
-          transition={{ 
-            duration: 3, 
-            repeat: Infinity, 
-            ease: "easeInOut",
-            delay: 0.5
-          }}
-        />
-        <motion.div
-          className="absolute top-3/4 right-1/3 w-1 h-1 bg-brand-earthen/40 rounded-full"
-          animate={{ 
-            scale: [1, 3, 1],
-            opacity: [0.4, 0.9, 0.4]
-          }}
-          transition={{ 
-            duration: 4, 
-            repeat: Infinity, 
-            ease: "easeInOut",
-            delay: 1.5
-          }}
-        />
-        
-      </div>
-        <div className="container mx-auto max-w-[140rem] relative z-10">
-        {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-center mb-6 sm:mb-8"
-        >
+        {/* Section Header */}
+        <div className="text-center mb-16 relative z-10">
           <motion.h2 
-            className="text-3xl sm:text-4xl md:text-5xl font-serif mb-4 sm:mb-6"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            className="text-4xl md:text-5xl font-griffy text-white mb-6 leading-tight"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <span className="text-brand-brown">Cultural Heritage </span>
-            <span className="text-brand-brown">Festival</span>
+            Virasat Festival Events
           </motion.h2>
-          {/* Decorative gradient line */}
           <motion.div
             initial={{ opacity: 0, scaleX: 0 }}
             whileInView={{ opacity: 1, scaleX: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="w-24 h-1 mx-auto mb-6 rounded-full"
-            style={{
-              background: 'linear-gradient(to right, #dc2626, #7c2d12)'
-            }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="w-24 h-1 mx-auto mb-8 rounded-full bg-gradient-to-r from-red-600 to-orange-600"
           />
-          
-          <motion.p 
-            className="text-base sm:text-lg md:text-xl text-brand-earthen max-w-3xl mx-auto leading-relaxed px-2"
+          <motion.p
+            className="text-xl text-gray-300 max-w-3xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
           >
-            Book your preferred events and immerse yourself in three days of authentic Indian cultural experiences.
+            Experience the magic of Indian culture through our immersive 3D event showcase
           </motion.p>
-        </motion.div>
+        </div>
 
-
-        {/* Events Grid with Navigation */}
-        <div className="relative">
-          {/* Shadow Containment Wrapper */}
-          <div className="relative overflow-hidden rounded-3xl" style={{ contain: 'layout style paint' }}>
-            {/* Main Container with Side Navigation */}
-            <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 p-2 sm:p-4">
-            {/* Left Navigation Button - only show on desktop when not on first page */}
-            {!isMobile && currentPage > 0 && (
-              <motion.button
-                onClick={prevPage}
-                className="flex items-center justify-center w-14 h-14 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-brand-red group flex-shrink-0"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <svg
-                  className="w-6 h-6 transition-transform duration-300 group-hover:-translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </motion.button>
-            )}
-
-            {/* Spacer for when left button is not shown */}
-            {!isMobile && currentPage === 0 && <div className="w-12 sm:w-14 h-12 sm:h-14 flex-shrink-0" />}
-
-            {/* Events Grid - native scroll on mobile, 4 cards on desktop */}
+        {/* 3D Carousel Container */}
+        <div className="relative w-full h-96 flex items-center justify-center mb-16">
+          <div 
+            ref={containerRef}
+            className="relative"
+            style={{
+              perspective: '2000px',
+              width: '300px',
+              height: '400px'
+            }}
+          >
             <div 
-              ref={setScrollContainerRef}
-              className={`flex-1 ${isMobile ? 'flex overflow-x-auto overflow-y-hidden scrollbar-hide px-4' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4'} gap-4 sm:gap-6 lg:gap-8`}
-              onScroll={handleScroll}
-              style={{
-                scrollSnapType: isMobile ? 'x mandatory' : 'none',
-                scrollBehavior: isMobile ? 'smooth' : 'auto',
-                WebkitOverflowScrolling: isMobile ? 'touch' : 'auto',
-                contain: 'layout style paint',
-                isolation: 'isolate'
+              ref={ringRef}
+              className="relative w-full h-full cursor-grab"
+              style={{ 
+                transformStyle: 'preserve-3d'
               }}
             >
-            {(isMobile ? events : displayedEvents).map((event, index) => (
-              <motion.div
-                key={`${event.id}-${isMobile ? currentMobileCard : currentPage}`}
-                initial={isMobile ? false : { opacity: 0, y: 50 }}
-                animate={isMobile ? false : { opacity: 1, y: 0 }}
-                transition={isMobile ? {} : { duration: 0.6, delay: index * 0.1 }}
-                className={`group relative bg-gradient-to-br from-gray-50 to-gray-100 ${isMediumScreen ? 'rounded-xl' : 'rounded-2xl'} ${isMobile ? 'mx-2' : ''} transition-all duration-300 ease-out overflow-hidden flex flex-col ${isMobile ? 'flex-shrink-0 w-72' : ''}`}
-                style={{
-                  scrollSnapAlign: isMobile ? 'start' : 'none',
-                  filter: 'drop-shadow(0 0 0 transparent)'
-                }}
-                onMouseEnter={() => setHoveredCard(event.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-              >
-                {/* Inner white card container */}
-                <div className={`bg-white ${isMediumScreen ? 'rounded-xl m-1 flex flex-row items-center p-3 hover:shadow-lg' : 'rounded-2xl m-1 flex flex-col flex-1'} overflow-hidden transition-all duration-300`}>
-                
-                {isMediumScreen ? (
-                  <>
-                    {/* Compact button layout for medium screens */}
-                    {/* Event Image - Small */}
-                    <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                      <motion.img
-                        src={getEventImageUrl(event.title)}
-                        alt={event.title}
-                        className="w-full h-full object-cover"
-                      />
-                      {/* Day Badge */}
-                      <div className="absolute -top-1 -left-1">
-                        <span className="bg-brand-black text-white px-1.5 py-0.5 rounded-full text-xs font-medium">
-                          {event.day}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Event Info */}
-                    <div className="flex-1 ml-3 min-w-0">
-                      <h3 className="text-sm font-bold text-brand-black font-serif group-hover:text-brand-red transition-colors duration-300 line-clamp-1 mb-1">
-                        {event.title}
-                      </h3>
-                      <div className="flex items-center gap-3 text-xs text-brand-earthen">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-brand-red flex-shrink-0" />
-                          <span>{event.time}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-brand-red flex-shrink-0" />
-                          <span className="truncate">{event.location}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                  </>
-                ) : (
-                  <>
-                    {/* Full card layout for mobile and desktop */}
-                    {/* Event Image */}
-                    <div className="relative h-48 sm:h-52 overflow-hidden">
-                   <motion.img
-                     src={getEventImageUrl(event.title)}
-                     alt={event.title}
-                     className="w-full h-full object-cover"
-                   />
-                  
-                  {/* Overlay Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  
-                  {/* Day Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-brand-black text-white px-3 py-1 rounded-full text-sm font-medium">
-                      {event.day}
-                    </span>
-                  </div>
-                  
-                </div>
-
-                {/* Event Content */}
-                <div className="p-4 sm:p-5 flex flex-col flex-grow">
-                   {/* Fixed Height Title Section */}
-                   <div className="h-14 sm:h-16 mb-3 flex items-start">
-                     <h3 className="text-base sm:text-lg md:text-xl font-bold text-brand-black font-serif group-hover:text-brand-red transition-colors duration-300 line-clamp-2 leading-tight">
-                       {event.title}
-                     </h3>
-                   </div>
-                  
-                  {/* Fixed Height Description Section */}
-                  <div className="h-10 sm:h-12 mb-3 sm:mb-4 flex items-start">
-                    <p className="text-brand-earthen text-xs sm:text-sm leading-relaxed line-clamp-2">
-                      {event.description}
-                    </p>
-                  </div>
-                  
-                  {/* Fixed Height Separator Section */}
-                  <div className="h-5 sm:h-6 mb-3 sm:mb-4 flex items-center">
-                    <div className="w-12 sm:w-16 h-1 bg-brand-red rounded-full" />
-                  </div>
-                  
-                   {/* Event Details */}
-                   <div className="space-y-1.5 sm:space-y-2 mb-4 sm:mb-5 flex-grow">
-                     <div className="flex items-center gap-2 text-xs sm:text-sm text-brand-earthen group-hover:text-brand-red transition-colors duration-300">
-                       <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-red flex-shrink-0" />
-                       <span>{event.time}</span>
-                     </div>
-                     <div className="flex items-center gap-2 text-xs sm:text-sm text-brand-earthen group-hover:text-brand-red transition-colors duration-300">
-                       <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-red flex-shrink-0" />
-                       <span>{event.location}</span>
-                     </div>
-                     <div className="flex items-center gap-2 text-xs sm:text-sm text-brand-earthen group-hover:text-brand-red transition-colors duration-300">
-                       <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-red flex-shrink-0" />
-                       <span>Only 100 tickets • First-come, first-served</span>
-                     </div>
-                   </div>
-                  
-                </div>
-                </>
-                )}
-                </div>
-
-              </motion.div>
-            ))}
-            </div>
-
-            {/* Right Navigation Button - only show on desktop when not on last page */}
-            {!isMobile && currentPage < totalPages - 1 && (
-              <motion.button
-                onClick={nextPage}
-                className="flex items-center justify-center w-14 h-14 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-brand-red group flex-shrink-0"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <svg
-                  className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </motion.button>
-            )}
-
-            {/* Spacer for when right button is not shown */}
-            {!isMobile && currentPage === totalPages - 1 && <div className="w-12 sm:w-14 h-12 sm:h-14 flex-shrink-0" />}
-            </div>
-          </div>
-
-          {/* Page Indicator - only show on desktop */}
-          {!isMobile && (
-            <div className="flex justify-center mt-6 sm:mt-8 space-x-2">
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentPage
-                      ? 'bg-brand-red scale-125' 
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
+              {Array.from({ length: 10 }, (_, i) => (
+                <div
+                  key={i}
+                  ref={(el) => {
+                    if (el) imagesRef.current[i] = el;
+                  }}
+                  className="absolute inset-0 rounded-xl border-2 border-white/10"
+                  style={{
+                    transformStyle: 'preserve-3d',
+                    userSelect: 'none',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+                    transition: 'opacity 0.3s ease',
+                    opacity: 1, // Ensure fallback visibility
+                    backgroundImage: `url(${eventImages[i] || eventImages[0]})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                  }}
                 />
               ))}
             </div>
-          )}
+          </div>
         </div>
-
 
         {/* Call to Action */}
         <motion.div
+          className="text-center relative z-10"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-center mt-6 sm:mt-8"
+          transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <Link href="/events">
-            <motion.button
-              className="inline-flex items-center gap-2 bg-brand-red text-white hover:bg-brand-red-dark text-base sm:text-lg font-semibold py-3 px-6 sm:px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 group"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <Link 
+            href="/events" 
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-orange-600 text-white px-8 py-4 rounded-full font-semibold hover:from-red-700 hover:to-orange-700 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+          >
+            Explore All Events
+            <motion.span
+              animate={{ x: [0, 5, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             >
-              <span>View All Events</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-            </motion.button>
+              →
+            </motion.span>
           </Link>
         </motion.div>
-      </div>
-    </motion.section>
-    </ComponentErrorBoundary>
-  )
-}
 
-export default EventsSection
+        {/* Instructions */}
+        <motion.div
+          className="text-center mt-8 relative z-10"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 1 }}
+        >
+          <p className="text-gray-400 text-sm">
+            Drag to rotate • Hover to highlight
+          </p>
+        </motion.div>
+      </motion.section>
+    </ComponentErrorBoundary>
+  );
+};
+
+export default EventsSection;

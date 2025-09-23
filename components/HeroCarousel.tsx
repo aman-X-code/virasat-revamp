@@ -1,3 +1,9 @@
+/**
+ * HeroCarousel.tsx
+ * Mobile video carousel component for VIRASAT festival website
+ * 
+ * */
+
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';

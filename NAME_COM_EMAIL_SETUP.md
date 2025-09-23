@@ -168,6 +168,7 @@ nslookup -type=TXT reachvirasat.org
 ```
 
 Or use online tools like:
+
 - https://mxtoolbox.com/
 - https://dnschecker.org/
 

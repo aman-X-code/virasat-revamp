@@ -32,7 +32,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="text-brand-black">
+    <div className="text-white">
       {/* 1. Hero Section - Main landing area */}
       <HeroSection />
 

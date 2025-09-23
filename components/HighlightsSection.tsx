@@ -1,191 +1,80 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const highlightsData = [
   {
+    id: '03',
+    date: 'May 2024',
     imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1758174433/prod/highlights/chakravyuh_xrbkxu.png',
-    title: 'Chakravyuh – A Garhwali Folk Theatre Masterpiece',
+    title: 'Chakravyuh – A Garhwali Folk Theatre',
+    location: 'Dehradun',
+    duration: 'May 1, 2024 06:00 - June 1, 2024 08:00',
     description: 'Experience the traditional Garhwali folk theatre performance that showcases the rich cultural heritage of Uttarakhand.',
-    detailedInfo: `Chakravyuh is one of the most acclaimed folk theatre productions of Garhwal, written and scripted by Professor Dataram Purohit. Performed by a dedicated ensemble of Garhwali folk artists, it brings to life the legendary military formation from the Mahabharata through a powerful combination of narration, music, and ritual performance.
-
-First staged in 2001 at Gandhari village, Chakravyuh has since become a highlight at cultural festivals including the Virasat Mahotsav, where it has been received with immense appreciation by audiences. The production showcases the artistry of traditional musicians playing instruments such as the ranasingha, dhol, damau, and bankori, and captures the essence of Garhwal's living heritage.
-
-More than a performance, Chakravyuh is part of the broader tradition of Pandav Nritya (or Pandav Leela), a ritual dance-drama that narrates the story of the Pandava brothers from their birth to their Swargarohini Yatra (ascent to heaven). Performed in villages across Chamoli and Rudraprayag, especially during the winter months, Pandav Nritya celebrates devotion, community spirit, and the timeless values of dharma.
-
-Through episodes like Keechak Vadh (slaying of Keechak), Narayan Vivah (marriage of Lord Vishnu), Chakravyuh (the war strategy devised by Guru Drona), and Genda Vadh (symbolic sacrifice of a rhinoceros), the tradition keeps alive the Mahabharata's moral and spiritual teachings in the cultural memory of Uttarakhand.
-
-With its staging of Chakravyuh, REACH continues its mission of preserving and celebrating the intangible cultural heritage of the Himalayas, bringing age-old folk traditions to contemporary audiences.`,
   },
   {
+    id: '01',
+    date: 'Apr 2024',
     imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1758174433/prod/highlights/carrally_l5qnty.jpg',
     title: 'Vintage Car Rally',
+    location: 'Dehradun',
+    duration: 'Apr 15, 2024 10:00 - Apr 15, 2024 16:00',
     description: 'Experience the charm of classic automobiles in our vintage car rally through heritage routes.',
-    detailedInfo: `The Vintage & Classical Car and Bike Rally has become one of the most spectacular highlights of the Virasat Art & Heritage Festival in Dehradun. Flagged off from the Ambedkar Stadium, the rally brings the city to life as over 40 rare and beautifully maintained vintage cars and bikes parade through iconic routes like Rajpur Road and the Cantonment area, before returning to the stadium for public viewing.
-
-From a stately 1926 Chevrolet to the legendary 1942 Matchless motorcycle, the rally showcases timeless automotive treasures that continue to capture hearts across generations. Awards are presented in multiple categories—including cars, bikes, audience choice, and more—adding a competitive yet celebratory spirit to the event.
-
-More than just a parade, the rally reflects the charm of heritage motoring, encouraging the preservation of classic vehicles while offering the public a nostalgic journey through automotive history. With cheering crowds and the gleam of chrome under the Doon sun, the Vintage Car Rally embodies the elegance, pride, and cultural vibrance that the Virasat Festival stands for.`,
   },
   {
+    id: '01',
+    date: 'Mar 2024',
     imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1758174433/prod/highlights/bikerally_yfphdz.jpg',
-    title: 'Bike Rally',
+    title: 'Bike Rally Adventure',
+    location: 'Dehradun',
+    duration: 'Mar 10, 2024 08:00 - Mar 11, 2024 18:00',
     description: 'Join our exciting bike rally celebrating the spirit of adventure and cultural exploration.',
-    detailedInfo: `The Bike Rally at the Virasat Art & Heritage Festival is more than a parade, it's a celebration of the evolution of biking across generations. From the timeless elegance of 1940s and 50s British marques like the BSA and Matchless, to the nostalgic scooters that once defined Indian roads, the Lambretta and Vespa, the rally offers a living glimpse into motorcycling history.
-
-Adding a contemporary edge, the line-up also includes modern sports bikes, showcasing how design, speed, and engineering have transformed over the decades while retaining the same passion for the open road.
-
-As the rally winds through Dehradun's iconic streets, crowds cheer on an eclectic mix of scooters, cruisers, vintage sport bikes, and today's high-performance machines. Each ride tells a story of heritage, innovation, and the enduring bond between rider and machine. With awards across categories, riders in themed attire, and the unique atmosphere of camaraderie, the event bridges nostalgia with the thrill of the present.
-
-By celebrating the journey from vintage classics to modern marvels, the Bike Rally captures the spirit of evolution reminding us that while the machines may have changed, the love for two wheels remains timeless.`,
   },
   {
+    id: '02',
+    date: 'Feb 2024',
     imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1758174434/prod/highlights/saadhna_ay8fyg.jpg',
     title: 'SAADHNA',
+    location: 'Dehradun',
+    duration: 'Feb 20, 2024 09:00 - Feb 25, 2024 17:00',
     description: 'A dedicated platform for spiritual and cultural practices that connect us to our roots.',
-    detailedInfo: `Virasat Sadhana: Young Voices of Heritage
-
-Among the many highlights of the Virasat Art & Heritage Festival, the Sadhana sessions hold a special place, celebrating the creativity and promise of the younger generation. Held every morning during the festival, these sessions transform the stage into a canvas for school and college students from across Dehradun and beyond, offering them a rare opportunity to perform before an enthusiastic audience.
-
-The air fills with the sound of ragas, devotional hymns, and folk melodies as young vocalists showcase their training, while dancers captivate with graceful renditions of classical forms like Kathak, Bharatnatyam, and Kuchipudi. Interspersed with these are heritage quizzes, recitals, and even popular songs—making the sessions both educational and entertaining.
-
-What makes Sadhana truly unique is how it mirrors the journey of India's performing arts: from timeless classical traditions to more contemporary interpretations, all brought alive by students with fresh energy and pride. Many participants arrive dressed in traditional attire, carrying the poise of seasoned performers, while others experiment with fusions that bridge old and new. Every performance is met with applause, reinforcing the idea that heritage is not a relic of the past, but a living, evolving practice. Certificates and awards at the end honor the effort, but the real reward is the confidence and recognition that young artists carry back with them.
-
-By placing the spotlight on budding talent, Virasat Sadhana nurtures a deeper connection between youth and culture. It ensures that art forms passed down through centuries continue to resonate in modern times, inspiring not just the performers, but also the audiences who witness them. In many ways, Sadhana is the heartbeat of Virasat—where tradition meets youthful imagination, and heritage finds its future.`,
   },
   {
+    id: '04',
+    date: 'Jan 2024',
     imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1758174434/prod/highlights/talkies_rqusd9.jpg',
     title: 'REACH Talkies',
+    location: 'Dehradun',
+    duration: 'Jan 15, 2024 18:00 - Jan 15, 2024 21:00',
     description: 'Our film club that celebrates world cinema and promotes awareness through curated screenings.',
-    detailedInfo: `Sixteen years ago, in 2009, a small group of passionate cinephiles in Dehradun came together with a simple idea — to give the city a taste of world cinema beyond the mainstream. That idea became REACH Talkies, and today, it proudly stands as the only dedicated film society in Dehradun promoting art cinema, world classics, and meaningful films.
-
-Over the years, REACH Talkies has built a loyal community of film lovers who gather regularly to watch and discuss films that spark thought, debate, and reflection. From the timeless works of Satyajit Ray to international masters like Kurosawa, Bergman, and Vittorio De Sica, screenings have opened windows to cultures, philosophies, and cinematic traditions far beyond Uttarakhand.
-
-"Our mission was never just to show films, but to create conversations around them," says the REACH Talkies team. "Cinema is a mirror to society, and through it, we wanted Doon's audiences to engage with ideas and stories that mainstream theatres rarely offer."
-
-What started as a handful of screenings has now grown into a consistent cultural movement. Collaborations with embassies, cultural centers, and film archives have allowed the group to bring rare, independent, and award-winning films to the valley. Student-focused screenings and discussions have also made REACH Talkies a hub for young people curious about cinema as art, not just entertainment.
-
-For cinephiles in Dehradun, REACH Talkies has become a sanctuary — a space where the silence of a hall and the glow of a projector connect people to stories from across the world. In a city where mainstream entertainment dominates, REACH Talkies continues to keep the spirit of serious cinema alive, 16 years and counting.`,
   },
   {
+    id: '05',
+    date: 'Dec 2023',
     imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1758174434/prod/highlights/theatre_firrdd.png',
     title: 'Theatre Festival',
+    location: 'Dehradun',
+    duration: 'Dec 10, 2023 19:00 - Dec 12, 2023 22:00',
     description: 'A celebration of dramatic arts featuring performances that bring stories to life on stage.',
-    detailedInfo: `While Dehradun's Virasat Arts & Heritage Festival is celebrated for its diverse cultural offerings, the Theatre Festival has carved out its own distinct identity as a premier event for dramatic arts in the region. Over the years, it has grown into a platform where India's most acclaimed directors, actors, and theatre companies converge, transforming the city into a hub of creativity and storytelling.
-
-The 2011 edition remains memorable for Bhanu Bharti's Tamasha Na Hua, a production that showcased his mastery of blending folk aesthetics with modern sensibilities, and Sangeeta Sharma's Visarjan, a stirring dance-drama adaptation of Rabindranath Tagore's work. These performances set the bar high, establishing the festival as a space for bold and innovative theatre.
-
-In subsequent years, legendary figures graced the stage—none more iconic than Naseeruddin Shah, whose presence drew audiences into the magnetic world of serious theatre and reaffirmed the festival's national stature. By 2017, the festival reached new heights with Urubhangam, a rare and powerful Sanskrit classic brought alive with intensity, alongside productions from the late Ratan Thiyam, whose visionary theatre left audiences spellbound with its ritualistic grandeur and philosophical depth.
-
-Unlike routine cultural programming, the Theatre Festival thrives as a space of experimentation, dialogue, and artistic risk-taking. It has welcomed traditional folk plays and experimental scripts, blending regional voices with universal themes. For audiences, it offers not only entertainment but an intellectual and emotional engagement that lingers long after the performance.
-
-Today, the Theatre Festival stands as an institution in its own right—an event that honors India's theatrical heritage while embracing its evolving future. It is more than a stage; it is a living conversation between artists and audiences, between tradition and innovation, between the stories of yesterday and the possibilities of tomorrow.`,
   },
   {
+    id: '06',
+    date: 'Nov 2023',
     imageUrl: 'https://res.cloudinary.com/digilabs/image/upload/v1758174433/prod/highlights/photography_lmglkm.jpg',
     title: 'Photography Competition',
+    location: 'Dehradun',
+    duration: 'Nov 5, 2023 10:00 - Nov 30, 2023 18:00',
     description: 'Freeze moments of beauty and tradition in our photography competition celebrating visual storytelling.',
-    detailedInfo: `This year, Virasat introduces an exciting new addition to its cultural celebration—the Photography Competition, a platform for festival-goers to capture the many moods, colors, and stories of Virasat through their own lens. Open to all attendees, the competition invites participants to document their unique perspective of the festival—be it art, performances, crafts, food, or candid moments of joy—making every photograph a slice of Virasat's living heritage.
-
-Participation is simple: attendees can submit their photographs through a Google Form link provided by the organizers and also share their entries on Instagram by tagging our official handle. Every submission becomes a chance to showcase creativity while engaging with the festival community in real time.
-
-Rules & Guidelines:
-• Photos must be taken within the Virasat premises during the festival.
-• The subject and style of photography are entirely up to the participant—artistic freedom is encouraged.
-• Submitted photographs may be featured on Virasat's official social media platforms and website, at the discretion of the organizers.
-• Participants whose photos are selected for publication may also be invited to collaborate on Virasat's social media pages.
-• Certificates will be awarded to the Top 5 photographers, whose entries will be recognized as the standout captures of Virasat 2025.
-
-More than a contest, this is a call to celebrate Virasat through your own eyes—every frame telling a story, every image adding to the collective memory of the festival. Whether you're a budding photographer, an Instagram storyteller, or simply someone who loves to capture moments, the Virasat Photography Competition is your chance to be part of the festival in a whole new way.`,
   },
 ];
 
 export const HighlightsSection = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [currentCard, setCurrentCard] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [scrollContainerRef, setScrollContainerRef] = useState<HTMLDivElement | null>(null);
-  const [selectedHighlight, setSelectedHighlight] = useState<typeof highlightsData[0] | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Check if mobile on mount and resize
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Cleanup: restore body scroll when component unmounts
-  useEffect(() => {
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, []);
-
-  // Handle scroll position for mobile
-  const handleScroll = () => {
-    if (!isMobile || !scrollContainerRef) return;
-    
-    const scrollLeft = scrollContainerRef.scrollLeft;
-    const cardWidth = 304; // w-72 + gap = 288 + 16 = 304px
-    const currentCardIndex = Math.round(scrollLeft / cardWidth);
-    setCurrentCard(Math.min(Math.max(currentCardIndex, 0), highlightsData.length - 1));
-  };
-
-  // Pagination logic for desktop
-  const cardsPerPage = 4;
-  const totalPages = Math.ceil(highlightsData.length / cardsPerPage);
-  const startIndex = currentPage * cardsPerPage;
-  const endIndex = startIndex + cardsPerPage;
-  const displayedHighlights = highlightsData.slice(startIndex, endIndex);
-
-  const nextPage = () => {
-    if (isMobile) {
-      setCurrentCard((prev) => Math.min(prev + 1, highlightsData.length - 1));
-    } else {
-      setCurrentPage((prev) => (prev + 1) % totalPages);
-    }
-  };
-
-  const prevPage = () => {
-    if (isMobile) {
-      setCurrentCard((prev) => Math.max(prev - 1, 0));
-    } else {
-      setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
-    }
-  };
-
-  const openModal = (highlight: typeof highlightsData[0]) => {
-    setSelectedHighlight(highlight);
-    setIsModalOpen(true);
-    // Prevent all scrolling on the entire page while preserving scroll position
-    const scrollY = window.scrollY;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.setAttribute('data-scroll-y', scrollY.toString());
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedHighlight(null);
-    // Restore all scrolling functionality
-    const scrollY = document.body.getAttribute('data-scroll-y') || '0';
-    document.body.style.overflow = 'unset';
-    document.body.style.position = 'unset';
-    document.body.style.width = 'unset';
-    document.body.style.top = 'unset';
-    document.body.removeAttribute('data-scroll-y');
-    // Use scrollTo with behavior: 'instant' to avoid animation
-    window.scrollTo({ top: parseInt(scrollY), behavior: 'instant' });
-  };
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const itemsToShow = 3;
 
   return (
     <motion.section
@@ -193,271 +82,241 @@ export const HighlightsSection = () => {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
-      className="pt-4 pb-20 px-6" 
-      style={{ backgroundColor: '#FFF7F5F4' }}
+      className="pt-16 pb-20 px-6 relative overflow-hidden"
+      style={{ 
+        backgroundColor: '#000'
+      }}
     >
       <div className="container mx-auto">
-        <h2 className="text-4xl md:text-5xl font-serif text-center text-brand-brown mb-6">
-          Our Journey&apos;s Highlights
-        </h2>
-        {/* Decorative gradient line */}
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          whileInView={{ opacity: 1, scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="w-24 h-1 mx-auto mb-6 rounded-full"
-          style={{
-            background: 'linear-gradient(to right, #dc2626, #7c2d12)'
-          }}
-        />
-        <p className="text-center text-lg text-brand-earthen mb-12 max-w-2xl mx-auto">
-          Moments that defined our mission and celebrated our shared heritage.
-        </p>
-        
-        {/* Desktop Grid Layout with Pagination */}
-        {!isMobile && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          
+          {/* Left Side - Title and Classical Column */}
+          <div className="relative">
+            {/* Title Section */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="mb-12"
+            >
+              <h2 className="text-5xl md:text-6xl font-griffy text-white mb-6 leading-tight">
+                Our Journeys
+                <br />
+                <span className="text-orange-300">Highlights</span>
+              </h2>
+              
+              {/* Description */}
+              <p className="text-gray-300 text-lg leading-relaxed max-w-md mb-8">
+                Dicta sunt explicabo. Nemo enim ipsam voluptatem quia 
+                voluptas sit aspernatur aut odit aut fugit, sed quia 
+                consequuntur. Dicta sunt explicabo. Nemo enim ipsam 
+                voluptatem quia voluptas.
+              </p>
+
+              {/* View More Link */}
+              <Link 
+                href="/events"
+                className="inline-flex items-center gap-2 text-orange-400 font-semibold hover:text-orange-300 transition-colors duration-300 group"
+              >
+                View More
+                <motion.svg
+                  className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </motion.svg>
+              </Link>
+            </motion.div>
+
+            {/* Classical Column */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: 0.4 }}
+              className="relative"
+            >
+              <div className="w-32 h-96 mx-auto relative">
+                {/* Column Base */}
+                <div className="absolute bottom-0 w-full h-8 bg-gradient-to-t from-amber-700 to-amber-600 rounded-b-lg shadow-lg"></div>
+                
+                {/* Column Shaft */}
+                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-20 h-80 bg-gradient-to-b from-amber-500 to-amber-700 shadow-xl">
+                  {/* Fluting lines */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-30"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300 to-transparent opacity-20 transform translate-x-1"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-600 to-transparent opacity-40 transform -translate-x-1"></div>
+                </div>
+                
+                {/* Column Capital (Corinthian style) */}
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-28 h-16">
+                  {/* Capital base */}
+                  <div className="w-full h-8 bg-gradient-to-b from-amber-400 to-amber-600 rounded-t-lg shadow-lg"></div>
+                  {/* Decorative elements */}
+                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-24 h-4 bg-gradient-to-b from-amber-300 to-amber-500 rounded-full shadow-md"></div>
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-gradient-to-b from-amber-200 to-amber-400 rounded-full shadow-sm"></div>
+                  
+                  {/* Acanthus leaves pattern */}
+                  <div className="absolute top-4 left-2 w-6 h-8 bg-gradient-to-br from-amber-300 to-amber-600 rounded-full transform rotate-12 opacity-80"></div>
+                  <div className="absolute top-4 right-2 w-6 h-8 bg-gradient-to-bl from-amber-300 to-amber-600 rounded-full transform -rotate-12 opacity-80"></div>
+                  <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-8 h-6 bg-gradient-to-b from-amber-200 to-amber-500 rounded-full opacity-90"></div>
+                </div>
+
+                {/* Decorative scrollwork */}
+                <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-16 h-16 opacity-60">
+                  <div className="w-full h-full border-2 border-amber-300 rounded-full"></div>
+                  <div className="absolute top-2 left-2 w-12 h-12 border border-amber-400 rounded-full"></div>
+                  <div className="absolute top-4 left-4 w-8 h-8 bg-amber-400 rounded-full opacity-50"></div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Right Side - Journey Highlights with Scrolling */}
           <div className="relative">
             {/* Navigation Buttons */}
-            <div className="flex items-center gap-6 lg:gap-8 mb-8">
-              {/* Left Button - only show when not on first page */}
-              {currentPage > 0 && (
-                <motion.button
-                  onClick={prevPage}
-                  className="flex items-center justify-center w-14 h-14 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-brand-red group flex-shrink-0"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3 }}
-                  aria-label="Previous highlights"
-                >
-                  <svg
-                    className="w-6 h-6 transition-transform duration-300 group-hover:-translate-x-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </motion.button>
-              )}
-
-              {/* Spacer for when left button is not shown */}
-              {currentPage === 0 && <div className="w-14 h-14 flex-shrink-0" />}
-
-              {/* Highlights Grid */}
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-8">
-                {displayedHighlights.map((highlight, index) => (
-                  <motion.div
-                    key={startIndex + index}
-                    initial={isMobile ? undefined : { opacity: 0, y: 50 }}
-                    whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
-                    viewport={isMobile ? undefined : { once: true }}
-                    transition={isMobile ? undefined : { duration: 0.6, delay: index * 0.1 }}
-                    className={`bg-white rounded-2xl ${isMobile ? 'shadow-md hover:shadow-lg' : 'shadow-lg hover:shadow-2xl'} transition-all duration-300 ease-out overflow-hidden group flex flex-col`}
-                  >
-                    <div className="relative h-48 sm:h-52 overflow-hidden">
-                      <Image 
-                        src={highlight.imageUrl} 
-                        alt={highlight.title} 
-                        fill
-                        className="object-cover" 
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                      />
-                    </div>
-                    <div className="p-6 flex flex-col flex-grow">
-                      <h3 className="text-xl font-serif text-brand-black mb-3 line-clamp-2">{highlight.title}</h3>
-                      <p className="text-sm font-sans text-brand-earthen line-clamp-3 mb-4 flex-grow">
-                        {highlight.description}
-                      </p>
-                      <button
-                        onClick={() => openModal(highlight)}
-                        className="text-sm font-medium text-brand-red hover:text-brand-brown transition-colors duration-200 flex items-center gap-1 group mt-auto"
-                      >
-                        Read More
-                        <svg
-                          className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
+            <div className="flex justify-between items-center mb-6">
+              <button
+                onClick={() => setCurrentIndex(Math.max(0, currentIndex - itemsToShow))}
+                disabled={currentIndex === 0}
+                className={`p-2 rounded-full transition-all duration-300 ${
+                  currentIndex === 0 
+                    ? 'text-gray-600 cursor-not-allowed' 
+                    : 'text-orange-400 hover:text-orange-300 hover:bg-orange-400/10'
+                }`}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+              </button>
+              
+              <div className="text-sm text-gray-400">
+                {currentIndex + 1}-{Math.min(currentIndex + itemsToShow, highlightsData.length)} of {highlightsData.length}
               </div>
-
-              {/* Right Button - only show when not on last page */}
-              {currentPage < totalPages - 1 && (
-                <motion.button
-                  onClick={nextPage}
-                  className="flex items-center justify-center w-14 h-14 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-brand-red group flex-shrink-0"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3 }}
-                  aria-label="Next highlights"
-                >
-                  <svg
-                    className="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </motion.button>
-              )}
-
-              {/* Spacer for when right button is not shown */}
-              {currentPage === totalPages - 1 && <div className="w-14 h-14 flex-shrink-0" />}
+              
+              <button
+                onClick={() => setCurrentIndex(Math.min(highlightsData.length - itemsToShow, currentIndex + itemsToShow))}
+                disabled={currentIndex >= highlightsData.length - itemsToShow}
+                className={`p-2 rounded-full transition-all duration-300 ${
+                  currentIndex >= highlightsData.length - itemsToShow
+                    ? 'text-gray-600 cursor-not-allowed' 
+                    : 'text-orange-400 hover:text-orange-300 hover:bg-orange-400/10'
+                }`}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
             </div>
 
-            {/* Page Indicator */}
-            <div className="flex justify-center mt-8 space-x-2">
-              {Array.from({ length: totalPages }, (_, index) => (
+            {/* Scrollable Content */}
+            <div className="space-y-8 overflow-hidden">
+              {highlightsData.slice(currentIndex, currentIndex + itemsToShow).map((item, index) => (
+                <motion.div
+                  key={item.id + (currentIndex + index)}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="group cursor-pointer"
+                  onMouseEnter={() => setHoveredItem(item.id + (currentIndex + index))}
+                  onMouseLeave={() => setHoveredItem(null)}
+                >
+                  <div className="flex items-start gap-6">
+                    {/* Date and Number */}
+                    <div className="flex-shrink-0 text-center">
+                      <div className="text-4xl font-bold text-orange-400 mb-1">
+                        {item.id}
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        {item.date}
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 flex items-start gap-4">
+                      {/* Image */}
+                      <motion.div
+                        className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.title}
+                          fill
+                          className="object-cover"
+                          sizes="96px"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                      </motion.div>
+
+                      {/* Text Content */}
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-orange-300 transition-colors duration-300">
+                          {item.title}
+                        </h3>
+                        <div className="flex items-center gap-4 text-sm text-gray-400 mb-2">
+                          <span className="flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                            </svg>
+                            {item.location}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                            </svg>
+                            {item.duration}
+                          </span>
+                        </div>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Arrow */}
+                    <motion.div
+                      className="flex-shrink-0 text-gray-500 group-hover:text-orange-400 transition-colors duration-300"
+                      animate={hoveredItem === item.id + (currentIndex + index) ? { x: 5 } : { x: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </motion.div>
+                  </div>
+
+                  {/* Divider */}
+                  {index < itemsToShow - 1 && currentIndex + index < highlightsData.length - 1 && (
+                    <div className="mt-8 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent opacity-50"></div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Scroll Indicators */}
+            <div className="flex justify-center mt-6 space-x-2">
+              {Array.from({ length: Math.ceil(highlightsData.length / itemsToShow) }, (_, index) => (
                 <button
                   key={index}
-                  onClick={() => setCurrentPage(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentPage
-                      ? 'bg-brand-red scale-125' 
-                      : 'bg-gray-300 hover:bg-gray-400'
+                  onClick={() => setCurrentIndex(index * itemsToShow)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    Math.floor(currentIndex / itemsToShow) === index
+                      ? 'bg-orange-400 scale-125' 
+                      : 'bg-gray-600 hover:bg-gray-500'
                   }`}
                 />
               ))}
             </div>
           </div>
-        )}
-
-        {/* Mobile Horizontal Scroll Layout */}
-        {isMobile && (
-          <div className="relative">
-            <div 
-              ref={setScrollContainerRef}
-              className="flex overflow-x-auto overflow-y-hidden scrollbar-hide gap-3 sm:gap-4 pb-4"
-              onScroll={handleScroll}
-              style={{
-                scrollSnapType: 'x mandatory',
-                scrollBehavior: 'smooth',
-                WebkitOverflowScrolling: 'touch'
-              }}
-            >
-              {highlightsData.map((highlight, index) => (
-                <motion.div
-                  key={index}
-                  initial={undefined}
-                  whileInView={undefined}
-                  viewport={undefined}
-                  transition={undefined}
-                  className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 ease-out overflow-hidden group flex-shrink-0 w-72 flex flex-col"
-                  style={{
-                    scrollSnapAlign: 'start'
-                  }}
-                >
-                  <div className="relative h-48 overflow-hidden">
-                    <Image 
-                      src={highlight.imageUrl} 
-                      alt={highlight.title} 
-                      fill
-                      className="object-cover" 
-                      sizes="(max-width: 768px) 100vw, 288px"
-                    />
-                  </div>
-                  <div className="p-4 flex flex-col flex-grow">
-                    <h3 className="text-lg font-serif text-brand-black mb-2 line-clamp-2">{highlight.title}</h3>
-                    <p className="text-sm font-sans text-brand-earthen line-clamp-3 mb-3 flex-grow">
-                      {highlight.description}
-                    </p>
-                    <button
-                      onClick={() => openModal(highlight)}
-                      className="text-sm font-medium text-brand-red hover:text-brand-brown transition-colors duration-200 flex items-center gap-1 group mt-auto"
-                    >
-                      Read More
-                      <svg
-                        className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )}
+        </div>
       </div>
-
-      {/* Modal for detailed information */}
-      {isModalOpen && selectedHighlight && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          onClick={closeModal}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="relative h-64">
-              <Image
-                src={selectedHighlight.imageUrl}
-                alt={selectedHighlight.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 512px"
-              />
-              <button
-                onClick={closeModal}
-                className="absolute top-4 right-4 w-10 h-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg"
-              >
-                <svg
-                  className="w-6 h-6 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-16rem)]">
-              <h2 className="text-2xl font-serif text-brand-black mb-4">
-                {selectedHighlight.title}
-              </h2>
-              <div className="text-gray-700 leading-relaxed whitespace-pre-line text-justify">
-                {selectedHighlight.detailedInfo}
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="px-6 py-4 bg-gray-50 border-t">
-              <button
-                onClick={closeModal}
-                className="w-full bg-brand-red hover:bg-brand-brown text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200"
-              >
-                Close
-              </button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
     </motion.section>
   );
 };

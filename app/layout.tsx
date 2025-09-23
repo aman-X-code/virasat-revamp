@@ -1,14 +1,13 @@
 'use client';
 
 import './globals.css';
-import { Playfair_Display, Lato, Cormorant_Garamond, Cinzel } from 'next/font/google';
+import { Playfair_Display, Lato, Cormorant_Garamond, Cinzel, Griffy } from 'next/font/google';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import FloatingGetTicketsButton from '@/components/FloatingGetTicketsButton';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { trackWebVitals } from '@/lib/performance';
 
@@ -44,6 +43,14 @@ const cinzel = Cinzel({
   variable: '--font-cinzel',
   display: 'swap',
   preload: false, // Not critical, load later
+});
+
+const griffy = Griffy({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-griffy',
+  display: 'swap',
+  preload: true, // Primary heading font
 });
 
 export default function RootLayout({
@@ -128,7 +135,6 @@ export default function RootLayout({
               <Header />
               <main>{children}</main>
               <Footer />
-              <FloatingGetTicketsButton />
             </motion.div>
           </ErrorBoundary>
         )}
