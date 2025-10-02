@@ -7,9 +7,7 @@ import {
   CreditCard,
   Shield,
   Gift,
-  Star,
   Users,
-  Award,
   CheckCircle,
   Loader2,
 } from "lucide-react";
@@ -20,8 +18,8 @@ const DonatePage = () => {
   const [selectedAmount, setSelectedAmount] = useState(2000);
   const [customAmount, setCustomAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [payubizLoaded, setPayubizLoaded] = useState(false);
-  const [payubizError, setPayubizError] = useState(false);
+  const [paymentLoaded, setPaymentLoaded] = useState(false);
+  const [paymentError, setPaymentError] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,12 +30,9 @@ const DonatePage = () => {
     email: "",
     phone: "",
   });
-  // CSRF tokens removed for simplified payment flow
-
-  // PayU Biz uses form-based submission to PayU's servers
-  // Clean deployment - Razorpay completely removed
+  // Payment gateway initialization
   useEffect(() => {
-    setPayubizLoaded(true); // PayU Biz is always "loaded" as it's form-based
+    setPaymentLoaded(true); // Payment gateway is ready
   }, []);
 
   const predefinedAmounts = [
@@ -79,16 +74,13 @@ const DonatePage = () => {
     }
   };
 
-  // PayU Biz doesn't require retry functionality as it's form-based
-  const retryPayubizLoad = () => {
-    setPayubizError(false);
-    setPayubizLoaded(true);
+  // Payment gateway retry functionality
+  const retryPaymentLoad = () => {
+    setPaymentError(false);
+    setPaymentLoaded(true);
   };
 
-  // Simple connectivity test
-  const testPayubizConnectivity = async (): Promise<boolean> => {
-    return true; // Simplified - just return true
-  };
+
 
   const validateForm = () => {
     const errors = { name: "", email: "", phone: "" };
@@ -134,159 +126,117 @@ const DonatePage = () => {
         return;
       }
 
-      // Simple payment request
-
-      // Create transaction
-      const transactionResponse = await fetch(
-        "/api/payubiz/create-transaction",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount,
-            currency: "INR",
-            firstName: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            productInfo: "Donation for Heritage Preservation",
-          }),
-        }
-      );
-
-      let transactionData = await transactionResponse.json();
-
-      if (!transactionData.success) {
-        throw new Error(
-          transactionData.error || "Failed to create transaction"
-        );
+      if (process.env.NODE_ENV === 'development') {
+        console.log("🚀 Initiating PayU payment for amount:", amount);
       }
 
-      // Create and submit PayU Biz form using a more reliable method
-      const submitPayubizForm = () => {
-        try {
-          // Debug: Log transaction data
-          // Transaction data prepared
+      // Call payment initiation API with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
+      const response = await fetch('/api/payment/initiate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        }),
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
 
-          // Create form HTML as a string first
-          let formHTML = `<form id="payuForm" method="POST" action="https://test.payu.in/_payment" target="_blank">`;
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Payment API response status:', response.status);
+      }
 
-          // Add all transaction data as hidden inputs
-          Object.entries(transactionData.transactionData).forEach(
-            ([key, value]) => {
-              formHTML += `<input type="hidden" name="${key}" value="${value}" />`;
-            }
-          );
+      const data = await response.json();
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Payment API response data:', data);
+      }
 
-          formHTML += `</form>`;
-
-          // Create a temporary div to hold the form
-          const tempDiv = document.createElement("div");
-          tempDiv.innerHTML = formHTML;
-          tempDiv.style.display = "none";
-
-          // Append to body
-          document.body.appendChild(tempDiv);
-
-          // Get the form and submit it
-          const form = document.getElementById("payuForm") as HTMLFormElement;
-
-          if (form) {
-            // Validate required fields are present
-            const requiredFields = [
-              "key",
-              "txnid",
-              "amount",
-              "hash",
-              "firstname",
-              "email",
-            ];
-            const formData = new FormData(form);
-            const missingFields = requiredFields.filter(
-              (field) => !formData.get(field)
-            );
-
-            if (missingFields.length > 0) {
-              console.error("Missing required fields:", missingFields);
-              alert("Payment form error. Please try again.");
-              setIsLoading(false);
-              document.body.removeChild(tempDiv);
-              return;
-            }
-
-            // Form submitted to PayU
-
-            // Submit the form
-            form.submit();
-
-            // Clean up after a delay
-            setTimeout(() => {
-              if (document.body.contains(tempDiv)) {
-                document.body.removeChild(tempDiv);
-              }
-              // Reset loading state
-              setIsLoading(false);
-            }, 2000);
-          } else {
-            throw new Error("Form creation failed");
-            setIsLoading(false);
-          }
-        } catch (error) {
-          console.error("PayU form submission error:", error);
-          setIsLoading(false);
-
-          // Fallback: Show manual form submission option
-          const shouldRetry = confirm(
-            "Payment form failed to load. Would you like to try a manual submission method?"
-          );
-          if (shouldRetry) {
-            // Create a visible form as fallback
-            createManualPaymentForm();
-          }
+      if (!response.ok) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Payment initiation failed:', data);
         }
-      };
+        throw new Error(data.error || 'Payment initiation failed');
+      }
 
-      // Fallback manual form creation
-      const createManualPaymentForm = () => {
-        const formHTML = `
-          <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                      background: white; padding: 20px; border: 2px solid #ccc; z-index: 9999;">
-            <h3>Manual Payment Submission</h3>
-            <p>Click the button below to proceed to PayU payment:</p>
-            <form method="POST" action="https://test.payu.in/_payment" target="_blank">
-              ${Object.entries(transactionData.transactionData)
-                .map(
-                  ([key, value]) =>
-                    `<input type="hidden" name="${key}" value="${value}" />`
-                )
-                .join("")}
-              <button type="submit" style="padding: 10px 20px; background: #007cba; color: white; border: none; cursor: pointer;">
-                Proceed to Payment
-              </button>
-              <button type="button" onclick="this.parentElement.parentElement.remove()" 
-                      style="padding: 10px 20px; background: #ccc; color: black; border: none; cursor: pointer; margin-left: 10px;">
-                Cancel
-              </button>
-            </form>
-          </div>
-        `;
+      if (data.success && data.paymentData) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Payment data received, creating form for PayU submission');
+          console.log('Payment data:', data.paymentData);
+        }
+        
+        // Create form and submit to PayU - Following PayU documentation
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = data.payuUrl;
+        form.target = '_blank'; // Open in new window/tab
+        form.style.display = 'none'; // Hide the form
 
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = formHTML;
-        document.body.appendChild(tempDiv);
+        // Add all PayU parameters as hidden inputs
+        Object.entries(data.paymentData).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = String(value);
+            form.appendChild(input);
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`Added parameter: ${key} = ${value}`);
+            }
+          }
+        });
 
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Submitting form to PayU:', data.payuUrl);
+          console.log('Form data being submitted:', new FormData(form));
+        }
+        
+        document.body.appendChild(form);
+        
+        // Submit form - will open PayU in new window/tab
+        form.submit();
+        
+        // Show success message since PayU opened successfully
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ PayU payment page opened successfully!');
+        }
+        
+        // Stop loading state since PayU opened
         setIsLoading(false);
-      };
-
-      // Submit the PayU Biz form
-      submitPayubizForm();
+        
+        // Show success message to user
+        alert('Payment page opened! Please complete your payment in the new window.');
+      } else {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Invalid payment data received:', data);
+        }
+        throw new Error('Invalid payment data received');
+      }
+      
     } catch (error) {
       setIsLoading(false);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Payment error:', error);
+      }
+      
+      let errorMessage = "Payment failed";
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          errorMessage = "Payment request timed out. Please try again.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       router.push(
-        `/donate/failure?error_description=${encodeURIComponent(
-          error instanceof Error ? error.message : "Payment failed"
-        )}`
+        `/donate/failure?error_description=${encodeURIComponent(errorMessage)}`
       );
     }
   };
@@ -434,12 +384,63 @@ const DonatePage = () => {
           }
         }
       `}</style>
-      <div
-        className="text-brand-black pt-20 min-h-screen"
-        style={{ backgroundColor: "#FFF6F4" }}
-      >
+      <div className="text-brand-black pt-28 relative">
+        {/* Dark Underlay Background */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundColor: "#160000",
+          }}
+        />
+
+        {/* Fabric Texture Background - Reduced Opacity */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage:
+              "url(https://res.cloudinary.com/digilabs/image/upload/v1759174422/prod/texture/fabric_texture_dtbgi8.jpg)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            opacity: 0.18,
+          }}
+        />
+
+        {/* Peacock Flat Overlay with Multiply Blend */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage:
+              "url(https://res.cloudinary.com/digilabs/image/upload/v1759174358/prod/about/background/peacock_flat_ol19op.png)",
+            backgroundSize: "70%",
+            backgroundPosition: "center",
+            backgroundRepeat: "repeat",
+            mixBlendMode: "multiply",
+            opacity: 0.9,
+          }}
+        />
+
+        {/* Top Fade Overlay - Like Home Screen */}
+        <div
+          className="absolute top-0 left-0 right-0 z-1"
+          style={{
+            height: "200px",
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+          }}
+        />
+
+        {/* Bottom Fade Overlay - Like Home Screen */}
+        <div
+          className="absolute bottom-0 left-0 right-0 z-1"
+          style={{
+            height: "200px",
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+          }}
+        />
         {/* Hero Section */}
-        <section className="py-8 px-6 container mx-auto text-center">
+        <section className="py-8 px-6 container mx-auto text-center relative z-10">
           <motion.div
             initial="initial"
             animate="animate"
@@ -476,7 +477,7 @@ const DonatePage = () => {
         </section>
 
         {/* Donation Form */}
-        <section className="pt-2 pb-4 px-6 container mx-auto max-w-4xl">
+        <section className="pt-2 pb-4 px-6 container mx-auto max-w-4xl relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Side - Amount Selection */}
             <motion.div
@@ -698,7 +699,7 @@ const DonatePage = () => {
                 <div className="pt-2 flex flex-col items-center gap-3">
                   <button
                     type="submit"
-                    disabled={isLoading || !payubizLoaded}
+                    disabled={isLoading || !paymentLoaded}
                     className="pay-btn"
                     aria-label="Process donation payment"
                     aria-describedby="payment-status"
@@ -709,12 +710,12 @@ const DonatePage = () => {
                           <Loader2 className="w-5 h-5 animate-spin" />
                           Processing...
                         </div>
-                      ) : !payubizLoaded && !payubizError ? (
+                      ) : !paymentLoaded && !paymentError ? (
                         <div className="flex items-center gap-2">
                           <Loader2 className="w-5 h-5 animate-spin" />
                           Loading Payment Gateway...
                         </div>
-                      ) : payubizError ? (
+                      ) : paymentError ? (
                         "Payment Gateway Error"
                       ) : (
                         "Donate Now"
@@ -758,7 +759,7 @@ const DonatePage = () => {
                   </button>
 
                   {/* Retry Button and Error Message */}
-                  {payubizError && (
+                  {paymentError && (
                     <div
                       className="text-center"
                       role="alert"
@@ -769,7 +770,7 @@ const DonatePage = () => {
                         to network issues or firewall restrictions.
                       </p>
                       <button
-                        onClick={retryPayubizLoad}
+                        onClick={retryPaymentLoad}
                         className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors text-sm"
                         aria-label="Retry loading payment gateway"
                       >
@@ -779,7 +780,7 @@ const DonatePage = () => {
                   )}
 
                   {/* Debug Info */}
-                  {!payubizLoaded && !payubizError && (
+                  {!paymentLoaded && !paymentError && (
                     <p
                       id="payment-status"
                       className="text-gray-500 text-xs text-center"
@@ -794,7 +795,7 @@ const DonatePage = () => {
         </section>
 
         {/* Trust Indicators */}
-        <section className="py-8 px-6 container mx-auto">
+        <section className="py-8 px-6 container mx-auto relative z-10">
           <motion.div
             initial="initial"
             animate="animate"

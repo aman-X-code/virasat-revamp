@@ -42,6 +42,24 @@ export function checkRateLimit(
   };
 }
 
+// Helper function for Next.js API routes
+export async function rateLimit(request: Request): Promise<{ success: boolean; error?: string }> {
+  // Get client IP from request headers
+  const forwarded = request.headers.get('x-forwarded-for');
+  const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
+  
+  const result = checkRateLimit(ip, 5, 60000); // 5 requests per minute
+  
+  if (!result.allowed) {
+    return {
+      success: false,
+      error: 'Too many requests. Please try again later.'
+    };
+  }
+  
+  return { success: true };
+}
+
 // Clean up expired entries periodically
 setInterval(() => {
   const now = Date.now();

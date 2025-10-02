@@ -39,7 +39,9 @@ const HeroCarousel = ({ items }: { items: { id: number; video: string }[] }) => 
                 controlsList="nodownload nofullscreen noremoteplayback"
                 onContextMenu={(e) => e.preventDefault()}
                 onError={(e) => {
-                  console.error('Carousel video failed to load:', item.video);
+                  if (process.env.NODE_ENV === 'development') {
+                    console.error('Carousel video failed to load:', item.video);
+                  }
                   // Fallback to gradient background if video fails
                   const videoElement = e.target as HTMLVideoElement;
                   const fallbackElement = document.createElement('div');

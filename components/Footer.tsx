@@ -4,7 +4,7 @@ import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-brand-black text-brand-white pt-10 pb-8 md:pt-16 md:pb-8">
+    <footer className="bg-black text-brand-white pt-10 pb-8 md:pt-16 md:pb-8">
       <div className="container mx-auto px-5 md:px-6">
         {/* Ornamental Divider */}
         <div className="w-full h-px bg-gradient-to-r from-transparent via-brand-earthen to-transparent mb-8 md:mb-12"></div>
@@ -12,8 +12,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6">
           {/* Logo and About */}
           <div>
-            <h3 className="text-2xl md:text-3xl font-serif text-brand-red font-bold mb-3 md:mb-4">VIRASAT</h3>
-            <p className="text-sm md:text-base text-brand-earthen-light font-sans">
+            <h3 className="text-2xl md:text-3xl font-berkshire-swash text-brand-red font-bold mb-3 md:mb-4" style={{ fontFamily: 'var(--font-berkshire-swash)' }}>VIRASAT</h3>
+            <p className="text-sm md:text-base text-brand-earthen-light font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }}>
               Experience the confluence of tradition and modernity. A celebration of culture, art, and heritage.
             </p>
           </div>

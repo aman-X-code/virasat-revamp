@@ -33,13 +33,17 @@ const DEFAULT_BLUR_DATA_URL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAA
 function getImageUrl(publicId: string, type: string, size: string, folder: string = '') {
   const typeConfig = imageConfigs[type as keyof typeof imageConfigs];
   if (!typeConfig) {
-    console.warn(`Invalid image type: ${type}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Invalid image type: ${type}`);
+    }
     return getCloudinaryImageUrl(`${folder}/${publicId}`);
   }
   
   const config = (typeConfig as any)[size];
   if (!config) {
-    console.warn(`Invalid image size: ${size} for type: ${type}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Invalid image size: ${size} for type: ${type}`);
+    }
     return getCloudinaryImageUrl(`${folder}/${publicId}`);
   }
   

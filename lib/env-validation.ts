@@ -2,10 +2,6 @@ import { z } from 'zod';
 
 // Environment variable schema validation
 const envSchema = z.object({
-  // PayU Biz Configuration (Server-side only)
-  PAYUBIZ_MERCHANT_KEY: z.string().min(6, 'PAYUBIZ_MERCHANT_KEY must be at least 6 characters'),
-  PAYUBIZ_MERCHANT_SALT: z.string().min(20, 'PAYUBIZ_MERCHANT_SALT must be at least 20 characters'),
-  
   // App Configuration
   NEXT_PUBLIC_APP_URL: z.string().url('NEXT_PUBLIC_APP_URL must be a valid URL'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -51,26 +47,14 @@ export function validateEnvironment(): { isValid: boolean; errors: string[]; con
   }
 }
 
-// Environment variable validation for PayU Biz
-export function validatePayUBizConfig(): { isValid: boolean; errors: string[] } {
+// Generic payment gateway configuration validation
+export function validatePaymentConfig(): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
   
   // Check if we're in server-side context
   if (typeof window !== 'undefined') {
     errors.push('Environment validation should only run on server-side');
     return { isValid: false, errors };
-  }
-  
-  if (!process.env.PAYUBIZ_MERCHANT_KEY) {
-    errors.push('PAYUBIZ_MERCHANT_KEY is required');
-  } else if (process.env.PAYUBIZ_MERCHANT_KEY.length < 6) {
-    errors.push('PAYUBIZ_MERCHANT_KEY appears to be invalid');
-  }
-  
-  if (!process.env.PAYUBIZ_MERCHANT_SALT) {
-    errors.push('PAYUBIZ_MERCHANT_SALT is required');
-  } else if (process.env.PAYUBIZ_MERCHANT_SALT.length < 20) {
-    errors.push('PAYUBIZ_MERCHANT_SALT appears to be invalid');
   }
   
   if (!process.env.NEXT_PUBLIC_APP_URL) {
@@ -96,17 +80,17 @@ export function validatePayUBizConfig(): { isValid: boolean; errors: string[] } 
   };
 }
 
-// Test PayU Biz configuration
-export function testPayUBizConfig(): void {
-  const validation = validatePayUBizConfig();
+// Test payment configuration
+export function testPaymentConfig(): void {
+  const validation = validatePaymentConfig();
   
   if (!validation.isValid) {
-    console.error('PayU Biz Configuration Errors:');
+    console.error('Payment Configuration Errors:');
     validation.errors.forEach(error => console.error(`- ${error}`));
-    throw new Error('PayU Biz configuration is invalid');
+    throw new Error('Payment configuration is invalid');
   }
   
-  console.log('✅ PayU Biz configuration is valid');
+  console.log('✅ Payment configuration is valid');
 }
 
 // Secure environment variable getter

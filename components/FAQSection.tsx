@@ -35,38 +35,62 @@ const faqData = [
 export const FAQSection = () => {
   return (
     <motion.section
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-      className="pt-4 pb-20 px-6" style={{ backgroundColor: '#FFF7F5F4' }}
+      initial={{ opacity: 1, y: 0 }}
+      className="pt-4 pb-20 px-6 relative" 
+      style={{ backgroundColor: '#000', zIndex: 10 }}
     >
-      <div className="container mx-auto max-w-4xl">
-        <h2 className="text-4xl md:text-5xl font-serif text-center text-brand-brown mb-6">
-          Frequently Asked Questions
+      {/* Fabric Texture Background */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'url(https://res.cloudinary.com/digilabs/image/upload/v1759174422/prod/texture/fabric_texture_dtbgi8.jpg)',
+          backgroundSize: 'auto',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'repeat',
+          opacity: 0.25,
+          minWidth: '100%',
+          minHeight: '100%'
+        }}
+      />
+
+      {/* Top Fade Overlay */}
+      <div
+        className="absolute top-0 left-0 right-0 z-2"
+        style={{
+          height: '200px',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)'
+        }}
+      />
+
+      {/* Bottom Fade Overlay */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-2"
+        style={{
+          height: '200px',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)'
+        }}
+      />
+      <div className="container mx-auto max-w-4xl relative z-10">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-berkshire-swash text-center text-white mb-6" style={{ fontFamily: 'var(--font-berkshire-swash)' }}>
+          Frequently Asked<br className="md:hidden" />
+          <span className="hidden md:inline"> </span>Questions
         </h2>
         {/* Decorative gradient line */}
         <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          whileInView={{ opacity: 1, scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="w-24 h-1 mx-auto mb-6 rounded-full"
-          style={{
-            background: 'linear-gradient(to right, #dc2626, #7c2d12)'
-          }}
+          initial={{ opacity: 1, scaleX: 1 }}
+          className="w-24 h-1 mx-auto mb-6 rounded-full bg-gradient-to-r from-red-600 to-orange-600"
         />
-        <p className="text-center text-lg text-brand-earthen mb-12">
+        <p className="text-center text-lg text-white mb-12">
           Answers to some of the common questions we receive.
         </p>
 
         <Accordion type="single" collapsible className="w-full">
           {faqData.map((faq, index) => (
             <AccordionItem value={`item-${index}`} key={index}>
-              <AccordionTrigger className="text-xl font-sans font-semibold text-brand-black hover:text-brand-red text-left">
+              <AccordionTrigger className="text-xl font-sans font-semibold text-white hover:text-red-400 text-left">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="text-base font-sans text-brand-earthen leading-relaxed">
+              <AccordionContent className="text-base font-league-spartan text-gray-300 leading-relaxed" style={{ fontFamily: 'var(--font-league-spartan)' }}>
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>

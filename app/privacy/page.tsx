@@ -113,7 +113,7 @@ const PrivacyPage = () => {
             </h2>
             <div className="bg-green-50 p-4 rounded-lg">
               <p className="text-gray-700 leading-relaxed">
-                <strong>Secure Payment Processing:</strong> We use PayuBiz, a PCI DSS compliant payment gateway, to process all donations. We do not store your credit card or bank account details on our servers. All payment information is encrypted and processed securely by PayuBiz.
+                <strong>Secure Payment Processing:</strong> We use a PCI DSS compliant payment gateway to process all donations. We do not store your credit card or bank account details on our servers. All payment information is encrypted and processed securely by our payment processor.
               </p>
             </div>
           </section>
@@ -125,7 +125,7 @@ const PrivacyPage = () => {
               We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:
             </p>
             <ul className="list-disc list-inside text-gray-700 space-y-2">
-              <li>With payment processors (PayuBiz) to process donations</li>
+              <li>With payment processors to process donations</li>
               <li>With email service providers to send receipts and updates</li>
               <li>When required by law or legal process</li>
               <li>To protect our rights, property, or safety</li>

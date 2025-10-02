@@ -18,33 +18,33 @@ const PaymentStatusPage = () => {
 
   const checkPaymentStatus = useCallback(async () => {
     try {
-      // Get all URL parameters that PayU Biz might have sent
+      // Get all URL parameters that payment gateway might have sent
       const urlParams = new URLSearchParams(window.location.search);
-      const paymentParams: any = {};
+      const paymentData: any = {};
       
-      // Extract common PayU Biz parameters
-      const payuParams = [
+      // Extract common payment gateway parameters
+      const paymentParamNames = [
         'txnid', 'amount', 'productinfo', 'firstname', 'email', 'phone',
         'status', 'hash', 'mihpayid', 'mode', 'udf1', 'udf2', 'udf3', 'udf4', 'udf5'
       ];
       
-      payuParams.forEach(param => {
+      paymentParamNames.forEach(param => {
         const value = urlParams.get(param);
         if (value) {
-          paymentParams[param] = value;
+          paymentData[param] = value;
         }
       });
 
       // If we have payment status in URL, verify it
-      if (paymentParams.status && paymentParams.hash) {
+      if (paymentData.status && paymentData.hash) {
         // Payment data found in URL
         
-        const verifyResponse = await fetch('/api/payubiz/verify-payment', {
+        const verifyResponse = await fetch('/api/payment/verify', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(paymentParams),
+          body: JSON.stringify(paymentData),
         });
 
         const verifyResult = await verifyResponse.json();
@@ -89,7 +89,9 @@ const PaymentStatusPage = () => {
       }
 
     } catch (error) {
-      console.error('Error checking payment status:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error checking payment status:', error);
+      }
       setStatus('failure');
       setTimeout(() => {
         router.push(`/donate/failure?txnid=${txnid}&error_description=Payment verification error`);
@@ -144,7 +146,7 @@ const PaymentStatusPage = () => {
               </h1>
               
               <p className="text-gray-600 mb-6">
-                Please wait while we verify your payment with PayU Biz.
+                Please wait while we verify your payment with the payment gateway.
               </p>
               
               <div className="bg-gray-50 rounded-2xl p-4 mb-6">

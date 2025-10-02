@@ -93,7 +93,7 @@ const TermsPage = () => {
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">Donation Process</h3>
                 <ul className="list-disc list-inside text-gray-700 space-y-1">
-                  <li>All donations are processed securely through PayuBiz payment gateway</li>
+                  <li>All donations are processed securely through our payment gateway</li>
                   <li>Donations are voluntary and non-refundable unless specified otherwise</li>
                   <li>Minimum donation amount is ₹1, maximum is ₹10,00,000</li>
                   <li>All transactions are processed in Indian Rupees (INR)</li>

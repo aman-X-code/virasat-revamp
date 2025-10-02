@@ -30,8 +30,8 @@ const DevPaymentCompletePage = () => {
     }
 
     const successParams = new URLSearchParams({
-      mihpayid: paymentData.mihpayid || `PAYU_${Date.now()}`,
-      txnid: txnid,
+      payment_id: paymentData.mihpayid || `PAYMENT_${Date.now()}`,
+      transaction_id: txnid,
       amount: paymentData.amount,
       status: paymentData.status
     });
@@ -64,7 +64,7 @@ const DevPaymentCompletePage = () => {
             <div>
               <h2 className="font-semibold text-yellow-800">Development Mode Only</h2>
               <p className="text-sm text-yellow-700">
-                This page helps complete payments when PayU Biz redirects fail on localhost
+                This page helps complete payments when payment gateway redirects fail on localhost
               </p>
             </div>
           </div>
@@ -78,8 +78,8 @@ const DevPaymentCompletePage = () => {
             <div className="bg-blue-50 rounded-2xl p-4">
               <h3 className="font-semibold text-blue-800 mb-2">Instructions:</h3>
               <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
-                <li>Complete your payment on PayU Biz</li>
-                <li>Check your PayU Biz merchant dashboard for transaction details</li>
+                <li>Complete your payment on the payment gateway</li>
+                <li>Check your payment gateway merchant dashboard for transaction details</li>
                 <li>Enter the transaction details below</li>
                 <li>Click "Complete Payment" to see success/failure page</li>
               </ol>
@@ -89,7 +89,7 @@ const DevPaymentCompletePage = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Transaction ID (from PayU Biz dashboard)
+                  Transaction ID (from payment gateway dashboard)
                 </label>
                 <input
                   type="text"
@@ -103,7 +103,7 @@ const DevPaymentCompletePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    PayU Payment ID
+                    Payment ID
                   </label>
                   <input
                     type="text"
@@ -206,19 +206,19 @@ const DevPaymentCompletePage = () => {
               </button>
             </div>
 
-            {/* PayU Dashboard Link */}
+            {/* Payment Gateway Dashboard Link */}
             <div className="text-center">
               <p className="text-sm text-gray-600 mb-2">
-                Check your transaction details in PayU Biz Dashboard:
+                Check your transaction details in Payment Gateway Dashboard:
               </p>
               <a
-                href="https://test.payu.in/merchant/transactions"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold"
               >
                 <Search className="w-4 h-4" />
-                Open PayU Biz Dashboard
+                Open Payment Gateway Dashboard
               </a>
             </div>
           </div>

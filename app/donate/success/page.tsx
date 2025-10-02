@@ -11,9 +11,9 @@ const DonationSuccessPage = () => {
   const [paymentDetails, setPaymentDetails] = useState<any>(null);
 
   useEffect(() => {
-    // Get payment details from URL params (PayU Biz format)
-    const paymentId = searchParams.get('mihpayid') || searchParams.get('payment_id');
-    const transactionId = searchParams.get('txnid') || searchParams.get('order_id');
+    // Get payment details from URL params (generic format)
+    const paymentId = searchParams.get('payment_id') || searchParams.get('id');
+    const transactionId = searchParams.get('transaction_id') || searchParams.get('order_id');
     const amount = searchParams.get('amount');
     const status = searchParams.get('status');
     
@@ -137,7 +137,9 @@ const DonationSuccessPage = () => {
       doc.save(`donation-receipt-${receiptData.paymentId}.pdf`);
       
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error generating PDF:', error);
+      }
       
       // Fallback: Create HTML and download
       const receiptHTML = `

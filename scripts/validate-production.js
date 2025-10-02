@@ -24,8 +24,8 @@ function validateProductionConfig() {
     warnings.push('⚠️  NODE_ENV is not set to production');
   }
   
-  // PayU Biz credentials
-  console.log('\n🔐 PayU Biz Credentials:');
+  // Payment Gateway credentials
+  console.log('\n🔐 Payment Gateway Credentials:');
   if (!merchantKey) {
     errors.push('❌ PAYUBIZ_MERCHANT_KEY is missing');
   } else if (merchantKey.length < 6) {
@@ -143,7 +143,7 @@ function validateProductionConfig() {
     console.log('🎉 PRODUCTION READY!');
     console.log('\n📝 Next Steps:');
     console.log('   1. Deploy to your production environment');
-    console.log('   2. Configure PayU Biz webhook URL in dashboard');
+    console.log('   2. Configure payment gateway webhook URL in dashboard');
     console.log('   3. Test with small payment (₹1)');
     console.log('   4. Monitor logs and webhook delivery');
     console.log('   5. Go live! 🚀');
@@ -156,11 +156,11 @@ function validateProductionConfig() {
     console.log('   Please fix all errors before deploying');
   }
   
-  console.log('\n🔗 Important URLs to configure in PayU Biz:');
+  console.log('\n🔗 Important URLs to configure in PayU Dashboard:');
   if (appUrl) {
     console.log(`   Success URL: ${appUrl}/donate/success`);
     console.log(`   Failure URL: ${appUrl}/donate/failure`);
-    console.log(`   Webhook URL: ${appUrl}/api/payubiz/webhook`);
+    console.log(`   Callback URL: ${appUrl}/api/payment/callback`);
   }
   
   return errors.length === 0;

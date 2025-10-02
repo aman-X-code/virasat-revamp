@@ -52,8 +52,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ['var(--font-playfair-display)'],
-        sans: ['var(--font-lato)'],
+        'berkshire-swash': ['var(--font-berkshire-swash)'],
+        'league-spartan': ['var(--font-league-spartan)'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

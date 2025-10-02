@@ -13,7 +13,7 @@ const emailConfig = {
     },
   },
   
-  // Custom SMTP configuration (for name.com or other providers)
+  // Custom SMTP configuration (for name.com Titan Email or other providers)
   smtp: {
     host: process.env.EMAIL_HOST || 'smtp.yourdomain.com',
     port: parseInt(process.env.EMAIL_PORT || '587'),
@@ -22,6 +22,9 @@ const emailConfig = {
       user: process.env.EMAIL_USER, // Full email address
       pass: process.env.EMAIL_PASSWORD, // Email password
     },
+    tls: {
+      rejectUnauthorized: false // For some SMTP servers
+    }
   },
   
   // Resend configuration (for future switch)
@@ -69,7 +72,7 @@ export const emailTemplates = {
     orderId: string;
     date: string;
   }) => ({
-    from: `"Virasat Foundation" <${process.env.EMAIL_USER}>`,
+    from: `"${process.env.CUSTOM_EMAIL_NAME || 'Virasat Foundation'}" <${process.env.CUSTOM_EMAIL_FROM || process.env.EMAIL_USER}>`,
     to: donationData.donorEmail,
     subject: 'Thank You for Your Donation - Receipt Attached',
     html: `
@@ -164,7 +167,7 @@ export const emailTemplates = {
     orderId: string;
     date: string;
   }) => ({
-    from: `"Virasat Foundation" <${process.env.EMAIL_USER}>`,
+    from: `"${process.env.CUSTOM_EMAIL_NAME || 'Virasat Foundation'}" <${process.env.CUSTOM_EMAIL_FROM || process.env.EMAIL_USER}>`,
     to: process.env.ADMIN_EMAIL || 'virasat.reach@gmail.com',
     subject: `New Donation Received - ₹${donationData.amount}`,
     html: `
@@ -232,7 +235,7 @@ export const sendEmail = async (
     const transporter = createTransporter();
     
     const mailOptions = {
-      from: `"Virasat Foundation" <${process.env.EMAIL_USER}>`,
+      from: `"${process.env.CUSTOM_EMAIL_NAME || 'Virasat Foundation'}" <${process.env.CUSTOM_EMAIL_FROM || process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
@@ -241,10 +244,12 @@ export const sendEmail = async (
     };
 
     const result = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', result.messageId);
     return { success: true, messageId: result.messageId };
   } catch (error) {
-    console.error('Email sending failed:', error);
+    // Log errors only in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Email sending failed:', error);
+    }
     return { success: false, error: error };
   }
 };
@@ -346,7 +351,10 @@ export const generateReceiptPDF = async (donationData: {
     // Return PDF as buffer
     return doc.output('arraybuffer');
   } catch (error) {
-    console.error('PDF generation failed:', error);
+    // Log errors only in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('PDF generation failed:', error);
+    }
     throw error;
   }
 };

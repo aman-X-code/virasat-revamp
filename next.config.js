@@ -61,53 +61,32 @@ const nextConfig = {
       },
     ];
 
-    // Only add CSP in production
-    if (!isDevelopment) {
-      headers.push({
-        key: 'Content-Security-Policy',
-        value: [
-          "default-src 'self'",
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://secure.payu.in https://test.payu.in https://fonts.googleapis.com https://vercel.live blob:",
-          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
-          "font-src 'self' https://fonts.gstatic.com",
-          "img-src 'self' data: https: blob: https://res.cloudinary.com",
-          "media-src 'self' https: blob: https://res.cloudinary.com",
-          "connect-src 'self' https://secure.payu.in https://test.payu.in https://res.cloudinary.com https://vercel.live https://cdn.jsdelivr.net https://maps.googleapis.com https://maps.gstatic.com",
-          "frame-src 'self' https://secure.payu.in https://test.payu.in https://vercel.live https://www.google.com",
-          "object-src 'none'",
-          "base-uri 'self'",
-          "form-action 'self' https://secure.payu.in https://test.payu.in"
-        ].join('; '),
-      });
-    }
+    // TEMPORARILY DISABLED CSP TO FIX PAYU INTEGRATION
+    // CSP is causing issues with PayU form submission
+    // TODO: Re-enable CSP after PayU is working
+    // if (!isDevelopment) {
+    //   headers.push({
+    //     key: 'Content-Security-Policy',
+    //     value: [
+    //       "default-src 'self'",
+    //       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://vercel.live blob:",
+    //       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+    //       "font-src 'self' https://fonts.gstatic.com",
+    //       "img-src 'self' data: https: blob: https://res.cloudinary.com",
+    //       "media-src 'self' https: blob: https://res.cloudinary.com",
+    //       "connect-src 'self' https://res.cloudinary.com https://vercel.live https://cdn.jsdelivr.net https://maps.googleapis.com https://maps.gstatic.com",
+    //       "frame-src 'self' https://vercel.live https://www.google.com",
+    //       "object-src 'none'",
+    //       "base-uri 'self'",
+    //       "form-action 'self' https://secure.payu.in https://test.payu.in"
+    //     ].join('; '),
+    //   });
+    // }
 
     return [
       {
         source: '/(.*)',
         headers,
-      },
-      // Special headers for donate page - more permissive CSP for PayU Biz
-      {
-        source: '/donate',
-        headers: [
-          ...headers.filter(h => h.key !== 'Content-Security-Policy'),
-          {
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:",
-              "style-src 'self' 'unsafe-inline' https:",
-              "font-src 'self' https:",
-              "img-src 'self' data: https: blob:",
-              "media-src 'self' https: blob:",
-              "connect-src 'self' https:",
-              "frame-src 'self' https:",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self' https://secure.payu.in https://test.payu.in"
-            ].join('; '),
-          }
-        ],
       },
     ];
   },

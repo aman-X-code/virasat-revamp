@@ -90,7 +90,12 @@ const Header = () => {
 
   return (
     <motion.header
-      className="fixed top-0 left-0 right-0 z-50 bg-brand-black bg-opacity-80 backdrop-blur-lg shadow-lg"
+      className="fixed top-2 left-4 right-4 md:top-4 md:left-12 md:right-12 z-[100] bg-black/10 backdrop-blur-xl shadow-2xl border border-white/10 rounded-2xl"
+      style={{
+        background: 'linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 100%)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+      }}
       initial={{ y: 0 }}
       animate={{ y: isHeaderVisible ? 0 : -100 }}
       transition={{
@@ -99,11 +104,11 @@ const Header = () => {
         type: "tween",
       }}
     >
-      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div className="container mx-auto px-3 py-1 md:px-6 md:py-2 flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-4">
-          <Image src="/images/reach.png" alt="REACH Logo" width={80} height={50} className="h-12 w-auto" />
-          <Image src="/images/vir.png" alt="VIR Logo" width={80} height={50} className="h-12 w-auto" priority />
+        <Link href="/" className="flex items-center space-x-2 md:space-x-4">
+          <Image src="https://res.cloudinary.com/digilabs/image/upload/f_auto,q_95,w_160,c_limit/v1759346302/prod/hero/prod/hero/reach_pab9vf.png" alt="REACH Logo" width={80} height={50} className="h-8 md:h-12 w-auto" />
+          <Image src="https://res.cloudinary.com/digilabs/image/upload/f_auto,q_95,w_160,c_limit/v1759346303/prod/hero/prod/hero/vir_z2ln92.png" alt="VIR Logo" width={80} height={50} className="h-8 md:h-12 w-auto" priority />
         </Link>
 
         {/* Desktop Navigation */}
@@ -123,7 +128,8 @@ const Header = () => {
                   style={{
                     transitionTimingFunction: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
                     transitionDuration: '400ms',
-                    transitionProperty: 'color'
+                    transitionProperty: 'color',
+                    cursor: 'pointer'
                   }}
                 >
                   {/* Blinking golden dot */}
@@ -138,6 +144,7 @@ const Header = () => {
                   <span 
                     className="relative"
                     style={{
+                      cursor: 'pointer',
                       ...(isActive ? {} : {
                         color: 'transparent',
                         background: '#ffffff -webkit-gradient(linear, left top, right top, from(#ffffff), to(#ffffff), color-stop(0.5, #ffd700)) 0 0 no-repeat',
@@ -171,18 +178,19 @@ const Header = () => {
                 key={item.name}
                 href={item.href}
                 className={`relative font-sans font-semibold transition-all duration-400 group ${
-                  isActive ? "text-brand-red" : "text-brand-white hover:text-brand-white"
+                  isActive ? "text-yellow-400" : "text-white hover:text-yellow-400"
                 }`}
                 style={{
                   transitionTimingFunction: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
                   transitionDuration: '400ms',
-                  transitionProperty: 'color'
+                  transitionProperty: 'color',
+                  cursor: 'pointer'
                 }}
               >
                 {item.name}
                 {!isActive && (
                   <span 
-                    className="absolute bottom-[-2px] left-1/2 w-0 h-0.5 bg-brand-red transition-all duration-400 group-hover:w-full group-hover:left-0"
+                    className="absolute bottom-[-2px] left-1/2 w-0 h-0.5 bg-yellow-400 transition-all duration-400 group-hover:w-full group-hover:left-0"
                     style={{
                       transitionTimingFunction: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
                       transitionDuration: '400ms',
@@ -205,15 +213,15 @@ const Header = () => {
         </nav>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center justify-center h-full">
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)} 
-            className="text-brand-white"
+            className="text-brand-white p-2 rounded-lg hover:bg-white/10 transition-colors duration-200 flex items-center justify-center mt-1"
             aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-navigation"
           >
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
@@ -230,7 +238,12 @@ const Header = () => {
           duration: 0.3,
           ease: [0.25, 0.46, 0.45, 0.94],
         }}
-        className="md:hidden overflow-hidden bg-brand-black bg-opacity-95"
+        className="md:hidden overflow-hidden bg-black/15 backdrop-blur-xl border border-white/10 rounded-2xl mt-2"
+        style={{
+          background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.2) 100%)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        }}
         aria-label="Mobile navigation menu"
       >
         <motion.div
@@ -243,7 +256,7 @@ const Header = () => {
             delay: isMenuOpen ? 0.1 : 0,
             ease: [0.25, 0.46, 0.45, 0.94],
           }}
-          className="px-6 pb-6"
+          className="px-3 pb-4 md:px-6 md:pb-6"
         >
           <ul className="flex flex-col space-y-0">
             {navItems.map((item, index) => {
@@ -268,8 +281,8 @@ const Header = () => {
                   <Link
                     href={item.href}
                     onClick={() => setIsMenuOpen(false)}
-                     className={`relative py-4 text-lg font-sans font-semibold transition-all duration-400 text-center group flex items-center justify-center ${
-                       isActive ? (isEvents ? "text-yellow-400" : "text-brand-red") : "text-brand-white hover:text-brand-white"
+                     className={`relative py-3 md:py-4 text-base md:text-lg font-sans font-semibold transition-all duration-400 text-center group flex items-center justify-center ${
+                       isActive ? "text-yellow-400" : "text-white hover:text-yellow-400"
                      }`}
                     style={{
                       transitionTimingFunction: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
@@ -307,7 +320,7 @@ const Header = () => {
                         <span 
                           className="absolute bottom-[-2px] left-0 w-0 h-0.5 transition-all duration-400 group-hover:w-full"
                           style={{
-                            backgroundColor: isEvents ? '#ffd700' : '#dc2626',
+                            backgroundColor: '#fbbf24',
                             transitionTimingFunction: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
                             transitionDuration: '400ms',
                             transitionProperty: 'width'

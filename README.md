@@ -5,39 +5,27 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.3-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.23.12-0055FF?style=for-the-badge&logo=framer)](https://www.framer.com/motion/)
 [![GSAP](https://img.shields.io/badge/GSAP-3.13.0-88CE02?style=for-the-badge&logo=greensock)](https://greensock.com/gsap/)
+[![Production Ready](https://img.shields.io/badge/Production-Ready-green?style=for-the-badge)](https://github.com)
 
 A modern, responsive website celebrating India's cultural heritage and traditions, built with Next.js 13, TypeScript, Tailwind CSS, and advanced animations. This project showcases the Virasat festival by **REACH** (Rural Entrepreneurship for Art & Cultural Heritage) - Afro-Asia's largest celebration of art and culture.
 
-
-### 🎪 New Home Page Design
-- **3D Events Carousel**: Interactive GSAP-powered 3D rotating carousel with drag functionality
-- **Journey Highlights**: Classical column design with scrollable content (7 items, 3 visible)
-- **Maroon Textured Background**: Rich gradient background throughout the site
-- **Griffy Font Integration**: Google Fonts Griffy for all headings and cultural elements
-- **Black Accent Sections**: Pure black backgrounds for dramatic effect in key sections
-
-### 🎭 Design System Overhaul
-- **Typography**: Griffy (headings) + Playfair Display + Lato (body)
-- **Color Palette**: Maroon gradient + pure black + orange accents + golden elements
-- **Animations**: Enhanced GSAP 3D animations + Framer Motion transitions
-- **Responsive**: Optimized for mobile, tablet, and desktop experiences
-
 ## 🌟 Project Overview
 
-**VIRASAT** is a comprehensive cultural heritage website that transforms Dehradun into a living museum where classical ragas blend with folk dances, handmade crafts find new admirers, and theatre, literature, and traditional cuisines bring communities together. The website serves as both an information hub and a ticket booking platform for the 15-day festival.
+**VIRASAT** is a comprehensive cultural heritage website that transforms Dehradun into a living museum where classical ragas blend with folk dances, handmade crafts find new admirers, and theatre, literature, and traditional cuisines bring communities together. The website serves as both an information hub and a complete donation platform for the 15-day festival.
 
 ### 🎯 Key Highlights
-- 🎪 **15-day Cultural Festival** - Complete event management and booking system
-- 💳 **PayU Biz Payment Integration** - Secure donation processing with Indian payment methods
+
+- 🎪 **15-day Cultural Festival** - Complete event management and information system
+- 💳 **PayU Payment Integration** - Live payment gateway with secure donation processing
 - 📧 **Automated Email System** - Professional receipt emails with PDF attachments
 - 🎨 **Advanced Animations** - GSAP and Framer Motion powered interactions
 - 📱 **Fully Responsive** - Optimized for all devices and screen sizes
-- 🚀 **Performance Optimized** - Static export with advanced caching and dynamic imports
+- 🚀 **Performance Optimized** - Advanced caching, dynamic imports, and bundle optimization
 - 🎭 **Cultural Design** - Traditional Indian aesthetics with modern UX
-- 🔒 **Security First** - Comprehensive security headers and CSP
-- 🔗 **Webhook Integration** - Real-time payment processing and email notifications
-- 🏗️ **Clean Architecture** - Refactored codebase with no duplicated data and optimized structure
+- 🔒 **Security First** - Comprehensive security headers and production-ready configuration
+- 🏗️ **Clean Architecture** - Refactored codebase with optimized structure and zero console log exposure
 - ⚡ **TypeScript Optimized** - Full type safety with zero compilation errors
+- 🌐 **Production Deployed** - Live and fully functional payment system
 
 ## 🚀 Quick Start
 
@@ -63,18 +51,17 @@ A modern, responsive website celebrating India's cultural heritage and tradition
 
 3. **Environment Setup**
    ```bash
-   # Create .env.local file
+   # Run the setup script for easy configuration
+   npm run setup-dev
+   
+   # Or manually create .env.local file
    cp .env.example .env.local
    
-   # Add your credentials
-   # Cloudinary (for images)
-   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
-   CLOUDINARY_API_KEY=your_api_key
-   CLOUDINARY_API_SECRET=your_api_secret
+   # Add your credentials to .env.local:
    
-   # PayU Biz (for payments)
-   PAYUBIZ_MERCHANT_KEY=your_payubiz_merchant_key
-   PAYUBIZ_MERCHANT_SALT=your_payubiz_merchant_salt
+   # PayU Payment Gateway (Production Ready)
+   PAYUBIZ_MERCHANT_KEY=your_live_merchant_key
+   PAYUBIZ_MERCHANT_SALT=your_live_merchant_salt
    
    # App Configuration
    NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -86,6 +73,11 @@ A modern, responsive website celebrating India's cultural heritage and tradition
    EMAIL_SECURE=false
    EMAIL_USER=noreply@reachvirasat.org
    EMAIL_PASSWORD=your_email_password
+   
+   # Cloudinary (for images)
+   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
    ```
 
 4. **Run development server**
@@ -97,16 +89,23 @@ A modern, responsive website celebrating India's cultural heritage and tradition
    
    🌐 **Website**: [http://localhost:3000](http://localhost:3000)
 
-### 🏗️ Production Build
+### 🏗️ Production Build & Deployment
+
 ```bash
+# Test PayU configuration
+npm run test-payu
+
+# Validate production setup
+npm run validate-production
+
 # Build for production
 npm run build
 
 # Start production server
 npm start
 
-# Or export static files
-npm run export
+# Production build with environment
+npm run build-production
 ```
 
 ## 📁 Project Structure
@@ -114,419 +113,370 @@ npm run export
 ```
 virasat/
 ├── 📁 app/                          # Next.js 13 App Router
-│   ├── 📁 about/                    # About page
+│   ├── 📁 about/                    # About REACH organization
 │   │   └── page.tsx                 # About page component
 │   ├── 📁 api/                      # API Routes
-│   │   ├── 📁 debug/               # Development debugging endpoints
-│   │   │   └── 📁 env-check/       # Environment validation endpoint
-│   │   ├── 📁 payubiz/             # PayU Biz payment integration
-│   │   │   ├── 📁 create-transaction/ # Create payment transaction
-│   │   │   ├── 📁 verify-payment/     # Verify payment status
-│   │   │   ├── 📁 webhook/            # Payment webhook handler
-│   │   │   ├── 📁 get-key/            # Get merchant key
-│   │   │   ├── 📁 test-config/        # Test PayU Biz configuration
-│   │   │   ├── 📁 check-status/       # Check payment status
-│   │   │   └── 📁 redirect-handler/   # Handle PayU Biz redirects
-│   │   ├── 📁 send-email/          # Email sending API
-│   │   └── 📁 test-email/          # Email testing API
+│   │   ├── 📁 donate/               # Donation callback handlers
+│   │   │   ├── 📁 success/          # PayU success callback API
+│   │   │   └── 📁 failure/          # PayU failure callback API
+│   │   ├── 📁 payment/              # Payment processing APIs
+│   │   │   ├── 📁 initiate/         # Payment initiation endpoint
+│   │   │   ├── 📁 callback/         # PayU webhook handler
+│   │   │   ├── 📁 verify/           # Payment verification
+│   │   │   ├── 📁 success/          # Success processing
+│   │   │   └── 📁 failure/          # Failure processing
+│   │   └── 📁 send-email/           # Email sending API
 │   ├── 📁 blogs/                    # News system (PDF downloads)
-│   │   └── page.tsx                 # News listing
+│   │   ├── 📁 [slug]/               # Dynamic blog routes
+│   │   └── page.tsx                 # News listing page
 │   ├── 📁 contact/                  # Contact page
 │   │   └── page.tsx                 # Contact form with Google Maps
-│   ├── 📁 donate/                   # Donation system
-│   │   ├── 📁 success/             # Donation success page
-│   │   ├── 📁 failure/             # Donation failure page
-│   │   ├── 📁 dev-complete/        # Development payment completion helper
-│   │   ├── 📁 payment-status/      # Payment status checking page
-│   │   ├── 📁 status/              # Payment status verification page
-│   │   └── page.tsx                 # Donation form with PayU Biz
-│   ├── 📁 events/                   # Events system
-│   │   ├── 📁 [id]/                # Dynamic event pages
-│   │   │   ├── 📁 booking/         # Event booking
-│   │   │   │   ├── EventBookingClient.tsx
-│   │   │   │   ├── eventData.ts
-│   │   │   │   └── page.tsx
-│   │   │   ├── EventDetailsClient.tsx
-│   │   │   ├── layout.tsx
-│   │   │   └── page.tsx
-│   │   └── page.tsx                 # Events listing
-│   ├── 📁 gallery/                  # Gallery page
-│   │   └── page.tsx                 # Photo/video gallery
+│   ├── 📁 donate/                   # Complete donation system
+│   │   ├── 📁 success/              # Donation success page
+│   │   ├── 📁 failure/              # Donation failure page
+│   │   ├── 📁 status/               # Payment status verification
+│   │   ├── 📁 payment-status/       # Payment status checking
+│   │   ├── 📁 payu-success/         # PayU success redirect handler
+│   │   ├── 📁 payu-failure/         # PayU failure redirect handler
+│   │   ├── 📁 success-redirect/     # Success redirect middleware
+│   │   └── page.tsx                 # Main donation form
+│   ├── 📁 events/                   # Events information system
+│   │   └── page.tsx                 # Events listing and details
+│   ├── 📁 gallery/                  # Photo/video gallery
+│   │   └── page.tsx                 # Masonry gallery with lightbox
+│   ├── 📁 legends/                  # Cultural legends showcase
+│   │   └── page.tsx                 # Artist profiles and stories
+│   ├── 📁 privacy/                  # Privacy policy page
+│   │   └── page.tsx                 # Privacy policy and data protection
 │   ├── 📁 refund/                   # Refund policy page
 │   │   └── page.tsx                 # Refund terms and conditions
 │   ├── 📁 terms/                    # Terms and conditions page
 │   │   └── page.tsx                 # Legal terms and conditions
-│   ├── 📁 privacy/                  # Privacy policy page
-│   │   └── page.tsx                 # Privacy policy and data protection
-│   ├── globals.css                  # Global styles
-│   ├── layout.tsx                   # Root layoutation
-│   └── page.tsx                     # Home page
+│   ├── globals.css                  # Global styles and animations
+│   ├── layout.tsx                   # Root layout with fonts and providers
+│   └── page.tsx                     # Home page with hero and sections
 ├── 📁 components/                   # React components
-│   ├── 📁 ui/                       # Reusable UI components
-│   │   ├── accordion.tsx            # FAQ accordion
+│   ├── 📁 ui/                       # Reusable UI components (Radix UI)
+│   │   ├── accordion.tsx            # FAQ accordion component
 │   │   ├── alert.tsx                # Alert notifications
 │   │   ├── badge.tsx                # Status badges
+│   │   ├── bento-grid.tsx           # Grid layout component
 │   │   ├── button.tsx               # Button variants
 │   │   ├── card.tsx                 # Card component
 │   │   ├── carousel.tsx             # Carousel wrapper
 │   │   ├── form.tsx                 # Form components
 │   │   ├── input.tsx                # Input fields
 │   │   ├── label.tsx                # Form labels
-│   │   ├── toast.tsx                # Toast notifins
+│   │   ├── toast.tsx                # Toast notifications
 │   │   └── toaster.tsx              # Toast container
-│   ├── CloudinaryImage.tsx          # Optimized image com
-│   ├── ComponentErrorBoundary.tsx   # Error boundary wrper
-│   ├── ErrorBoundary.tsx            # Main error dary
-│   ├── EventsSection.tsx            # 3D Events carousel with GSAP
-│   ├── FAQSection.tsx               # FAQ section
-│   ├── FlowingSilkBackground.tsx    # Silk animation background
-│   ├── Footer.tsx                   # Site footer
+│   ├── AboutSection.tsx             # About REACH section
+│   ├── ArtistsSection.tsx           # Featured artists showcase
+│   ├── CloudinaryImage.tsx          # Optimized image component
+│   ├── ComponentErrorBoundary.tsx   # Component-level error boundary
+│   ├── ErrorBoundary.tsx            # Main application error boundary
+│   ├── FAQSection.tsx               # FAQ section with accordion
+│   ├── Footer.tsx                   # Site footer with links
 │   ├── GalleryPreview.tsx           # Gallery preview section
-│   ├── Header.tsx                   # Site header/navigation
+│   ├── Header.tsx                   # Site header with navigation
 │   ├── HeroCarousel.tsx             # Hero carousel (mobile)
-│   ├── HeroSection.tsx              # Main hero section
-│   ├── HighlightsSection.tsx        # Journey highlights with classical column
-│   ├── LoadingScreen.tsx            # Initial loa
-│   ├── ParallaxArtistSection.tsx    # Parallax artist secon
-│   ├── PartnersSection.tsx          # Partners/sponsors
-│   └── SmallLoader.tsx              # Small loadior
+│   ├── HeroEventsSection.tsx        # Events showcase section
+│   ├── HeroSection.tsx              # Main hero section with video
+│   ├── HighlightsSection.tsx        # Journey highlights section
+│   ├── LoadingScreen.tsx            # Initial loading animation
+│   ├── PartnersSection.tsx          # Partners and sponsors
+│   └── SmallLoader.tsx              # Small loading indicator
 ├── 📁 hooks/                        # Custom React hooks
-│   ├── use-toast.ts                 # Toast notifications
-│   ├── useErrorHandler.ts           # Error handling
-│   ├── useEvents.ts                 # Events data manag
-│   └── useLoading.ts                # Loading state managment
+│   ├── use-toast.ts                 # Toast notifications hook
+│   ├── useErrorHandler.ts           # Error handling hook
+│   └── useLoading.ts                # Loading state management
 ├── 📁 lib/                          # Utility libraries
 │   ├── cloudinary-loader.ts         # Cloudinary image loader
-│   ├── cloudinary.ts                # Cloudinary configation
-│   ├── email.ts                     # Email templates and PDF
-│   ├── env-validation.ts            # Environment variablon
-│   ├── event-preloader.ts           # Event data preloading
-│   ├── events-ssg.ts                # Static site generatn
-│   ├── events.ts                    # Events data & ion
+│   ├── cloudinary.ts                # Cloudinary configuration
+│   ├── csrf.ts                      # CSRF protection utilities
+│   ├── email.ts                     # Email templates and PDF generation
+│   ├── env-validation.ts            # Environment variable validation
+│   ├── events.ts                    # Events data and management
+│   ├── payu.ts                      # PayU payment gateway integration
+│   ├── performance.ts               # Performance monitoring utilities
 │   ├── rate-limit.ts                # In-memory rate limiting
 │   ├── redis-rate-limit.ts          # Redis-based rate limiting
-│   ├── security.ts                  # Security utilities
-│   ├── webhook-security.ts          # Webhook security valida
-│   └── utils.ts                     # General utilities
+│   ├── security.ts                  # Security utilities and validation
+│   └── utils.ts                     # General utility functions
 ├── 📁 public/                       # Static assets
-│   └── 📁 images/                   # Image assets
-│       ├── 📁 artists/              # Artist photos
-│       │   └── ring.png
-│       ├── rangoli-about.png        # Cultural images
-│       ├── rangoli-about2.png
-│       ├── rangoli-about3.png
-│       ├── rangoli.svg              # SVG assets
-│       ├── REACH (2).jpg            # Organization logos
-│       ├── reach.png
-│       ├── textured-background.svg
-│       └── vir.png
-├── 📁 scripts/                      # Build and utiscripts
-│   ├── test-payubiz.js ing
-│   ├── upload-to-cloudinary.js      # Cloudinary upcript
-│   └── validate-production.js       # Production depl
-├── components.json           on
-├── next.config.js            on
-├── package.json                     # Dependenci
+│   ├── 📁 images/                   # Image assets
+│   │   ├── circle_frame.png         # UI elements
+│   │   └── qr.jpg                   # QR code for donations
+│   ├── 📁 pdf/                      # PDF documents
+│   │   ├── news-1.pdf               # News articles
+│   │   └── news-2.pdf
+│   └── payu-redirect.html           # PayU redirect helper
+├── 📁 scripts/                      # Build and utility scripts
+│   ├── setup-dev.js                 # Development environment setup
+│   ├── test-payu.js                 # PayU integration testing
+│   ├── upload-to-cloudinary.js      # Cloudinary upload utility
+│   └── validate-production.js       # Production deployment validation
+├── 📁 types/                        # TypeScript type definitions
+│   └── css.d.ts                     # CSS module types
+├── components.json                  # Shadcn/ui configuration
+├── middleware.ts                    # Next.js middleware for routing
+├── next.config.js                   # Next.js configuration
+├── package.json                     # Dependencies and scripts
 ├── postcss.config.js                # PostCSS configuration
-├── tailwind.config.tation
-├── tsconfig.json                  
-└── README.md      e
-```
-
-## 🎨 Design System & Brand Identity
-
-### 🎨 Brand Color Palette
-The project uses a carefully crafted color palette inspired 
-
-```css
-/* Updated Brand Colors with Maroon Theme */
---brand-red: #c0392b          /* Primary accent - inspired by s
---brand-red-dark: #a52f23     /* Darker variant tates */
---bt */
- */
---brand-brown: #5a3e36        /* Ear
-xt */
---brand-orange: #f97316    */
---brand-amber: #f59e0b        /* Golden amber for decorative elements */
-
-/* Mar
-background: linear-gradien
-```
-
-### 🔤 Typography System
-- **Primary Font**: **Griffy** (Google Fonts) - for all headi
-- **Secondary Font**: **Playfair Display** (Serif) - for elegant text sections
-- **Body Font**: **Lato** (Sans-serif) - for body text and UI elements
-- **Accent Fonts**: **Cormorant Garamond**, **Cinzel** - for special cultections
-
-hemes
-- **Global Background**:e patterns
-- **Events Section**: Pure black (`#000`) for dramatic 3D carousel effect
-- **Journey Highlights**: Pure black (`#000`) with golden classical column
-- **Artist Section**: Dark theme with flowing silk animations
-
-## � Updatged Home Page re
-
-### 🏠 Home Page (`/`) - New Design
-1. **Loading Screen**: 3D animated "VIRASAT" text with particfects
-lay
-3. **Events Section**: **NEW 3D Carouselign**
-
-   - Drag-to-rotate functy
-   - H
-   - Black background for dramect
-4. **Journey Highlights**: **NEW Classical Column **
-   - Left side: Griffy font title + 3D CSSn
-   - Right side: Scrollable journey items sible)
-   - Up/down navigation arrows
-   - Dot indicators for pagination
-    section
-
-6. **About Section**: REACH org
-wcase
-8. **Partners Section**:s
-9. **FAQ Section**: Common questions and answers
-
-## 🎨 New Component Features
-
-### 🎪 EventsSection.tsx - 3D Carousel
-t
-// Key Features:
-- 3D rotating carousel using GSAP
-- 10 image slots arranged in circular formation
-- Drag-to-rotate interaction (mouse & touch)
-es
-- Smooth entrance animations
-- Black background for dramatic effect
-- Responsive design for mobile/desktop
-```
-
-ign
-```typescript
-// Keyatures:
-- Left: Griffy font tital column
-- Right: Scr
-- Navigation: Up/down arrows + dot iators
-- Smooth animations with Framer Moti
-- All 7 original journey items preser
- e
-
-  3. Bike Rally Adven
-  4. SAADA
-  5. REACH Talkies
-  6. Theatre Festival
-  7. Photography Competition
-```
-
-#es
-```css
- */
-body {
-: 
-    radial-gradient(circle at 25% ,
-0%),
-    linear-gradient(135deg,
-  background-attachment: fixed;
-}
-
-/* Griffy Font Integration */
-{
-  font-family: var(--font-griserif;
-}
-
-.font-griffy {
-  font-family: var(--font-griffy), serif;
-}
+├── tailwind.config.ts               # Tailwind CSS configuration
+├── tsconfig.json                    # TypeScript configuration
+├── FORMSPREE_SETUP.md              # Form setup documentation
+└── README.md                        # This file
 ```
 
 ## 🛠️ Technology Stack
 
 ### 🚀 Core Technologies
 - **Framework**: Next.js 13 (App Router)
-peScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion, GSAP
+- **Language**: TypeScript 5.2.2
+- **Styling**: Tailwind CSS 3.3.3
+- **Animations**: Framer Motion 12.23.12, GSAP 3.13.0
 - **UI Components**: Radix UI primitives
 - **Icons**: Lucide React
-o)
+- **Forms**: React Hook Form + Zod validation
 
+### 💳 Payment & Email Integration
+- **Payment Gateway**: PayU (Production Ready)
+- **Email Service**: Nodemailer with custom SMTP
+- **PDF Generation**: jsPDF for receipts
+- **Image Optimization**: Cloudinary
+
+### 📦 Key Dependencies
 
 ```json
 {
   "next": "13.5.1",                    // React framework
-  "react": "18.2.0",                   //ary
+  "react": "18.2.0",                   // UI library
   "typescript": "5.2.2",               // Type safety
-S
-  "framer-motion": "^ations
-  "gsap": "^3.13.0",                   // Adva carousel
-  "swiper": "^11.2.10",                // Msel
-  "lucide-react": "^0.446.0",         brary
-  "@radix-ui/react-accordion": "^1.2.0", /rdion
-
-  "cloudinary": "^2.7on
+  "tailwindcss": "3.3.3",              // CSS framework
+  "framer-motion": "^12.23.12",        // Animations
+  "gsap": "^3.13.0",                   // Advanced animations
+  "swiper": "^11.2.10",                // Touch carousels
+  "lucide-react": "^0.446.0",          // Icon library
+  "@radix-ui/react-accordion": "^1.2.0", // UI primitives
+  "cloudinary": "^2.7.0",              // Image optimization
   "react-hook-form": "^7.53.0",        // Form handling
-  "zod": "^3.23.8",                    // Schemtion
-  "nodemailer": "^7.0.6",              // E
-n
+  "zod": "^3.23.8",                    // Schema validation
+  "nodemailer": "^7.0.6",              // Email sending
+  "jspdf": "^3.0.2",                   // PDF generation
+  "yet-another-react-lightbox": "^3.25.0", // Gallery lightbox
+  "react-masonry-css": "^1.0.16"       // Masonry layout
 }
 ```
 
-## � Kaey Features & Functionality
+## 🎯 Key Features & Functionality
 
-### 🎪 3D Events Carousel
-- **Interactive 3D Rotation**: Drag to rotate the carousel in 3D 
-- **GSAP Powered**: Smooth animations and transforms
-- **Touch Support**: Works on mobile devices with to
-- **Hover Effects**: Images highlight on hover wit
-- **Responsive**: Adapts to different screen sizes
-- **Performance Optimized**: GPU-accelerated anis
-
-### 🏛️ Journey Highligumn
-- **3D CSS Column**: Hand-crafted classical column with Corinthian capital
-- **Scrollable Content**: 7 journey items with 3  time
-- **Navigation Controls**: Up/down arrows and dot indicat
-- **Smooth Animations**: Framer Motion powered transitios
-- **Responsive Design**: Adapts to mobile and desktop layouts
-
-### 💳 Payment System (PayU Biz Integration)
-- **Secure Payment Processing**: PayU Biz integthods
-- **Multiple Payment Options**: Cards, UPI, Net Br
-- **Real-time Verification**: Payment status veling
-- **Donation Form**: Complete donor information collecti
-- **Success/Failure Pages**: Professional post-pence
-- **PDF Receipt Generation**: Automatic receipt generation with jsPDF
+### 💳 PayU Payment System (Production Ready)
+- **Live PayU Integration**: Complete PayU payment gateway for real transactions
+- **Multiple Payment Methods**: Credit/Debit Cards, Net Banking, UPI, Wallets
+- **Secure Processing**: Bank-level security and PCI compliance
+- **Receipt Generation**: Automated PDF receipts with tax deduction information
+- **Donation Form**: Complete donor information collection with validation
+- **Success/Failure Handling**: Professional post-payment experience with email notifications
+- **Webhook Integration**: Real-time payment verification and processing
 - **Tax Deduction Support**: Section 80G compliance for Indian donors
 
 ### 📧 Email System (Automated Notifications)
-- **Professional Email Templates**: Branded HTML emailsg
-- **PDF Receipt Attachments**: Automatic PDF generachment
-- **Custom SMTP Integration**: Professional email setup with cust.org)
-ts
+- **Professional Email Templates**: Branded HTML emails with organization branding
+- **PDF Receipt Attachments**: Automatic receipt generation and attachment
+- **Custom SMTP Integration**: Professional email setup (noreply@reachvirasat.org)
+- **Dual Email System**: Donor receipts and admin notifications
+- **Error Handling**: Graceful email failure handling with retry mechanisms
 
+### 🎨 Advanced UI/UX Features
+- **Hero Video Background**: Immersive cultural video with fallback handling
+- **Interactive Gallery**: Masonry layout with lightbox and video support
+- **Responsive Design**: Mobile-first approach with tablet and desktop optimization
+- **Loading Animations**: Smooth page transitions and component loading states
+- **Error Boundaries**: Graceful error handling with user-friendly messages
+- **Toast Notifications**: Real-time feedback for user actions
 
-- **Static Export**: Conting
-- **Image Optimization**: Next.js Image 
-- **Lazy Loading**: Compon
-- **Code Splitting**: Automuter
-- **Bundle Optimization**: Tree shakis
-- **GPU Acceleration**: GSAP animations 
+### 🔒 Security & Performance
+- **Security Headers**: Comprehensive security headers including CSP (configurable)
+- **Rate Limiting**: API endpoint protection against abuse
+- **Input Validation**: Comprehensive form validation and sanitization
+- **CSRF Protection**: Cross-site request forgery protection
+- **Environment Validation**: Runtime environment variable validation
+- **Console Log Security**: Production-safe logging (no sensitive data exposure)
+- **Performance Monitoring**: Web vitals tracking and optimization
 
-nes
+### 🚀 Performance Optimizations
+- **Static Export**: Optimized for static hosting and CDN distribution
+- **Image Optimization**: Cloudinary integration with responsive images
+- **Lazy Loading**: Component and image lazy loading
+- **Code Splitting**: Automatic route-based code splitting
+- **Bundle Optimization**: Tree shaking and dependency optimization
+- **GPU Acceleration**: Hardware-accelerated animations with GSAP
 
-### 🎨 ns
-We page:
+## 🎨 Design System & Brand Identity
 
-1. **Create Component**: Add new component in `/compnts/`
-2. **Import Dynamically**: Use dynamic imports for pee
-3. **Follow Design System**: Use established colors and fons
-4. **Add Animations**: Use Framer Motion for entrance animations
-5. **Test Responsiveness**: Ensure mobile and desktop compatibility
+### 🎨 Brand Color Palette
+```css
+/* Primary Brand Colors */
+--brand-red: #c0392b          /* Primary accent - traditional Indian red */
+--brand-red-dark: #a52f23     /* Darker variant for hover states */
+--brand-brown: #5a3e36        /* Earthy brown for text */
+--brand-orange: #f97316       /* Vibrant orange for highlights */
+--brand-amber: #f59e0b        /* Golden amber for decorative elements */
 
-### 🎭 Animation Guidelines
-- **Entrance Animations**: Use `whileInView` for scrolns
-- **Hover Effects**: Subtle scale and color transitions
-- **Loading States**: Smooth fade-in transitions
-- **Performance**: Use `will-change` and GPU acceleration foions
+/* Background Gradients */
+background: linear-gradient(135deg, #8b4513 0%, #a0522d 25%, #cd853f 50%, #daa520 75%, #b8860b 100%);
+```
 
-### 🎨 Styling Guidelines
-- **Background**: Use maroon textured gradient for main sons
-- **Accent Sections**: Use pure black (`#000`) for dramffect
-- **Typography**: Griffy for headings, Lato for body text
-- **Colors**: Stick to established brand palette
--
+### 🔤 Typography System
+- **Primary Font**: **Berkshire Swash** (Google Fonts) - for main headings and cultural elements
+- **Secondary Font**: **League Spartan** (Sans-serif) - for body text and UI elements
+- **Accent Fonts**: **Cormorant Garamond**, **Cinzel** - for special cultural sections
 
-ing
+### 🎭 Design Themes
+- **Global Background**: Rich maroon textured gradient with cultural patterns
+- **Hero Section**: Immersive video background with elegant overlay
+- **Events Section**: Clean card-based layout with hover effects
+- **Gallery Section**: Masonry layout with smooth lightbox transitions
 
+## 🌐 Pages & Routes
+
+### 🏠 Home Page (`/`) - Main Landing
+1. **Loading Screen**: Animated "VIRASAT" text with particle effects
+2. **Hero Section**: Full-screen video background with festival introduction
+3. **Events Section**: Featured events with interactive cards
+4. **About Section**: REACH organization information
+5. **Gallery Preview**: Photo/video showcase with lightbox
+6. **Artists Section**: Featured cultural artists and performers
+7. **Partners Section**: Sponsors and collaborators
+8. **FAQ Section**: Common questions and answers
+
+### 📄 Content Pages
+- **About (`/about`)**: Detailed information about REACH organization
+- **Events (`/events`)**: Complete events listing with details and schedules
+- **Gallery (`/gallery`)**: Full photo and video gallery with categories
+- **Legends (`/legends`)**: Cultural legends and artist profiles
+- **Contact (`/contact`)**: Contact form with Google Maps integration
+- **Blogs (`/blogs`)**: News articles and updates (PDF downloads)
+
+### 💳 Donation System
+- **Donate (`/donate`)**: Main donation form with PayU integration
+- **Success (`/donate/success`)**: Payment success page with receipt download
+- **Failure (`/donate/failure`)**: Payment failure page with retry options
+- **Status (`/donate/status`)**: Payment status verification and tracking
+
+### 📋 Legal Pages
+- **Privacy Policy (`/privacy`)**: Data protection and privacy information
+- **Terms & Conditions (`/terms`)**: Legal terms and conditions
+- **Refund Policy (`/refund`)**: Refund terms and procedures
+
+## 🔧 Development & Deployment
+
+### 🛠️ Development Scripts
+
+```bash
+# Development
+npm run dev              # Start development server
+npm run setup-dev       # Setup development environment
+npm run test-payu       # Test PayU integration
+
+# Production
+npm run build           # Build optimized production bundle
+npm run build-production # Build with production environment
+npm run start           # Start production server
+npm run validate-production # Validate production configuration
+
+# Utilities
+npm run lint            # Run ESLint
+npm run upload-cloudinary # Upload images to Cloudinary
+```
+
+### 🏗️ Build Configuration
 
 ```javascript
-onfig.js
+// next.config.js highlights
 const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   images: {
-    unoptimized: true, // For static hosting
-[
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        port: '',
-,
-      },
-    ],
+    unoptimized: true, // For static hosting compatibility
+    remotePatterns: [{ hostname: 'res.cloudinary.com' }],
   },
   experimental: {
--react'],
+    optimizePackageImports: ['framer-motion', 'gsap', 'lucide-react'],
+    optimizeCss: true,
   },
   compress: true,
   poweredByHeader: false,
+  // Comprehensive security headers
+  async headers() { /* Security configuration */ },
 };
 ```
 
-### 🏗️ Build Process
-```bash
-t
-npm run dev          # Start developmentver
-
-# Production
-npm run build        # Build optimized production 
-npm run start        # Start production server
-
-# Static Export
-
-```
-
 ### 🌐 Recommended Hosting
-- **Vercel**: Recommended for Next.js projects (automatic deployments, serverlesss)
-- **Netlify**: Static site hosting with form handling and serverless functions
-- **AWS S3 + CloudFront**: Scalable static hosting
+- **Vercel**: Recommended for Next.js projects (automatic deployments, serverless functions)
+- **Netlify**: Static site hosting with form handling capabilities
+- **AWS S3 + CloudFront**: Scalable static hosting with CDN
+- **Traditional Hosting**: Compatible with static export for shared hosting
 
-## 📝 Recent Updates & Changes
+## 📊 Recent Updates & Improvements
 
-### 🎨 Design System Updates
-ent
-- ✅ **Typography**: Integrated Griffy font fo
-- ✅ **Color Palette**: Updated with maroon theme and pure black accents
+### 🔒 Security Enhancements
+- ✅ **Console Log Security**: All console statements wrapped with development checks
+- ✅ **Production Safety**: No sensitive data exposure in production logs
+- ✅ **Input Validation**: Comprehensive form validation and sanitization
+- ✅ **Rate Limiting**: API endpoint protection against abuse
+- ✅ **Security Headers**: Comprehensive security headers configuration
 
-### 🎪 Home Page Redesign
-- ✅ **Events Section**: Completely redesigned with 3D GSAP carousel
-- ✅ **Journey Highlights**: New classical column design with scrollable cent
-- ✅ **Navigation**: Added up/down arrows and dot indicators
-- ✅ **Animations**: Enhanced with Framer Motion and GSAP
+### 💳 Payment System Improvements
+- ✅ **PayU Integration**: Complete live payment gateway integration
+- ✅ **Error Handling**: Robust error handling and user feedback
+- ✅ **Receipt System**: Automated PDF receipt generation and email delivery
+- ✅ **Webhook Security**: Secure webhook handling and verification
+- ✅ **Payment Tracking**: Complete payment status tracking and verification
 
-### 🏗️ Component Architecture
-- ✅ **EventsSection.tsx**: Rebuilt with 3D carouseality
-- ✅ **HighlightsSection.tsx**: Redesigned with classical column layout
-- ✅ **Global Styles**: Updated with new backgography
-- ✅ **Font Integration**: Added Griffy font to layout as
+### 🎨 UI/UX Enhancements
+- ✅ **Responsive Design**: Mobile-first responsive design improvements
+- ✅ **Loading States**: Smooth loading animations and transitions
+- ✅ **Error Boundaries**: Graceful error handling with user-friendly messages
+- ✅ **Performance**: Optimized bundle size and loading performance
+- ✅ **Accessibility**: Improved accessibility and keyboard navigation
 
-### 🧹 Code Cleanup
-onents
-- ✅ **Optimized Imports**: Uencies
-- ✅ **Performance**: Improved loading times aons
+### 🏗️ Code Quality Improvements
+- ✅ **TypeScript**: Full TypeScript implementation with strict type checking
+- ✅ **Component Architecture**: Clean, reusable component structure
+- ✅ **Error Handling**: Comprehensive error handling and logging
+- ✅ **Performance Monitoring**: Web vitals tracking and optimization
+- ✅ **Development Tools**: Enhanced development scripts and utilities
 
 ## 🤝 Contributing
 
-### 🔧 For New Engineers
-es
-2. **Check Component Structuremponents
-3. **Test Locally**: Run `npm run dev` and test
-4. **Follow Guidelines**: Use established design sy
-5. **Update Documentation**: Keep README updated withanges
+### 🔧 For New Developers
+1. **Setup Environment**: Run `npm run setup-dev` for easy configuration
+2. **Check Component Structure**: Review `/components` directory for patterns
+3. **Test Locally**: Run `npm run dev` and test all functionality
+4. **Follow Guidelines**: Use established design system and coding patterns
+5. **Update Documentation**: Keep README updated with any changes
 
 ### 📋 Development Checklist
-)
-- [ ] Verify journey higg)
-- [ ] Check responsive design on mobile and desktop
-- [ ] Test payment integration and email system
-- [ ] Validate performance and loading times
+- [ ] Run `npm run setup-dev` to configure environment
+- [ ] Test PayU integration with `npm run test-payu`
+- [ ] Verify responsive design on mobile and desktop
+- [ ] Configure email system and test receipt generation
+- [ ] Validate production setup with `npm run validate-production`
+- [ ] Test payment flow end-to-end
 - [ ] Ensure accessibility compliance
+- [ ] Check performance metrics
 
 ## 📞 Support & Contact
 
-For technical support oect:
-ge)
-- **Festival**: Virlture
-dia
+For technical support or questions about this project:
+
+- **Organization**: REACH (Rural Entrepreneurship for Art & Cultural Heritage)
+- **Festival**: Virasat - Celebrating India's Cultural Heritage
+- **Location**: Dehradun, Uttarakhand, India
+- **Website**: [Live Production Site]
 
 ---
 
-**Built with ❤️ fe**al heritag culturg India'srvinor prese
+**Built with ❤️ for preserving and celebrating India's rich cultural heritage**
+
+*This project represents the digital transformation of cultural preservation, bringing traditional Indian arts, crafts, and performances to the modern web while maintaining their authentic essence and cultural significance.*

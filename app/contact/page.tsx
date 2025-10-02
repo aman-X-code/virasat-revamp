@@ -40,10 +40,10 @@ const ContactPage = () => {
 
   // Formspree form IDs - configured with your actual Formspree form IDs
   const FORMSPREE_ENDPOINTS = {
-    artist: 'https://formspree.io/f/mpwjedzr',
-    volunteer: 'https://formspree.io/f/mkgvarnz', 
-    sponsor: 'https://formspree.io/f/mvgbnaob',
-    general: 'https://formspree.io/f/mrbavqgo'
+    artist: 'https://formspree.io/f/mqayqvjk',
+    volunteer: 'https://formspree.io/f/myznwqvk', 
+    sponsor: 'https://formspree.io/f/mzzjrlwe',
+    general: 'https://formspree.io/f/meorgbdg'
   };
 
   const fadeIn = {
@@ -95,10 +95,10 @@ const ContactPage = () => {
       title: 'General Enquiry/Stall Booking',
       description: 'Questions, feedback, or support',
       icon: MessageCircle,
-      color: 'from-rose-600 to-pink-600',
-      bgColor: 'bg-rose-50',
-      borderColor: 'border-rose-200',
-      focusColor: 'focus:ring-rose-500'
+      color: 'from-yellow-400 to-amber-600',
+      bgColor: 'bg-yellow-50',
+      borderColor: 'border-yellow-200',
+      focusColor: 'focus:ring-amber-500'
     }
   ];
 
@@ -151,23 +151,23 @@ const ContactPage = () => {
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Full Name *</label>
-          <input type="text" name="name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Full Name *</label>
+          <input type="text" name="name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }} />
         </div>
         <div>
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Email *</label>
-          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Email *</label>
+          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }} />
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Phone Number</label>
-          <input type="tel" name="phone" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Phone Number</label>
+          <input type="tel" name="phone" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }} />
         </div>
         <div>
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Art Form *</label>
-          <select name="art_form" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm">
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Art Form *</label>
+          <select name="art_form" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }}>
             <option value="">Select your art form</option>
             <option value="classical-dance">Classical Dance</option>
             <option value="music">Music</option>
@@ -182,38 +182,39 @@ const ContactPage = () => {
       </div>
 
       <div>
-        <label className="block text-gray-700 font-sans mb-1 text-sm">Experience Level *</label>
+        <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Experience Level *</label>
         <div className="grid grid-cols-3 gap-3">
           {['Beginner', 'Intermediate', 'Professional'].map((level) => (
             <label key={level} className="flex items-center space-x-2 cursor-pointer text-sm">
               <input type="radio" name="experience" value={level.toLowerCase()} className="text-amber-500" />
-              <span className="font-sans">{level}</span>
+              <span className="font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }}>{level}</span>
             </label>
           ))}
         </div>
       </div>
 
       <div>
-        <label className="block text-gray-700 font-sans mb-1 text-sm">Portfolio/Website</label>
-        <input type="url" name="portfolio_url" placeholder="https://yourportfolio.com" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" />
+        <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Portfolio/Website</label>
+        <input type="url" name="portfolio_url" placeholder="https://yourportfolio.com" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }} />
       </div>
 
       <div>
-        <label className="block text-gray-700 font-sans mb-1 text-sm">Portfolio/Work Samples (Google Drive Link)</label>
+        <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Portfolio/Work Samples (Google Drive Link)</label>
         <input 
           type="url" 
           name="portfolio_drive_link" 
           placeholder="https://drive.google.com/drive/folders/your-folder-id" 
-          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm" 
+          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" 
+          style={{ fontFamily: 'var(--font-league-spartan)' }}
         />
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-gray-500 mt-1 font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }}>
           Upload your portfolio images, documents, and work samples to Google Drive, make the folder public, and share the link here.
         </p>
       </div>
 
       <div>
-        <label className="block text-gray-700 font-sans mb-1 text-sm">Tell us about your artistic journey *</label>
-        <textarea name="artistic_journey" required rows={3} placeholder="Share your story, inspirations, and what drives your passion for art..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"></textarea>
+        <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Tell us about your artistic journey *</label>
+        <textarea name="artistic_journey" required rows={3} placeholder="Share your story, inspirations, and what drives your passion for art..." className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }}></textarea>
       </div>
 
       <motion.button
@@ -221,7 +222,7 @@ const ContactPage = () => {
         disabled={isSubmitting}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white py-3 rounded-md font-sans font-semibold hover:from-amber-700 hover:to-orange-700 transition-all disabled:opacity-50 text-sm"
+        className="w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white py-3 rounded-md font-league-spartan font-semibold hover:from-amber-700 hover:to-orange-700 transition-all disabled:opacity-50 text-sm"
       >
         {isSubmitting ? 'Submitting...' : 'Register as Artist'}
       </motion.button>
@@ -237,19 +238,19 @@ const ContactPage = () => {
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Full Name *</label>
-          <input type="text" name="name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Full Name *</label>
+          <input type="text" name="name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }} />
         </div>
         <div>
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Email *</label>
-          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Email *</label>
+          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }} />
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Phone Number *</label>
-          <input type="tel" name="phone" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm" />
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Phone Number *</label>
+          <input type="tel" name="phone" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }} />
         </div>
         <div>
           <label className="block text-gray-700 font-sans mb-1 text-sm">Age</label>
@@ -393,23 +394,24 @@ const ContactPage = () => {
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Name *</label>
-          <input type="text" name="name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm" />
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Name *</label>
+          <input type="text" name="name" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }} />
         </div>
         <div>
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Email *</label>
-          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm" />
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Email *</label>
+          <input type="email" name="email" required className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }} />
         </div>
       </div>
       
       <div className="mb-4">
-        <label className="block text-gray-700 font-sans mb-1 text-sm">Subject *</label>
+        <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Subject *</label>
         <select 
           name="subject" 
           required 
           value={selectedSubject}
           onChange={(e) => setSelectedSubject(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm"
+          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan"
+          style={{ fontFamily: 'var(--font-league-spartan)' }}
         >
           <option value="">Select a topic</option>
           <option value="general-inquiry">General Inquiry</option>
@@ -424,23 +426,24 @@ const ContactPage = () => {
 
       {selectedSubject === 'stall-booking' && (
         <div className="mb-4">
-          <label className="block text-gray-700 font-sans mb-1 text-sm">Stall Images & Information (Google Drive Link) *</label>
+          <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Stall Images & Information (Google Drive Link) *</label>
           <input 
             type="url" 
             name="stall_drive_link" 
             required
             placeholder="https://drive.google.com/drive/folders/your-folder-id" 
-            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm" 
+            className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" 
+            style={{ fontFamily: 'var(--font-league-spartan)' }}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 mt-1 font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }}>
             Upload your stall images, product information, and any relevant documents to Google Drive, make the folder public, and share the link here.
           </p>
         </div>
       )}
 
       <div className="mb-4">
-        <label className="block text-gray-700 font-sans mb-1 text-sm">Message *</label>
-        <textarea name="message" required rows={4} placeholder="How can we help you?" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm"></textarea>
+        <label className="block text-gray-700 font-league-spartan mb-1 text-sm" style={{ fontFamily: 'var(--font-league-spartan)' }}>Message *</label>
+        <textarea name="message" required rows={4} placeholder="How can we help you?" className="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm font-league-spartan" style={{ fontFamily: 'var(--font-league-spartan)' }}></textarea>
       </div>
 
       <motion.button
@@ -448,7 +451,7 @@ const ContactPage = () => {
         disabled={isSubmitting}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="w-full bg-gradient-to-r from-rose-600 to-pink-600 text-white py-3 rounded-md font-sans font-semibold hover:from-rose-700 hover:to-pink-700 transition-all disabled:opacity-50 text-sm"
+        className="w-full bg-gradient-to-r from-yellow-400 to-amber-600 text-white py-3 rounded-md font-league-spartan font-semibold hover:from-yellow-500 hover:to-amber-700 transition-all disabled:opacity-50 text-sm"
       >
         {isSubmitting ? 'Sending...' : 'Send Message'}
       </motion.button>
@@ -471,11 +474,66 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="text-gray-900 pt-20" style={{ backgroundColor: '#FFF6F4' }}>
-      <section className="py-12 px-6 container mx-auto">
+    <div className="text-gray-900 pt-16 relative">
+      {/* Dark Underlay Background */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundColor: "#160000",
+        }}
+      />
+
+      {/* Fabric Texture Background - Reduced Opacity */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage:
+            "url(https://res.cloudinary.com/digilabs/image/upload/v1759174422/prod/texture/fabric_texture_dtbgi8.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.18,
+        }}
+      />
+
+      {/* Peacock Flat Overlay with Multiply Blend */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage:
+            "url(https://res.cloudinary.com/digilabs/image/upload/v1759174358/prod/about/background/peacock_flat_ol19op.png)",
+          backgroundSize: "70%",
+          backgroundPosition: "center",
+          backgroundRepeat: "repeat",
+          mixBlendMode: "multiply",
+          opacity: 0.9,
+        }}
+      />
+
+      {/* Top Fade Overlay - Like Home Screen */}
+      <div
+        className="absolute top-0 left-0 right-0 z-1"
+        style={{
+          height: "200px",
+          background:
+            "linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+        }}
+      />
+
+      {/* Bottom Fade Overlay - Like Home Screen */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-1"
+        style={{
+          height: "200px",
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+        }}
+      />
+
+      <section className="py-12 px-6 container mx-auto relative z-10">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-serif text-gray-800 mb-4">Get In Touch</h1>
-          <p className="text-base font-sans text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-berkshire-swash text-white mb-4" style={{ fontFamily: 'var(--font-berkshire-swash)' }}>Get In Touch</h1>
+          <p className="text-base font-sans text-gray-300 max-w-2xl mx-auto">
             Whether you're an artist, volunteer, sponsor, or have a question - we'd love to hear from you.
           </p>
         </div>
@@ -572,16 +630,16 @@ const ContactPage = () => {
             whileInView="animate"
             viewport={{ once: true }}
           >
-            <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-              <h3 className="text-xl font-serif text-gray-800 mb-4">Contact Information</h3>
+            <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg shadow-md border border-white/20">
+              <h3 className="text-xl font-serif text-white mb-4">Contact Information</h3>
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-amber-600 to-orange-600 rounded-lg flex items-center justify-center">
                     <Mail className="text-white" size={16} />
                   </div>
                   <div>
-                    <p className="font-sans text-gray-700 text-sm">virasat.reach@gmail.com</p>
-                    <p className="text-xs text-gray-500">General inquiries</p>
+                    <p className="font-sans text-white text-sm">virasat.reach@gmail.com</p>
+                    <p className="text-xs text-gray-300">General inquiries</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -589,8 +647,8 @@ const ContactPage = () => {
                     <Phone className="text-white" size={16} />
                   </div>
                   <div>
-                    <p className="font-sans text-gray-700 text-sm">0135 2752111</p>
-                    <p className="text-xs text-gray-500">Mon-Fri 9AM-6PM</p>
+                    <p className="font-sans text-white text-sm">0135 2752111</p>
+                    <p className="text-xs text-gray-300">Mon-Fri 9AM-6PM</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -598,14 +656,14 @@ const ContactPage = () => {
                     <MapPin className="text-white" size={16} />
                   </div>
                   <div>
-                    <p className="font-sans text-gray-700 text-sm">72/II, Vasant Vihar</p>
-                    <p className="text-xs text-gray-500">Dehradun – 248006, Uttarakhand</p>
+                    <p className="font-sans text-white text-sm">72/II, Vasant Vihar</p>
+                    <p className="text-xs text-gray-300">Dehradun – 248006, Uttarakhand</p>
                   </div>
                 </div>
               </div>
               
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <h4 className="font-serif text-gray-800 mb-3 text-sm">Follow Us</h4>
+              <div className="mt-4 pt-4 border-t border-white/20">
+                <h4 className="font-serif text-white mb-3 text-sm">Follow Us</h4>
                 <div className="flex space-x-3">
                   <a href="https://www.facebook.com/reachvirasat/" target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center text-white hover:from-blue-700 hover:to-blue-800 transition-all">
                     <Facebook size={16} />
@@ -617,7 +675,7 @@ const ContactPage = () => {
               </div>
             </div>
             
-            <div className="h-64 rounded-lg shadow-md overflow-hidden border border-gray-200">
+            <div className="h-64 rounded-lg shadow-md overflow-hidden border border-white/20">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3444.123456789!2d78.0123456789!3d30.123456789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3909d9b8b8b8b8b8%3A0x1234567890abcdef!2s72%2FII%2C%20Vasant%20Vihar%2C%20Dehradun%2C%20Uttarakhand%20248006!5e0!3m2!1sen!2sin!4v1234567890123"
                 width="100%"
@@ -626,7 +684,9 @@ const ContactPage = () => {
                 allowFullScreen={true}
                 loading="lazy"
                 onError={(e) => {
-                  console.error('Google Maps iframe failed to load');
+                  if (process.env.NODE_ENV === 'development') {
+                    console.error('Google Maps iframe failed to load');
+                  }
                   // Fallback to static map or address display
                   const iframeElement = e.target as HTMLIFrameElement;
                   const fallbackElement = document.createElement('div');

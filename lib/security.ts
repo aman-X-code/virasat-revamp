@@ -304,9 +304,7 @@ export function validateRequestOrigin(request: Request): boolean {
   // In production, validate against allowed origins
   if (process.env.NODE_ENV === 'production') {
     const allowedOrigins = [
-      process.env.NEXT_PUBLIC_APP_URL,
-      'https://secure.payu.in',
-      'https://test.payu.in'
+      process.env.NEXT_PUBLIC_APP_URL
     ].filter(Boolean);
     
     if (origin && !allowedOrigins.includes(origin)) {

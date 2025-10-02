@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import Masonry from 'react-masonry-css';
 import dynamic from 'next/dynamic';
 import ComponentErrorBoundary from '@/components/ComponentErrorBoundary';
@@ -73,11 +74,27 @@ const generateGalleryItems = () => {
 
 const allItems = generateGalleryItems();
 
-const GalleryPage = () => {
+const GalleryContent = () => {
   const { isLoading, withLoading } = useLoading(true);
+  const searchParams = useSearchParams();
   const [filter, setFilter] = useState({ year: 'all', type: 'all' });
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Handle URL parameters for year filtering
+  useEffect(() => {
+    const yearParam = searchParams.get('year');
+    if (yearParam && ['2021', '2022', '2023', '2024'].includes(yearParam)) {
+      setFilter(prev => ({ ...prev, year: yearParam }));
+    } else {
+      setFilter(prev => ({ ...prev, year: 'all' }));
+    }
+  }, [searchParams]);
 
   // Simulate data loading
   useEffect(() => {
@@ -115,11 +132,62 @@ const GalleryPage = () => {
       <SmallLoader isLoading={isLoading} />
       {!isLoading && (
         <ComponentErrorBoundary componentName="Gallery">
-          <div className="text-brand-black pt-20" style={{backgroundColor: '#FFF6F4'}}>
+          <div className="text-brand-black pt-20 relative">
+        {/* Dark Underlay Background */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundColor: '#160000'
+          }}
+        />
+        
+        {/* Fabric Texture Background - Reduced Opacity */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: 'url(https://res.cloudinary.com/digilabs/image/upload/v1759174422/prod/texture/fabric_texture_dtbgi8.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            opacity: 0.18
+          }}
+        />
+        
+        {/* Peacock Flat Overlay with Multiply Blend */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: 'url(https://res.cloudinary.com/digilabs/image/upload/v1759174358/prod/about/background/peacock_flat_ol19op.png)',
+            backgroundSize: '70%',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'repeat',
+            mixBlendMode: 'multiply',
+            opacity: 0.9
+          }}
+        />
+        
+        {/* Top Fade Overlay - Like Home Screen */}
+        <div 
+          className="absolute top-0 left-0 right-0 z-1"
+          style={{
+            height: '200px',
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)'
+          }}
+        />
+
+        {/* Bottom Fade Overlay - Like Home Screen */}
+        <div 
+          className="absolute bottom-0 left-0 right-0 z-1"
+          style={{
+            height: '200px',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)'
+          }}
+        />
+
       {/* Hero Banner */}
-      <section className="relative h-40 sm:h-48 flex items-center justify-center text-brand-brown overflow-hidden">
+      <section className="relative h-40 sm:h-48 flex items-center justify-center text-white overflow-hidden z-10">
         {/* Animated Background */}
-        <div className="absolute inset-0" style={{backgroundColor: '#FFF6F4'}}>
+        <div className="absolute inset-0">
           {/* Floating Cultural Elements */}
           <div className="absolute inset-0 overflow-hidden">
             {/* Rangoli Patterns */}
@@ -231,7 +299,8 @@ const GalleryPage = () => {
             className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6"
         >
             <motion.h1 
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif mb-3 sm:mb-4 bg-gradient-to-r from-brand-brown via-brand-red to-brand-brown bg-clip-text text-transparent leading-loose drop-shadow-lg pb-2 sm:pb-3"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-berkshire-swash mb-3 sm:mb-4 text-white leading-loose drop-shadow-lg pb-2 sm:pb-3"
+              style={{ fontFamily: 'var(--font-berkshire-swash)' }}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.3 }}
@@ -241,7 +310,8 @@ const GalleryPage = () => {
               <span className="hidden sm:inline">Across the Years</span>
             </motion.h1>
             <motion.p 
-              className="text-xs sm:text-sm md:text-base font-sans text-brand-brown opacity-90 drop-shadow-md mt-2 sm:mt-3"
+              className="text-xs sm:text-sm md:text-base text-gray-300 opacity-90 drop-shadow-md mt-2 sm:mt-3"
+              style={{ fontFamily: 'var(--font-league-spartan)' }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 0.9, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
@@ -252,7 +322,7 @@ const GalleryPage = () => {
       </section>
 
       {/* Filters */}
-      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 rounded-2xl shadow-lg" style={{backgroundColor: 'rgba(255, 246, 244, 0.8)'}}>
+      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 relative z-10">
         <motion.div 
           className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 mb-4 sm:mb-8"
           initial={{ opacity: 0, y: 30 }}
@@ -313,7 +383,7 @@ const GalleryPage = () => {
         <Masonry
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid flex -ml-6"
-          columnClassName="my-masonry-grid_column pl-6 bg-clip-padding"
+          columnClassName="my-masonry-grid_column pl-6"
         >
           {filteredItems.map((item, index) => {
             // Create varying sizes for dynamic layout
@@ -484,7 +554,7 @@ const GalleryPage = () => {
         viewport={{ once: true }}
       >
         {/* Background Effects */}
-        <div className="absolute inset-0" style={{backgroundColor: '#FFF6F4'}} />
+        <div className="absolute inset-0" style={{backgroundColor: 'transparent'}} />
         
         <div className="relative z-10">
           <motion.h2 
@@ -597,6 +667,14 @@ const GalleryPage = () => {
         </ComponentErrorBoundary>
       )}
     </>
+  );
+};
+
+const GalleryPage = () => {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-red"></div></div>}>
+      <GalleryContent />
+    </Suspense>
   );
 };
 
