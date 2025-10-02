@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPayUPaymentData, validatePayUConfig } from '@/lib/payu';
 import { rateLimit } from '@/lib/rate-limit';
+import { validateAmount } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
   try {
@@ -68,9 +69,10 @@ export async function POST(request: NextRequest) {
 
     // Validate amount
     const donationAmount = parseFloat(amount);
-    if (isNaN(donationAmount) || donationAmount < 1) {
+    const amountValidation = validateAmount(donationAmount);
+    if (!amountValidation.isValid) {
       return NextResponse.json(
-        { error: 'Invalid amount' },
+        { error: amountValidation.errors[0] },
         { status: 400 }
       );
     }

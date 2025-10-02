@@ -193,8 +193,8 @@ export function validateAmount(amount: number): ValidationResult {
   
   if (!amount || amount <= 0) {
     errors.push('Amount must be greater than 0');
-  } else if (amount > 1000000) {
-    errors.push('Amount is too large');
+  } else if (amount > 100000) {
+    errors.push('Maximum donation amount is ₹1,00,000 (1 Lakh)');
   } else if (!Number.isInteger(amount)) {
     errors.push('Amount must be a whole number');
   } else if (amount < 1) {

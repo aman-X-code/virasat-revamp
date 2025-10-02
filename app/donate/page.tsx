@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { validateAmount } from "@/lib/security";
 
 const DonatePage = () => {
   const router = useRouter();
@@ -49,10 +50,26 @@ const DonatePage = () => {
 
   const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Only allow positive numbers and empty string
-    if (value === "" || (!isNaN(Number(value)) && Number(value) >= 0)) {
+    
+    // Allow empty string for clearing input
+    if (value === "") {
       setCustomAmount(value);
-      if (value) {
+      return;
+    }
+    
+    // Remove any non-digit characters except for leading zeros
+    const numericValue = value.replace(/[^\d]/g, '');
+    
+    // Prevent multiple leading zeros (e.g., "0000" becomes "0")
+    const cleanedValue = numericValue.replace(/^0+/, '0').replace(/^0(\d)/, '$1');
+    
+    // Convert to number for validation
+    const amount = Number(cleanedValue);
+    
+    // Validate amount constraints
+    if (!isNaN(amount) && amount >= 0 && amount <= 100000) {
+      setCustomAmount(cleanedValue);
+      if (cleanedValue) {
         setSelectedAmount(0);
       }
     }
@@ -120,8 +137,10 @@ const DonatePage = () => {
     try {
       const amount = customAmount ? parseInt(customAmount) : selectedAmount;
 
-      if (!amount || amount < 1) {
-        alert("Please enter a valid amount");
+      // Use the security utility for comprehensive amount validation
+      const amountValidation = validateAmount(amount);
+      if (!amountValidation.isValid) {
+        alert(amountValidation.errors[0]); // Show the first error
         setIsLoading(false);
         return;
       }
@@ -561,14 +580,18 @@ const DonatePage = () => {
                     </span>
                     <input
                       type="number"
-                      min="0"
+                      min="1"
+                      max="100000"
                       step="1"
                       value={customAmount}
                       onChange={handleCustomAmountChange}
-                      placeholder="Enter amount"
+                      placeholder="Enter amount (max ₹1,00,000)"
                       className="w-full pl-12 pr-4 py-3 text-xl border-2 border-brand-earthen rounded-2xl focus:border-yellow-400 focus:outline-none transition-all duration-300 bg-white/50"
                     />
                   </div>
+                  <p className="text-sm text-gray-600 mt-2 text-center">
+                    Minimum: ₹1 • Maximum: ₹1,00,000 (1 Lakh)
+                  </p>
                 </div>
               </div>
             </motion.div>
